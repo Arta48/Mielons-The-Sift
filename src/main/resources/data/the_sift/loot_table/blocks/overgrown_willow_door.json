@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "the_sift:overgrown_willow_door",
+          "condition": {
+            "type": "minecraft:match_block",
+            "blocks": "the_sift:overgrown_willow_door",
+            "state": {
+              "half": "lower"
+            }
+          }
+        }
+      ],
+      "rolls": 1,
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
+    }
+  ],
+  "random_sequence": "minecraft:blocks/oak_door"
+}

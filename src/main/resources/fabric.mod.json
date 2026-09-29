@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "${id}",
+  "version": "${version}",
+  "name": "${name}",
+  "description": "${description}",
+  "authors": [
+    "${author}"
+  ],
+  "contributors": [
+    "ImpSteve — Dark Sniffer texture",
+    "Fuzja Jądrowa — Rift music disc"
+  ],
+  "contact": {
+    "homepage": "https://x.com/MielonDev"
+  },
+  "license": "MIT",
+  "icon": "assets/the_sift/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "mielon.thesift.TheSiftMod"
+    ],
+    "client": [
+      "mielon.thesift.client.TheSiftClient",
+      "mielon.thesift.client.RiftClientInitializer"
+    ],
+    "lambdynlights:initializer": [
+      "mielon.thesift.client.light.TheSiftDynamicLightsInitializer"
+    ]
+  },
+  "mixins": [
+    "the_sift.mixins.json",
+    {
+      "config": "the_sift.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": "*",
+    "minecraft": ">=${minecraft}",
+    "java": ">=${java}",
+    "fabric-api": "*",
+    "geckolib": ">=${geckolib_version}"
+  },
+  "recommends": {
+    "lambdynlights": ">=${lambdynlights_version}"
+  },
+  "accessWidener": "the_sift.accesswidener"
+}

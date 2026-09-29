@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:simple_block",
+  "to_place": {
+    "type": "minecraft:simple",
+    "state": {
+      "id": "the_sift:healthy_sculk_sprouts"
+    }
+  }
+}
