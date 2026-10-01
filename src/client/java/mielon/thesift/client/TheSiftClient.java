@@ -22,7 +22,9 @@ import mielon.thesift.client.render.SonorousBeamRenderTypes;
 import mielon.thesift.client.render.SonorousBeamRenderer;
 import mielon.thesift.entity.ModEntities;
 import mielon.thesift.particle.ModParticles;
+import mielon.thesift.world.VanillaPaletteRemapper;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
@@ -37,6 +39,10 @@ public final class TheSiftClient implements ClientModInitializer {
    private static final ModelLayerLocation OVERGROWN_WILLOW_CHEST_BOAT_LAYER = new ModelLayerLocation(Identifier.fromNamespaceAndPath("the_sift", "chest_boat/overgrown_willow"), "main");
 
    public void onInitializeClient() {
+      VanillaPaletteRemapper.initialize();
+      ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+         VanillaPaletteRemapper.isVanillaServer = false;
+      });
       SiftShaderCompat.initialize();
       SonorousBeamRenderTypes.initialize();
       SiftProceduralSkyRenderer.initialize();

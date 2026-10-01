@@ -30,6 +30,8 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.JukeboxPlayable;
+import net.minecraft.world.item.JukeboxSong;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.SmithingTemplateItem;
 import net.minecraft.world.item.SnowballItem;
@@ -71,7 +73,7 @@ public final class ModItems {
    public static final Item RAW_SIFTER_MEAT;
    public static final Item COOKED_SIFTER_MEAT;
    public static final Item SIFT_RIFT;
-   public static final ResourceKey RIFT_JUKEBOX_SONG_KEY;
+   public static final ResourceKey<JukeboxSong> RIFT_JUKEBOX_SONG_KEY;
    public static final Item MUSIC_DISC_RIFT;
    public static final ResourceKey SCULKFLOWER_SEEDS_KEY;
    public static final Item SCULKFLOWER_SEEDS;
@@ -138,7 +140,7 @@ public final class ModItems {
       COOKED_SIFTER_MEAT = registerItem("cooked_sifter_meat", (new Item.Properties()).food(Foods.COOKED_PORKCHOP));
       SIFT_RIFT = registerItem("sift_rift", SiftRiftItem::new, (new Item.Properties()).stacksTo(1).rarity(Rarity.EPIC));
       RIFT_JUKEBOX_SONG_KEY = ResourceKey.create(Registries.JUKEBOX_SONG, Identifier.fromNamespaceAndPath("the_sift", "rift"));
-      MUSIC_DISC_RIFT = registerItem("music_disc_rift", (new Item.Properties()).stacksTo(1).rarity(Rarity.RARE).jukeboxPlayable(RIFT_JUKEBOX_SONG_KEY));
+      MUSIC_DISC_RIFT = registerItem("music_disc_rift", (new Item.Properties()).stacksTo(1).rarity(Rarity.RARE).delayedComponent(DataComponents.JUKEBOX_PLAYABLE, (provider) -> provider.get(RIFT_JUKEBOX_SONG_KEY).map(JukeboxPlayable::new).orElse(null)));
       SCULKFLOWER_SEEDS_KEY = ResourceKey.create(BuiltInRegistries.ITEM.key(), Identifier.fromNamespaceAndPath("the_sift", "sculkflower_seeds"));
       SCULKFLOWER_SEEDS = (Item)Registry.register(BuiltInRegistries.ITEM, SCULKFLOWER_SEEDS_KEY, new BlockItem(ModBlocks.SCULKFLOWER_CROP, (new Item.Properties()).setId(SCULKFLOWER_SEEDS_KEY)));
       SIFTITE_SWORD = registerItem("siftite_sword", (new Item.Properties()).sword(SIFTITE_TOOL_MATERIAL, 3.0F, -2.4F).fireResistant());
