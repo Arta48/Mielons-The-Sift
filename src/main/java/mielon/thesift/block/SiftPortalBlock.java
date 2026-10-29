@@ -19,32 +19,33 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.NonNull;
 
 public class SiftPortalBlock extends BaseEntityBlock {
    public SiftPortalBlock(BlockBehaviour.Properties properties) {
       super(properties);
    }
 
-   public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+   public BlockEntity newBlockEntity(@NonNull BlockPos pos, @NonNull BlockState state) {
       return new SiftPortalBlockEntity(pos, state);
    }
 
-   public BlockEntityTicker getTicker(Level level, BlockState state, BlockEntityType type) {
+   public BlockEntityTicker getTicker(@NonNull Level level, @NonNull BlockState state, @NonNull BlockEntityType type) {
       return createTickerHelper(type, ModBlocks.SIFT_PORTAL_BLOCK_ENTITY, SiftPortalBlockEntity::tick);
    }
 
-   protected RenderShape getRenderShape(BlockState state) {
+   protected @NonNull RenderShape getRenderShape(@NonNull BlockState state) {
       return RenderShape.INVISIBLE;
    }
 
-   protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+   protected void entityInside(@NonNull BlockState state, Level level, @NonNull BlockPos pos, @NonNull Entity entity, @NonNull InsideBlockEffectApplier effectApplier, boolean isPrecise) {
       if (!level.isClientSide()) {
          SiftTeleportManager.onPortalContact(entity);
       }
 
    }
 
-   public void spawnDestroyParticles(Level level, BlockPos pos, BlockState state) {
+   public void spawnDestroyParticles(Level level, @NonNull BlockPos pos, @NonNull BlockState state) {
       if (level.isClientSide()) {
          RandomSource random = level.getRandom();
 
@@ -61,7 +62,7 @@ public class SiftPortalBlock extends BaseEntityBlock {
       }
    }
 
-   protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+   protected @NonNull VoxelShape getShape(@NonNull BlockState state, @NonNull BlockGetter level, @NonNull BlockPos pos, @NonNull CollisionContext context) {
       return Shapes.block();
    }
 }

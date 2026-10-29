@@ -29,18 +29,19 @@ import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import org.jspecify.annotations.NonNull;
 
 public final class OvergrownWillowTreeFeature implements Feature {
-   public static final MapCodec CODEC = MapCodec.unit(OvergrownWillowTreeFeature::new);
+   public static final MapCodec<OvergrownWillowTreeFeature> CODEC = MapCodec.unit(OvergrownWillowTreeFeature::new);
    private static final TemplateChoice SMALL = template("overgrown_willow/small_01", 3, 6);
    private static final TemplateChoice BIG = template("overgrown_willow/big_01", 7, 6);
    private static final Direction[] ROOT_DIRECTIONS;
 
-   public MapCodec codec() {
+   public @NonNull MapCodec codec() {
       return CODEC;
    }
 
-   public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+   public boolean place(WorldGenLevel level, @NonNull ChunkGenerator generator, RandomSource random, @NonNull BlockPos origin) {
       SiftWorldgenBounds bounds = SiftWorldgenBounds.aroundWithNeighbourMargin(origin);
       int minX = origin.getX() & -16;
       int minZ = origin.getZ() & -16;
@@ -63,7 +64,7 @@ public final class OvergrownWillowTreeFeature implements Feature {
    }
 
    static boolean placeAt(WorldGenLevel level, RandomSource random, BlockPos root, SiftWorldgenBounds bounds, boolean large) {
-      return !SiftFeaturePlacementGuard.intersectsPortal(root, 12) && isTreeGround(level.getBlockState(root.below())) ? placeAt(level, random, root, bounds, large ? BIG : SMALL) : false;
+      return !SiftFeaturePlacementGuard.intersectsPortal(root, 12) && isTreeGround(level.getBlockState(root.below())) && placeAt(level, random, root, bounds, large ? BIG : SMALL);
    }
 
    private static boolean placeAt(WorldGenLevel level, RandomSource random, BlockPos root, SiftWorldgenBounds bounds, TemplateChoice choice) {
@@ -71,7 +72,7 @@ public final class OvergrownWillowTreeFeature implements Feature {
       if (optional.isEmpty()) {
          return false;
       } else {
-         StructureTemplate template = (StructureTemplate)optional.get();
+         StructureTemplate template = optional.get();
          Rotation rotation = Rotation.getRandom(random);
          Mirror mirror = random.nextBoolean() ? Mirror.NONE : Mirror.LEFT_RIGHT;
          BlockPos pivot = choice.root();
@@ -150,7 +151,7 @@ public final class OvergrownWillowTreeFeature implements Feature {
    }
 
    private static int placeVineTemplateBlocksTopDown(WorldGenLevel level, SiftWorldgenBounds bounds, List vines) {
-      List<StructureTemplate.StructureBlockInfo> topDown = new ArrayList(vines);
+      List<StructureTemplate.StructureBlockInfo> topDown = new ArrayList<>(vines);
       topDown.sort((first, second) -> Integer.compare(second.pos().getY(), first.pos().getY()));
       int placed = 0;
 
@@ -174,7 +175,7 @@ public final class OvergrownWillowTreeFeature implements Feature {
          for (int rootIndex = 0; rootIndex < rootCount; ++rootIndex) {
             Direction direction = ROOT_DIRECTIONS[(firstDirection + rootIndex) % ROOT_DIRECTIONS.length];
             int length = 1 + random.nextInt(3);
-            BlockState rootState = (BlockState)verticalRoot.setValue(RotatedPillarBlock.AXIS, direction.getAxis());
+            BlockState rootState = verticalRoot.setValue(RotatedPillarBlock.AXIS, direction.getAxis());
 
             for (int step = 1; step <= length; ++step) {
                BlockPos pos = root.relative(direction, step);
@@ -197,7 +198,7 @@ public final class OvergrownWillowTreeFeature implements Feature {
                BooleanProperty face = VineBlock.getPropertyForFace(direction);
                BooleanProperty bottom = OvergrownWillowVinesBlock.getBottomProperty(direction);
                tipState = level.getBlockState(info.pos());
-               if ((Boolean)tipState.getValue(face) && (Boolean)tipState.getValue(bottom) && !(random.nextFloat() >= 0.34F)) {
+               if (tipState.getValue(face) && tipState.getValue(bottom) && !(random.nextFloat() >= 0.34F)) {
                   BlockPos current = info.pos();
                   int extension = 1 + random.nextInt(3);
 
@@ -209,13 +210,13 @@ public final class OvergrownWillowTreeFeature implements Feature {
 
                      BlockState belowState = level.getBlockState(below);
                      if (belowState.isAir()) {
-                        belowState = (BlockState)ModBlocks.OVERGROWN_WILLOW_VINES.defaultBlockState().setValue(face, true);
+                        belowState = ModBlocks.OVERGROWN_WILLOW_VINES.defaultBlockState().setValue(face, true);
                      } else {
                         if (!isWillowVine(belowState)) {
                            break;
                         }
 
-                        belowState = (BlockState)belowState.setValue(face, true);
+                        belowState = belowState.setValue(face, true);
                      }
 
                      belowState = OvergrownWillowVinesBlock.refreshBottomFaces(belowState, level.getBlockState(below.below()));
@@ -233,7 +234,7 @@ public final class OvergrownWillowTreeFeature implements Feature {
    }
 
    private static void alignTemplateVinesToTree(WorldGenLevel level, SiftWorldgenBounds bounds, List vines) {
-      List<StructureTemplate.StructureBlockInfo> topDown = new ArrayList(vines);
+      List<StructureTemplate.StructureBlockInfo> topDown = new ArrayList<>(vines);
       topDown.sort((first, second) -> Integer.compare(second.pos().getY(), first.pos().getY()));
 
       for (StructureTemplate.StructureBlockInfo info : topDown) {
@@ -259,14 +260,14 @@ public final class OvergrownWillowTreeFeature implements Feature {
                   Direction direction = ROOT_DIRECTIONS[directionIndex];
                   BooleanProperty face = VineBlock.getPropertyForFace(direction);
                   boolean directSupport = (directSupportMask & 1 << directionIndex) != 0;
-                  boolean inheritedFromAbove = isWillowVine(above) && (Boolean)above.getValue(face);
-                  boolean keepAuthoredFace = !hasDirectSideSupport && !isWillowVine(above) && upSupport && (Boolean)state.getValue(face);
+                  boolean inheritedFromAbove = isWillowVine(above) && above.getValue(face);
+                  boolean keepAuthoredFace = !hasDirectSideSupport && !isWillowVine(above) && upSupport && state.getValue(face);
                   boolean active = directSupport || inheritedFromAbove || keepAuthoredFace;
-                  state = (BlockState)state.setValue(face, active);
+                  state = state.setValue(face, active);
                   hasWallFace |= active;
                }
 
-               state = (BlockState)state.setValue(VineBlock.UP, upSupport);
+               state = state.setValue(VineBlock.UP, upSupport);
                if (!hasWallFace && !upSupport) {
                   level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
                } else {
@@ -398,6 +399,6 @@ public final class OvergrownWillowTreeFeature implements Feature {
       }
    }
 
-   private static record TemplateChoice(Identifier id, BlockPos root) {
+   private record TemplateChoice(Identifier id, BlockPos root) {
    }
 }

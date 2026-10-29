@@ -2,7 +2,6 @@ package mielon.thesift.client.mixin;
 
 import mielon.thesift.client.loading.SiftLoadingScreenState;
 import mielon.thesift.world.TheSiftDimension;
-import net.minecraft.client.gui.screens.LevelLoadingScreen;
 import net.minecraft.client.gui.screens.LevelLoadingScreen.Reason;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.resources.ResourceKey;
@@ -19,7 +18,7 @@ public abstract class SiftLevelLoadingReasonMixin {
       at = {@At("RETURN")},
       cancellable = true
    )
-   private void theSift$usePortalTransitionForSift(boolean playerDied, ResourceKey dimensionKey, ResourceKey oldDimensionKey, CallbackInfoReturnable cir) {
+   private void theSift$usePortalTransitionForSift(boolean playerDied, ResourceKey<Level> dimensionKey, ResourceKey<Level> oldDimensionKey, CallbackInfoReturnable<Reason> cir) {
       boolean enteringSift = dimensionKey.equals(TheSiftDimension.LEVEL_KEY);
       boolean leavingSift = oldDimensionKey.equals(TheSiftDimension.LEVEL_KEY);
       boolean siftTransition = enteringSift != leavingSift;

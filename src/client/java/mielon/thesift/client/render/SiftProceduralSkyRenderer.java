@@ -25,7 +25,7 @@ public final class SiftProceduralSkyRenderer {
    private static final int ELEVATION_SEGMENTS = 112;
    private static final int VERTEX_COUNT = 86016;
    private static final float RADIUS = 99.0F;
-   private static final float TAU = ((float)Math.PI * 2F);
+   private static final float TAU = ((float) Math.PI * 2F);
    private static final float ART_BOTTOM_DEGREES = -14.0F;
    private static final float ART_TOP_DEGREES = 90.0F;
    private static final float DOME_BOTTOM_DEGREES = -90.0F;
@@ -53,8 +53,8 @@ public final class SiftProceduralSkyRenderer {
       float night = SiftDayNightCycle.nightBlend(ticks);
       float day = 1.0F - night;
       float weather = 1.0F - level.getRainLevel(1.0F) * 0.16F;
-      float time = (float)ticks / 20.0F;
-      GpuBufferSlice[] transforms = new GpuBufferSlice[]{transform(poseStack, time * 1.0E-4F, 0.0F, weather, 1.0F), transform(poseStack, time * 1.0E-4F, 0.0F, weather, night), transform(poseStack, time * 0.00135F, (float)Math.sin((double)(time * 0.004F)) * 0.01F, weather, day * 0.96F), transform(poseStack, time * 0.00135F, (float)Math.sin((double)(time * 0.004F)) * 0.01F, weather, night * 0.96F), transform(poseStack, -time * 0.00205F, (float)Math.sin((double)(time * 0.0065F + 1.8F)) * 0.016F, weather, day * 0.78F), transform(poseStack, -time * 0.00205F, (float)Math.sin((double)(time * 0.0065F + 1.8F)) * 0.016F, weather, night * 0.82F)};
+      float time = (float) ticks / 20.0F;
+      GpuBufferSlice[] transforms = new GpuBufferSlice[]{transform(poseStack, time * 1.0E-4F, 0.0F, weather, 1.0F), transform(poseStack, time * 1.0E-4F, 0.0F, weather, night), transform(poseStack, time * 0.00135F, (float) Math.sin(time * 0.004F) * 0.01F, weather, day * 0.96F), transform(poseStack, time * 0.00135F, (float) Math.sin(time * 0.004F) * 0.01F, weather, night * 0.96F), transform(poseStack, -time * 0.00205F, (float) Math.sin(time * 0.0065F + 1.8F) * 0.016F, weather, day * 0.78F), transform(poseStack, -time * 0.00205F, (float) Math.sin(time * 0.0065F + 1.8F) * 0.016F, weather, night * 0.82F)};
       int indexCount = PrimitiveTopology.QUADS.indexCount(86016);
       GpuBuffer indexBuffer = quadIndices.getBuffer(indexCount);
       pass.setPipeline(RenderSystem.getCompiledPipeline(SiftShaderCompat.isShaderPackInUse() ? SKY_PIPELINE : RenderPipelines.DEBUG_QUADS));
@@ -102,12 +102,12 @@ public final class SiftProceduralSkyRenderer {
          BufferBuilder builder = new BufferBuilder(bytes, PrimitiveTopology.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
          for (int y = 0; y < 112; ++y) {
-            float v0 = (float)y / 112.0F;
-            float v1 = (float)(y + 1) / 112.0F;
+            float v0 = (float) y / 112.0F;
+            float v1 = (float) (y + 1) / 112.0F;
 
             for (int x = 0; x < 192; ++x) {
-               float u0 = (float)x / 192.0F;
-               float u1 = (float)(x + 1) / 192.0F;
+               float u0 = (float) x / 192.0F;
+               float u1 = (float) (x + 1) / 192.0F;
                addVertex(builder, u0, v0, night, layer);
                addVertex(builder, u1, v0, night, layer);
                addVertex(builder, u1, v1, night, layer);
@@ -120,48 +120,40 @@ public final class SiftProceduralSkyRenderer {
          try {
             var16 = RenderSystem.getDevice().createBuffer(() -> "The Sift procedural sky layer", 32, mesh.vertexBuffer());
          } catch (Throwable var13) {
-            if (mesh != null) {
-               try {
-                  mesh.close();
-               } catch (Throwable var12) {
-                  var13.addSuppressed(var12);
-               }
-            }
+             try {
+                 mesh.close();
+             } catch (Throwable var12) {
+                 var13.addSuppressed(var12);
+             }
 
-            throw var13;
+             throw var13;
          }
 
-         if (mesh != null) {
-            mesh.close();
-         }
+         mesh.close();
       } catch (Throwable var14) {
-         if (bytes != null) {
-            try {
-               bytes.close();
-            } catch (Throwable var11) {
-               var14.addSuppressed(var11);
-            }
-         }
+          try {
+              bytes.close();
+          } catch (Throwable var11) {
+              var14.addSuppressed(var11);
+          }
 
-         throw var14;
+          throw var14;
       }
 
-      if (bytes != null) {
-         bytes.close();
-      }
+      bytes.close();
 
       return var16;
    }
 
    private static void addVertex(BufferBuilder builder, float u, float v, boolean night, int layer) {
-      float azimuth = u * ((float)Math.PI * 2F);
+      float azimuth = u * ((float) Math.PI * 2F);
       float elevationDegrees = -90.0F + v * 180.0F;
-      float elevation = (float)Math.toRadians((double)elevationDegrees);
-      float horizontal = (float)Math.cos((double)elevation) * 99.0F;
-      float px = (float)Math.sin((double)azimuth) * horizontal;
-      float py = (float)Math.sin((double)elevation) * 99.0F;
-      float pz = (float)Math.cos((double)azimuth) * horizontal;
-      float artV = clamp((elevationDegrees - -14.0F) / 104.0F);
+      float elevation = (float) Math.toRadians(elevationDegrees);
+      float horizontal = (float) Math.cos(elevation) * 99.0F;
+      float px = (float) Math.sin(azimuth) * horizontal;
+      float py = (float) Math.sin(elevation) * 99.0F;
+      float pz = (float) Math.cos(azimuth) * horizontal;
+      float artV = clamp((elevationDegrees + 14.0F) / 104.0F);
       float lowerConvergence = smooth(clamp((-14.0F - elevationDegrees) / 68.0F));
       float ribbonFade = 1.0F - smooth(clamp((-14.0F - elevationDegrees) / 16.0F));
       float[] rgba = layer == 0 ? baseColor(u, artV, night, lowerConvergence) : ribbonColor(u, artV, night, layer - 1, ribbonFade);
@@ -170,7 +162,7 @@ public final class SiftProceduralSkyRenderer {
 
    private static float[] baseColor(float u, float v, boolean night, float lowerConvergence) {
       float horizon = 1.0F - smooth(clamp((v - 0.05F) / 0.82F));
-      float wave = 0.5F + 0.5F * (float)Math.sin((double)(((float)Math.PI * 2F) * (u * 2.0F + 0.08F)));
+      float wave = 0.5F + 0.5F * (float) Math.sin(((float) Math.PI * 2F) * (u * 2.0F + 0.08F));
       float zenithBlend = smooth((v - 0.68F) / 0.27F);
       if (night) {
          float[] color = new float[]{lerp(horizon, 0.025F, 0.055F) + wave * 0.015F, lerp(horizon, 0.145F, 0.43F) + wave * 0.035F, lerp(horizon, 0.31F, 0.64F) + wave * 0.055F, 1.0F};
@@ -180,7 +172,7 @@ public final class SiftProceduralSkyRenderer {
          float r = lerp(horizon, 0.47F, 0.98F);
          float g = lerp(horizon, 0.82F, 0.76F);
          float b = lerp(horizon, 0.93F, 0.88F);
-         float mint = 0.5F + 0.5F * (float)Math.sin((double)(((float)Math.PI * 2F) * (u * 3.0F - 0.21F)));
+         float mint = 0.5F + 0.5F * (float) Math.sin(((float) Math.PI * 2F) * (u * 3.0F - 0.21F));
          r -= mint * 0.07F * (1.0F - horizon * 0.35F);
          g += mint * 0.05F * (1.0F - horizon * 0.35F);
          float[] result = new float[]{lerp(zenithBlend, r, 0.43F), lerp(zenithBlend, g, 0.87F), lerp(zenithBlend, b, 0.94F), 1.0F};
@@ -201,12 +193,12 @@ public final class SiftProceduralSkyRenderer {
       float combined = 0.0F;
 
       for (int i = 0; i < palette.length; ++i) {
-         float frequency = 1.0F + (float)(i % 3);
-         float phase = (float)i * 0.173F + (float)variant * 0.271F;
-         float center = 0.13F + (float)i * 0.17F + (0.115F - (float)variant * 0.018F) * (float)Math.sin((double)(((float)Math.PI * 2F) * (u * frequency + phase))) + 0.038F * (float)Math.sin((double)(((float)Math.PI * 2F) * (u * (frequency + 2.0F) - phase)));
-         float width = (variant == 0 ? 0.135F : 0.085F) + (float)(i % 2) * 0.018F;
+         float frequency = 1.0F + (float) (i % 3);
+         float phase = (float) i * 0.173F + (float) variant * 0.271F;
+         float center = 0.13F + (float) i * 0.17F + (0.115F - (float) variant * 0.018F) * (float) Math.sin(((float) Math.PI * 2F) * (u * frequency + phase)) + 0.038F * (float) Math.sin(((float) Math.PI * 2F) * (u * (frequency + 2.0F) - phase));
+         float width = (variant == 0 ? 0.135F : 0.085F) + (float) (i % 2) * 0.018F;
          float band = smooth(clamp(1.0F - Math.abs(v - center) / width));
-         float pulse = (float)Math.sin((double)(((float)Math.PI * 2F) * (u * 2.0F + phase)));
+         float pulse = (float) Math.sin(((float) Math.PI * 2F) * (u * 2.0F + phase));
          band *= 0.78F + 0.22F * pulse * pulse;
          band *= 1.0F - smooth((v - 0.7F) / 0.22F);
          red += palette[i][0] * band;
@@ -249,11 +241,11 @@ public final class SiftProceduralSkyRenderer {
    }
 
    private static float clamp(float value) {
-      return Math.max(0.0F, Math.min(1.0F, value));
+      return Math.clamp(value, 0.0F, 1.0F);
    }
 
    static {
-      SKY_PIPELINE = RenderPipelines.register(RenderPipeline.builder(new RenderPipeline.Snippet[]{RenderPipelines.DEBUG_FILLED_SNIPPET}).withLocation(Identifier.fromNamespaceAndPath("the_sift", "pipeline/procedural_sky")).withCull(false).build());
+      SKY_PIPELINE = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET).withLocation(Identifier.fromNamespaceAndPath("the_sift", "pipeline/procedural_sky")).withCull(false).build());
       DAY_PALETTE = new float[][]{{1.0F, 0.61F, 0.76F}, {0.3F, 0.94F, 0.97F}, {0.52F, 1.0F, 0.8F}, {0.91F, 0.73F, 1.0F}, {1.0F, 0.82F, 0.64F}};
       NIGHT_PALETTE = new float[][]{{0.22F, 0.76F, 1.0F}, {0.13F, 0.96F, 1.0F}, {0.36F, 0.47F, 1.0F}, {0.72F, 0.35F, 1.0F}, {0.92F, 0.38F, 0.88F}};
    }

@@ -3,9 +3,7 @@ package mielon.thesift.mixin;
 import mielon.thesift.world.SiftDayNightCycle;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.clock.ClockTimeMarker;
 import net.minecraft.world.clock.ServerClockManager;
-import net.minecraft.world.clock.WorldClock;
 import net.minecraft.world.clock.ServerClockManager.MoveResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -66,10 +64,8 @@ public abstract class ServerClockManagerMixin {
          ServerClockManager self = (ServerClockManager)(Object)this;
          long targetTicks = self.getInstance(clock).totalTicks();
          this.theSift$beginTransition(clock, this.theSift$beforeMarker, targetTicks);
-         this.theSift$markerClock = null;
-      } else {
-         this.theSift$markerClock = null;
       }
+       this.theSift$markerClock = null;
    }
 
    @Inject(
@@ -130,6 +126,6 @@ public abstract class ServerClockManagerMixin {
    }
 
    @Unique
-   private static record Transition(Holder clock, long startTicks, long targetTicks, int elapsed) {
+   private record Transition(Holder clock, long startTicks, long targetTicks, int elapsed) {
    }
 }

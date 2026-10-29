@@ -20,13 +20,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.NonNull;
 
 public final class SiftiteReturnEntity extends Entity implements ItemSupplier {
    private static final EntityDataAccessor DATA_ITEM;
    private UUID ownerId;
    private long deliveryOrder;
 
-   protected InterpolationHandler createInterpolationHandler() {
+   protected @NonNull InterpolationHandler createInterpolationHandler() {
       return LinearInterpolationHandler.create(this, 3);
    }
 
@@ -47,7 +48,7 @@ public final class SiftiteReturnEntity extends Entity implements ItemSupplier {
       this.entityData.set(DATA_ITEM, stack.copy());
    }
 
-   public ItemStack getItem() {
+   public @NonNull ItemStack getItem() {
       return (ItemStack)this.entityData.get(DATA_ITEM);
    }
 
@@ -58,7 +59,7 @@ public final class SiftiteReturnEntity extends Entity implements ItemSupplier {
       if (var2 instanceof ServerLevel level) {
          ServerPlayer owner = this.ownerId == null ? null : level.getServer().getPlayerList().getPlayer(this.ownerId);
          if (owner != null && owner.isAlive() && owner.level() == level) {
-            Vec3 center = owner.position().add((double)0.0F, (double)owner.getBbHeight() * 0.62, (double)0.0F);
+            Vec3 center = owner.position().add(0.0F, (double)owner.getBbHeight() * 0.62, 0.0F);
             boolean waitingForEarlierItem = this.hasEarlierDelivery(level);
             ItemStack remaining = this.getItem().copy();
             if (!waitingForEarlierItem && this.distanceToSqr(center) <= 0.42250000000000004) {
@@ -110,7 +111,7 @@ public final class SiftiteReturnEntity extends Entity implements ItemSupplier {
    }
 
    private boolean hasEarlierDelivery(ServerLevel level) {
-      for (SiftiteReturnEntity other : level.getEntitiesOfClass(SiftiteReturnEntity.class, this.getBoundingBox().inflate((double)32.0F), (candidate) -> candidate != this && !candidate.isRemoved() && candidate.ownerId != null && candidate.ownerId.equals(this.ownerId) && !candidate.getItem().isEmpty())) {
+      for (SiftiteReturnEntity other : level.getEntitiesOfClass(SiftiteReturnEntity.class, this.getBoundingBox().inflate(32.0F), (candidate) -> candidate != this && !candidate.isRemoved() && candidate.ownerId != null && candidate.ownerId.equals(this.ownerId) && !candidate.getItem().isEmpty())) {
          if (other.deliveryOrder < this.deliveryOrder) {
             return true;
          }
@@ -140,7 +141,7 @@ public final class SiftiteReturnEntity extends Entity implements ItemSupplier {
       input.read("Item", ItemStack.CODEC).ifPresent((stack) -> this.entityData.set(DATA_ITEM, stack));
    }
 
-   protected void addAdditionalSaveData(ValueOutput output) {
+   protected void addAdditionalSaveData(@NonNull ValueOutput output) {
       if (this.ownerId != null) {
          output.putString("Owner", this.ownerId.toString());
       }
@@ -160,11 +161,11 @@ public final class SiftiteReturnEntity extends Entity implements ItemSupplier {
       }
    }
 
-   public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+   public boolean hurtServer(@NonNull ServerLevel level, @NonNull DamageSource source, float amount) {
       return false;
    }
 
-   public boolean hurtClient(DamageSource source) {
+   public boolean hurtClient(@NonNull DamageSource source) {
       return false;
    }
 
@@ -184,7 +185,7 @@ public final class SiftiteReturnEntity extends Entity implements ItemSupplier {
       return false;
    }
 
-   public boolean canCollideWith(Entity other) {
+   public boolean canCollideWith(@NonNull Entity other) {
       return false;
    }
 
@@ -192,7 +193,7 @@ public final class SiftiteReturnEntity extends Entity implements ItemSupplier {
       return false;
    }
 
-   public boolean skipAttackInteraction(Entity attacker) {
+   public boolean skipAttackInteraction(@NonNull Entity attacker) {
       return true;
    }
 

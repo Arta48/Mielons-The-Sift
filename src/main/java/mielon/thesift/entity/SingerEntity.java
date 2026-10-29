@@ -49,6 +49,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.NonNull;
 
 public class SingerEntity extends PathfinderMob implements GeoEntity {
    private static final RawAnimation SEQUENCE = RawAnimation.begin().thenPlay("appear").thenPlay("sing").thenPlay("disappear");
@@ -70,7 +71,7 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
    private static final int HORN_SEARCH_RADIUS = 20;
    private static final int MAX_HORN_TARGETS = 8;
    private static final double SOUND_WAVE_SPEED = 0.6;
-   private static final double SINGER_HEAD_Y_OFFSET = (double)3.0F;
+   private static final double SINGER_HEAD_Y_OFFSET = 3.0F;
    private static final int[] SOUND_WAVE_TICKS;
    private final AnimatableInstanceCache animatableInstanceCache = GeckoLibUtil.createInstanceCache(this);
    private SingerAnimationTimings timings;
@@ -99,7 +100,7 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
       this.timings = SingerAnimationTimings.load();
    }
 
-   protected void defineSynchedData(SynchedEntityData.Builder builder) {
+   protected void defineSynchedData(SynchedEntityData.@NonNull Builder builder) {
       super.defineSynchedData(builder);
       builder.define(DATA_SEQUENCE_STARTED, false);
       builder.define(DATA_SEQUENCE_TICK, 0);
@@ -109,7 +110,7 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
    }
 
    public static AttributeSupplier.Builder createAttributes() {
-      return PathfinderMob.createMobAttributes().add(Attributes.MAX_HEALTH, (double)20.0F).add(Attributes.MOVEMENT_SPEED, 0.27).add(Attributes.KNOCKBACK_RESISTANCE, (double)0.0F).add(Attributes.SCALE, 1.2);
+      return PathfinderMob.createMobAttributes().add(Attributes.MAX_HEALTH, 20.0F).add(Attributes.MOVEMENT_SPEED, 0.27).add(Attributes.KNOCKBACK_RESISTANCE, 0.0F).add(Attributes.SCALE, 1.2);
    }
 
    public void setPortalCenter(BlockPos portalCenter) {
@@ -155,12 +156,12 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
    }
 
    private void beginPermanentSoulEvent() {
-      this.beginSoulEvent((UUID)null);
+      this.beginSoulEvent(null);
       this.permanentSoulEvent = true;
       this.setPersistenceRequired();
    }
 
-   public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, SpawnGroupData spawnData) {
+   public SpawnGroupData finalizeSpawn(@NonNull ServerLevelAccessor level, @NonNull DifficultyInstance difficulty, @NonNull EntitySpawnReason reason, SpawnGroupData spawnData) {
       SpawnGroupData result = super.finalizeSpawn(level, difficulty, reason, spawnData);
       if ((reason == EntitySpawnReason.SPAWN_ITEM_USE || reason == EntitySpawnReason.COMMAND) && !this.isSoulEvent() && this.portalCenter == null) {
          this.beginPermanentSoulEvent();
@@ -182,12 +183,11 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
             }
 
             Level var4 = this.level();
-            if (!(var4 instanceof ServerLevel)) {
+            if (!(var4 instanceof ServerLevel level)) {
                return;
             }
 
-            ServerLevel level = (ServerLevel)var4;
-            if (level.getEntityInAnyDimension(this.soulEventGolem) != null) {
+             if (level.getEntityInAnyDimension(this.soulEventGolem) != null) {
                return;
             }
          }
@@ -350,7 +350,7 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
             this.setSoulEventPhase(SingerEntity.SoulEventPhase.APPROACH);
          } else {
             if (this.soulEventTick % 40 == 1) {
-               EchoGolemEntity nearby = (EchoGolemEntity)level.getEntitiesOfClass(EchoGolemEntity.class, this.getBoundingBox().inflate((double)48.0F, (double)28.0F, (double)48.0F), (golem) -> golem.hasSoulBlock() && golem.canInteractWithSinger()).stream().min(Comparator.comparingDouble(this::distanceToSqr)).orElse(null);
+               EchoGolemEntity nearby = level.getEntitiesOfClass(EchoGolemEntity.class, this.getBoundingBox().inflate(48.0F, 28.0F, 48.0F), (golem) -> golem.hasSoulBlock() && golem.canInteractWithSinger()).stream().min(Comparator.comparingDouble(this::distanceToSqr)).orElse(null);
                if (nearby != null) {
                   this.soulEventGolem = nearby.getUUID();
                   if (this.distanceToSqr(nearby) <= (double)100.0F) {
@@ -379,7 +379,7 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
    private boolean gentlyAvoidActiveSoulCanyon(ServerLevel level) {
       if (--this.canyonAwarenessCooldown <= 0) {
          this.canyonAwarenessCooldown = 40;
-         this.avoidedSoulCanyon = (BlockPos)SiftLandmarkTracker.nearestActiveSoulCanyon(level, this.blockPosition(), (double)36.0F).orElse(null);
+         this.avoidedSoulCanyon = (BlockPos)SiftLandmarkTracker.nearestActiveSoulCanyon(level, this.blockPosition(), 36.0F).orElse(null);
       }
 
       if (this.avoidedSoulCanyon == null) {
@@ -392,9 +392,7 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
                Vec3 away = DefaultRandomPos.getPosAway(this, 15, 8, Vec3.atCenterOf(this.avoidedSoulCanyon));
                if (away != null) {
                   this.getNavigation().moveTo(away.x, away.y, away.z, 0.66);
-               } else if (this.getNavigation().isDone()) {
-                  return false;
-               }
+               } else return !this.getNavigation().isDone();
             }
 
             return true;
@@ -420,8 +418,8 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
    }
 
    private static double horizontalDistanceSqr(BlockPos first, BlockPos second) {
-      double dx = (double)(first.getX() - second.getX());
-      double dz = (double)(first.getZ() - second.getZ());
+      double dx = first.getX() - second.getX();
+      double dz = first.getZ() - second.getZ();
       return dx * dx + dz * dz;
    }
 
@@ -435,22 +433,19 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
    }
 
    private EchoGolemEntity resolveSoulGolem(ServerLevel level) {
-      if (this.soulEventGolem == null) {
-         return null;
-      } else {
-         Entity entity = level.getEntityInAnyDimension(this.soulEventGolem);
-         EchoGolemEntity var10000;
-         if (entity instanceof EchoGolemEntity) {
-            EchoGolemEntity golem = (EchoGolemEntity)entity;
-            if (golem.isAlive() && golem.canInteractWithSinger()) {
-               var10000 = golem;
-               return var10000;
-            }
-         }
+       if (this.soulEventGolem != null) {
+           Entity entity = level.getEntityInAnyDimension(this.soulEventGolem);
+           EchoGolemEntity var10000;
+           if (entity instanceof EchoGolemEntity golem) {
+               if (golem.isAlive() && golem.canInteractWithSinger()) {
+                   var10000 = golem;
+                   return var10000;
+               }
+           }
 
-         var10000 = null;
-         return var10000;
-      }
+           var10000 = null;
+       }
+       return null;
    }
 
    private SoulEventPhase soulEventPhase() {
@@ -471,7 +466,7 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
    private void playSingSoundFromSinger() {
       Level var2 = this.level();
       if (var2 instanceof ServerLevel serverLevel) {
-         serverLevel.playSound((Entity)null, this.getX(), this.getY(), this.getZ(), ModSounds.SINGER_SING, SoundSource.NEUTRAL, 1000.0F, 1.0F);
+         serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(), ModSounds.SINGER_SING, SoundSource.NEUTRAL, 1000.0F, 1.0F);
       }
    }
 
@@ -487,20 +482,19 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
       if (!this.hornTargetsPrepared) {
          this.hornTargetsPrepared = true;
          Level var3 = this.level();
-         if (var3 instanceof ServerLevel) {
-            ServerLevel serverLevel = (ServerLevel)var3;
-            Vec3 var19 = this.position();
+         if (var3 instanceof ServerLevel serverLevel) {
+             Vec3 var19 = this.position();
             Vec3 forward = this.getLookAngle();
-            forward = new Vec3(forward.x, (double)0.0F, forward.z);
+            forward = new Vec3(forward.x, 0.0F, forward.z);
             if (forward.lengthSqr() < 1.0E-6) {
-               forward = new Vec3((double)0.0F, (double)0.0F, (double)1.0F);
+               forward = new Vec3(0.0F, 0.0F, 1.0F);
             } else {
                forward = forward.normalize();
             }
 
-            Vec3 right = new Vec3(-forward.z, (double)0.0F, forward.x);
+            Vec3 right = new Vec3(-forward.z, 0.0F, forward.x);
             if (right.lengthSqr() < 1.0E-6) {
-               right = new Vec3((double)1.0F, (double)0.0F, (double)0.0F);
+               right = new Vec3(1.0F, 0.0F, 0.0F);
             } else {
                right = right.normalize();
             }
@@ -584,7 +578,7 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
                   Vec3 direction = delta.scale((double)1.0F / distance);
                   int travelTicks = Math.max(1, (int)Math.ceil(distance / 0.6));
                   double encodedMagnitude = (double)1.0F + (double)travelTicks / (double)100.0F;
-                  serverLevel.sendParticles(ModParticles.SINGER_SOUND_WAVE, start.x, start.y, start.z, 0, direction.x * encodedMagnitude, direction.y * encodedMagnitude, direction.z * encodedMagnitude, (double)1.0F);
+                  serverLevel.sendParticles(ModParticles.SINGER_SOUND_WAVE, start.x, start.y, start.z, 0, direction.x * encodedMagnitude, direction.y * encodedMagnitude, direction.z * encodedMagnitude, 1.0F);
                   this.pendingHornActivations.add(new PendingHornActivation(target.immutable(), travelTicks));
                }
             }
@@ -597,13 +591,12 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
          Iterator<PendingHornActivation> iterator = this.pendingHornActivations.iterator();
 
          while(iterator.hasNext()) {
-            PendingHornActivation pending = (PendingHornActivation)iterator.next();
+            PendingHornActivation pending = iterator.next();
             --pending.ticksLeft;
             if (pending.ticksLeft <= 0) {
                Level var4 = this.level();
-               if (var4 instanceof ServerLevel) {
-                  ServerLevel serverLevel = (ServerLevel)var4;
-                  this.convertHornToNote(serverLevel, pending.pos);
+               if (var4 instanceof ServerLevel serverLevel) {
+                   this.convertHornToNote(serverLevel, pending.pos);
                }
 
                iterator.remove();
@@ -617,7 +610,7 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
       BlockState hornState = level.getBlockState(pos);
       if (hornState.is(ModBlocks.SONOROUS_DEEPSLATE)) {
          if (hornState.getValue(SonorousDeepslateBlock.MODE) == SonorousDeepslateBlock.Mode.HORN) {
-            level.setBlock(pos, (BlockState)hornState.setValue(SonorousDeepslateBlock.MODE, SonorousDeepslateBlock.Mode.NOTE), 3);
+            level.setBlock(pos, hornState.setValue(SonorousDeepslateBlock.MODE, SonorousDeepslateBlock.Mode.NOTE), 3);
             level.levelEvent(2001, pos, Block.getId(hornState));
          }
       }
@@ -625,16 +618,16 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
 
    private void playAppearEffects() {
       if (this.portalCenter == null) {
-         this.level().playSound((Entity)null, this.getX(), this.getY(), this.getZ(), ModSounds.THE_SIFT_PORTAL_OPEN, SoundSource.BLOCKS, 4.0F, 1.0F);
+         this.level().playSound(null, this.getX(), this.getY(), this.getZ(), ModSounds.THE_SIFT_PORTAL_OPEN, SoundSource.BLOCKS, 4.0F, 1.0F);
       }
 
-      this.level().playSound((Entity)null, this.getX(), this.getY(), this.getZ(), ModSounds.SINGER_EMERGE, SoundSource.HOSTILE, 4.0F, 1.0F);
+      this.level().playSound(null, this.getX(), this.getY(), this.getZ(), ModSounds.SINGER_EMERGE, SoundSource.HOSTILE, 4.0F, 1.0F);
    }
 
    private void playDisappearEffects() {
-      this.level().playSound((Entity)null, this.getX(), this.getY(), this.getZ(), ModSounds.SINGER_DIG, SoundSource.HOSTILE, 4.0F, 1.0F);
+      this.level().playSound(null, this.getX(), this.getY(), this.getZ(), ModSounds.SINGER_DIG, SoundSource.HOSTILE, 4.0F, 1.0F);
       if (this.portalCenter == null) {
-         this.level().playSound((Entity)null, this.getX(), this.getY(), this.getZ(), ModSounds.THE_SIFT_PORTAL_CLOSE, SoundSource.BLOCKS, 4.0F, 1.0F);
+         this.level().playSound(null, this.getX(), this.getY(), this.getZ(), ModSounds.THE_SIFT_PORTAL_CLOSE, SoundSource.BLOCKS, 4.0F, 1.0F);
       }
 
    }
@@ -658,9 +651,9 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
             double y = this.getY();
             double z = this.getZ() + (double)Mth.randomBetween(random, -0.7F, 0.7F);
             if (inSift) {
-               this.level().addParticle(blockParticle, x, y, z, (double)0.0F, (double)0.0F, (double)0.0F);
+               this.level().addParticle(blockParticle, x, y, z, 0.0F, 0.0F, 0.0F);
             } else {
-               this.level().addParticle(ModParticles.SIFT_PARALLAX, x, y, z, (double)0.0F, (double)0.0F, (double)0.0F);
+               this.level().addParticle(ModParticles.SIFT_PARALLAX, x, y, z, 0.0F, 0.0F, 0.0F);
             }
          }
 
@@ -684,7 +677,7 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
       }
    }
 
-   protected void addAdditionalSaveData(ValueOutput output) {
+   protected void addAdditionalSaveData(@NonNull ValueOutput output) {
       super.addAdditionalSaveData(output);
       output.putBoolean("sequence_started", this.started);
       output.putInt("sequence_tick", this.sequenceTick);
@@ -720,7 +713,7 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
 
    }
 
-   protected void readAdditionalSaveData(ValueInput input) {
+   protected void readAdditionalSaveData(@NonNull ValueInput input) {
       super.readAdditionalSaveData(input);
       this.started = input.getBooleanOr("sequence_started", false);
       this.sequenceTick = input.getIntOr("sequence_tick", 0);
@@ -754,23 +747,23 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
       }
 
       int hornTargetsVersion = input.getIntOr("horn_targets_version", 0);
-      int hornTargetCount = Math.max(0, Math.min(8, input.getIntOr("horn_target_count", 0)));
+      int hornTargetCount = Math.clamp(input.getIntOr("horn_target_count", 0), 0, 8);
       List<BlockPos> loadedHornTargets = new ArrayList(hornTargetCount);
 
       for (int i = 0; i < hornTargetCount; ++i) {
-         long packed = (Long)input.getLong("horn_target_" + i).orElse(0L);
+         long packed = input.getLong("horn_target_" + i).orElse(0L);
          loadedHornTargets.add(BlockPos.of(packed));
       }
 
       this.hornTargets = List.copyOf(loadedHornTargets);
       this.restoreLegacyHornTargets = hornTargetsVersion == 0 && this.started && this.singSoundPlayed && this.sequenceTick < this.timings.appearTicks() + this.timings.singTicks();
-      long packedPortalCenter = (Long)input.getLong("portal_center").orElse(Long.MIN_VALUE);
+      long packedPortalCenter = input.getLong("portal_center").orElse(Long.MIN_VALUE);
       this.portalCenter = packedPortalCenter == Long.MIN_VALUE ? null : BlockPos.of(packedPortalCenter);
       this.pendingHornActivations.clear();
       int pendingCount = Math.max(0, input.getIntOr("pending_horn_count", 0));
 
       for (int i = 0; i < pendingCount; ++i) {
-         long packedPos = (Long)input.getLong("pending_horn_pos_" + i).orElse(0L);
+         long packedPos = input.getLong("pending_horn_pos_" + i).orElse(0L);
          int ticksLeft = Math.max(0, input.getIntOr("pending_horn_ticks_" + i, 0));
          this.pendingHornActivations.add(new PendingHornActivation(BlockPos.of(packedPos), ticksLeft));
       }
@@ -793,7 +786,7 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
       return this.isSoulEvent() && super.canBeCollidedWith(entity);
    }
 
-   public boolean isInvulnerableTo(ServerLevel level, DamageSource source) {
+   public boolean isInvulnerableTo(@NonNull ServerLevel level, @NonNull DamageSource source) {
       if (this.isSoulEvent()) {
          return super.isInvulnerableTo(level, source);
       } else {
@@ -801,15 +794,15 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
       }
    }
 
-   public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+   public boolean hurtServer(@NonNull ServerLevel level, @NonNull DamageSource source, float amount) {
       if (this.isSoulEvent()) {
          return super.hurtServer(level, source, amount);
       } else {
-         return source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) ? super.hurtServer(level, source, amount) : false;
+         return source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && super.hurtServer(level, source, amount);
       }
    }
 
-   protected int getBaseExperienceReward(ServerLevel level) {
+   protected int getBaseExperienceReward(@NonNull ServerLevel level) {
       return this.isSoulEvent() ? 8 + this.random.nextInt(5) : 0;
    }
 
@@ -817,7 +810,7 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
       return this.portalCenter != null ? null : ModSounds.SINGER_IDLE;
    }
 
-   protected SoundEvent getHurtSound(DamageSource source) {
+   protected SoundEvent getHurtSound(@NonNull DamageSource source) {
       return this.portalCenter != null ? null : ModSounds.SINGER_HURT;
    }
 
@@ -833,11 +826,10 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
             RawAnimation var10000;
             switch (phase.ordinal()) {
                case 0 -> var10000 = EVENT_APPEAR;
-               case 1 -> var10000 = singer.isSoulEventWalkingForAnimation() ? EVENT_WALK : EVENT_IDLE;
+               case 1, 3 -> var10000 = singer.isSoulEventWalkingForAnimation() ? EVENT_WALK : EVENT_IDLE;
                case 2 -> var10000 = EVENT_RECEIVE;
-               case 3 -> var10000 = singer.isSoulEventWalkingForAnimation() ? EVENT_WALK : EVENT_IDLE;
-               case 4 -> var10000 = EVENT_DISAPPEAR;
-               default -> throw new MatchException((String)null, (Throwable)null);
+                case 4 -> var10000 = EVENT_DISAPPEAR;
+               default -> throw new MatchException(null, null);
             }
 
             RawAnimation eventAnimation = var10000;
@@ -859,7 +851,7 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
       }));
    }
 
-   public AnimatableInstanceCache getAnimatableInstanceCache() {
+   public @NonNull AnimatableInstanceCache getAnimatableInstanceCache() {
       return this.animatableInstanceCache;
    }
 
@@ -874,7 +866,7 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
       EVENT_IDLE = RawAnimation.begin().thenLoop("idle");
       EVENT_RECEIVE = RawAnimation.begin().thenPlay("receive_soul");
       EVENT_DISAPPEAR = RawAnimation.begin().thenPlay("disappear");
-      SOUND_WAVE_TICKS = new int[]{secondsToTicks(0.16666666666666666), secondsToTicks((double)1.25F), secondsToTicks(2.0833333333333335), secondsToTicks(2.8333333333333335), secondsToTicks((double)3.75F), secondsToTicks(4.583333333333333), secondsToTicks(4.916666666666667), secondsToTicks(5.833333333333333)};
+      SOUND_WAVE_TICKS = new int[]{secondsToTicks(0.16666666666666666), secondsToTicks(1.25F), secondsToTicks(2.0833333333333335), secondsToTicks(2.8333333333333335), secondsToTicks(3.75F), secondsToTicks(4.583333333333333), secondsToTicks(4.916666666666667), secondsToTicks(5.833333333333333)};
    }
 
    private static final class PendingHornActivation {
@@ -887,7 +879,7 @@ public class SingerEntity extends PathfinderMob implements GeoEntity {
       }
    }
 
-   private static enum SoulEventPhase {
+   private enum SoulEventPhase {
       APPEAR,
       APPROACH,
       EXCHANGE,

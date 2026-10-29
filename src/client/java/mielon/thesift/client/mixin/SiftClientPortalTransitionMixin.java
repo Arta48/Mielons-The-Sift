@@ -14,6 +14,6 @@ public abstract class SiftClientPortalTransitionMixin {
       at = {@At("TAIL")}
    )
    private void theSift$showTransitionImmediately(CallbackInfo ci) {
-      SiftClientPortalTransition.tick((LocalPlayer)(Object)this);
+      SiftClientPortalTransition.tick((LocalPlayer) (Object) this);
    }
 }

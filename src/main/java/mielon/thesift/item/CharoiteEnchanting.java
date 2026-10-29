@@ -18,7 +18,7 @@ public final class CharoiteEnchanting {
    }
 
    public static boolean wasUsed(ItemStack stack) {
-      CustomData data = (CustomData)stack.get(DataComponents.CUSTOM_DATA);
+      CustomData data = stack.get(DataComponents.CUSTOM_DATA);
       return data != null && data.copyTag().getBooleanOr("the_sift:charoite_used", false);
    }
 

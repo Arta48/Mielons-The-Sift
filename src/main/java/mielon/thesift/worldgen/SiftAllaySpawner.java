@@ -50,7 +50,7 @@ public final class SiftAllaySpawner {
                   return false;
                }
 
-               AABB local = (new AABB(center)).inflate((double)96.0F, (double)48.0F, (double)96.0F);
+               AABB local = (new AABB(center)).inflate(96.0F, 48.0F, 96.0F);
                int localPopulation = level.getEntitiesOfClass(Allay.class, local).size();
                int available = profile.localCap() - localPopulation;
                if (available < profile.minimumGroup()) {
@@ -84,9 +84,9 @@ public final class SiftAllaySpawner {
          }
 
          if (feet != null) {
-            Allay allay = (Allay)EntityTypes.ALLAY.create(level, EntitySpawnReason.NATURAL);
+            Allay allay = EntityTypes.ALLAY.create(level, EntitySpawnReason.NATURAL);
             if (allay != null) {
-               allay.snapTo((double)feet.getX() + (double)0.5F, (double)feet.getY(), (double)feet.getZ() + (double)0.5F, level.getRandom().nextFloat() * 360.0F, 0.0F);
+               allay.snapTo((double)feet.getX() + (double)0.5F, feet.getY(), (double)feet.getZ() + (double)0.5F, level.getRandom().nextFloat() * 360.0F, 0.0F);
                if (level.noCollision(allay) && level.addFreshEntity(allay)) {
                   ++spawned;
                } else {
@@ -113,9 +113,9 @@ public final class SiftAllaySpawner {
       checkCooldown = 0;
    }
 
-   private static enum SpawnProfile {
+   private enum SpawnProfile {
       FOREST(0.72, 2, 4, 16),
-      WASTES((double)0.5F, 2, 3, 12),
+      WASTES(0.5F, 2, 3, 12),
       CLEARING(0.32, 1, 3, 8);
 
       private final double chance;
@@ -123,7 +123,7 @@ public final class SiftAllaySpawner {
       private final int maximumGroup;
       private final int localCap;
 
-      private SpawnProfile(double chance, int minimumGroup, int maximumGroup, int localCap) {
+      SpawnProfile(double chance, int minimumGroup, int maximumGroup, int localCap) {
          this.chance = chance;
          this.minimumGroup = minimumGroup;
          this.maximumGroup = maximumGroup;

@@ -15,7 +15,7 @@ public abstract class LivingEntitySnifferShakeMixin {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void theSift$shakeInfectedSniffer(LivingEntityRenderState state, CallbackInfoReturnable cir) {
+   private void theSift$shakeInfectedSniffer(LivingEntityRenderState state, CallbackInfoReturnable<Boolean> cir) {
       if (state instanceof SnifferInfectionRenderState infectionState) {
          if (infectionState.theSift$isInfected()) {
             cir.setReturnValue(true);

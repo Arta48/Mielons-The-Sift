@@ -126,7 +126,7 @@ public final class SiftTeleportManager {
       Iterator<UUID> iterator = WAITING_FOR_EXIT.iterator();
 
       while(iterator.hasNext()) {
-         UUID id = (UUID)iterator.next();
+         UUID id = iterator.next();
          Entity entity = overworld.getEntityInAnyDimension(id);
          if (entity != null && !(entity instanceof ServerPlayer) && !PortalTransitGuard.isBlocked(entity) && !isTouchingPortal(entity) && !RiftManager.isTouchingRift(entity)) {
             iterator.remove();
@@ -165,10 +165,10 @@ public final class SiftTeleportManager {
       ServerLevel sift = server.getLevel(TheSiftDimension.LEVEL_KEY);
       if (sift != null) {
          Optional<BlockPos> anchorOptional = SiftPortalStructure.ensurePortal(server, sift);
-         if (!anchorOptional.isEmpty()) {
+         if (anchorOptional.isPresent()) {
             SiftWorldStorage.saveReturnPoint(entity);
-            BlockPos anchor = (BlockPos)anchorOptional.get();
-            Vec3 destination = new Vec3((double)anchor.getX() + (double)0.5F, (double)anchor.getY(), (double)anchor.getZ() + (double)0.5F);
+            BlockPos anchor = anchorOptional.get();
+            Vec3 destination = new Vec3((double)anchor.getX() + (double)0.5F, anchor.getY(), (double)anchor.getZ() + (double)0.5F);
             Entity teleported = teleport(entity, sift, destination, entity.getYRot(), entity.getXRot());
             if (teleported != null) {
                suppressUntilExit(teleported);
@@ -183,12 +183,12 @@ public final class SiftTeleportManager {
       if (overworld != null) {
          Optional<SiftWorldStorage.ReturnPoint> stored = SiftWorldStorage.getReturnPoint(server, entity.getUUID());
          if (stored.isPresent()) {
-            BlockPos entrance = ((SiftWorldStorage.ReturnPoint)stored.get()).portalBlock();
+            BlockPos entrance = stored.get().portalBlock();
             overworld.getChunk(entrance);
             if (!overworld.getBlockState(entrance).is(ModBlocks.SIFT_PORTAL)) {
                RiftManager.returnFromPortal(entity, true);
             } else {
-               SiftWorldStorage.ReturnPoint point = (SiftWorldStorage.ReturnPoint)stored.get();
+               SiftWorldStorage.ReturnPoint point = stored.get();
                Vec3 destination = new Vec3(point.x(), point.y(), point.z());
                float yaw = point.yaw();
                float pitch = point.pitch();
@@ -242,7 +242,7 @@ public final class SiftTeleportManager {
       }
    }
 
-   private static enum ResourceKeyMatch {
+   private enum ResourceKeyMatch {
       OVERWORLD,
       THE_SIFT,
       OTHER;

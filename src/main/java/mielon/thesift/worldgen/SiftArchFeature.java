@@ -11,16 +11,17 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import org.jspecify.annotations.NonNull;
 
 public final class SiftArchFeature implements Feature {
    public static final MapCodec CODEC = MapCodec.unit(SiftArchFeature::new);
    private static final int[][] AXES = new int[][]{{1, 0}, {0, 1}, {1, 1}, {1, -1}};
 
-   public MapCodec codec() {
+   public @NonNull MapCodec codec() {
       return CODEC;
    }
 
-   public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+   public boolean place(@NonNull WorldGenLevel level, @NonNull ChunkGenerator generator, RandomSource random, @NonNull BlockPos origin) {
       SiftWorldgenBounds bounds = SiftWorldgenBounds.aroundWithNeighbourMargin(origin);
       int centerX = (origin.getX() & -16) + 8 + random.nextInt(3) - 1;
       int centerZ = (origin.getZ() & -16) + 8 + random.nextInt(3) - 1;
@@ -66,7 +67,7 @@ public final class SiftArchFeature implements Feature {
                   for (int step = 0; step <= steps; ++step) {
                      double t = (double)step / (double)steps;
                      CurvePoint point = curvePoint(best, centerX, centerZ, t, archRise, shapeSalt);
-                     double endStrength = Math.pow(Math.abs(t * (double)2.0F - (double)1.0F), (double)4.0F);
+                     double endStrength = Math.pow(Math.abs(t * (double)2.0F - (double)1.0F), 4.0F);
                      double thicknessWave = 0.93 + 0.09 * Math.sin(t * Math.PI * (double)5.0F + phase(shapeSalt, 11)) + 0.045 * Math.sin(t * Math.PI * (double)9.0F + phase(shapeSalt, 29));
                      double localThickness = baseThickness * thicknessWave + endStrength * 1.15;
                      blocksPlaced += fillOrganicSphere(level, bounds, point, localThickness, body, healthy, step, shapeSalt, archBlocks);
@@ -124,7 +125,7 @@ public final class SiftArchFeature implements Feature {
          double eased = smootherstep(progress);
          double centerY = endpoint.y + ((double)surface - 0.35 - endpoint.y) * eased;
          double radius = baseThickness + 0.9 - progress * (baseThickness - 0.55) + Math.sin(progress * Math.PI * (double)3.0F + phase(salt, 31)) * 0.16;
-         placed += fillOrganicSphere(level, bounds, new CurvePoint(x, centerY, z), Math.max((double)1.25F, radius), body, healthy, left ? -sample : sample, salt, archBlocks);
+         placed += fillOrganicSphere(level, bounds, new CurvePoint(x, centerY, z), Math.max(1.25F, radius), body, healthy, left ? -sample : sample, salt, archBlocks);
       }
 
       return placed;
@@ -286,14 +287,14 @@ public final class SiftArchFeature implements Feature {
    }
 
    private static double smootherstep(double value) {
-      double t = Math.max((double)0.0F, Math.min((double)1.0F, value));
+      double t = Math.clamp(value, 0.0F, 1.0F);
       return t * t * t * (t * (t * (double)6.0F - (double)15.0F) + (double)10.0F);
    }
 
-   private static record CurvePoint(double x, double y, double z) {
+   private record CurvePoint(double x, double y, double z) {
    }
 
-   private static record Candidate(double axisX, double axisZ, int halfSpan, int leftY, int rightY, int valleyDepth) {
+   private record Candidate(double axisX, double axisZ, int halfSpan, int leftY, int rightY, int valleyDepth) {
       private BlockPos leftFloor(int centerX, int centerZ) {
          return new BlockPos(centerX - (int)Math.round(this.axisX * (double)this.halfSpan), this.leftY - 1, centerZ - (int)Math.round(this.axisZ * (double)this.halfSpan));
       }

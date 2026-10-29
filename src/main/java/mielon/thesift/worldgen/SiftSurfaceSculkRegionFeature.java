@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import org.jspecify.annotations.NonNull;
 
 public final class SiftSurfaceSculkRegionFeature implements Feature {
    public static final MapCodec CODEC = MapCodec.unit(SiftSurfaceSculkRegionFeature::new);
@@ -28,11 +29,11 @@ public final class SiftSurfaceSculkRegionFeature implements Feature {
    private static final long REGION_SALT = 5999732914757190983L;
    private static final long DARK_SNIFFER_SALT = 4918302751538956614L;
 
-   public MapCodec codec() {
+   public @NonNull MapCodec codec() {
       return CODEC;
    }
 
-   public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+   public boolean place(@NonNull WorldGenLevel level, @NonNull ChunkGenerator generator, @NonNull RandomSource random, BlockPos origin) {
       int chunkMinX = origin.getX() & -16;
       int chunkMinZ = origin.getZ() & -16;
       int chunkMaxX = chunkMinX + 15;
@@ -97,7 +98,7 @@ public final class SiftSurfaceSculkRegionFeature implements Feature {
                                     }
                                  }
                               } else if (aboveState.isAir() && level.ensureCanWrite(abovePos)) {
-                                 BlockState vein = (BlockState)Blocks.SCULK_VEIN.defaultBlockState().setValue(MultifaceBlock.getFaceProperty(Direction.DOWN), true);
+                                 BlockState vein = Blocks.SCULK_VEIN.defaultBlockState().setValue(MultifaceBlock.getFaceProperty(Direction.DOWN), true);
                                  level.setBlock(abovePos, vein, 2);
                                  changed = true;
                               }
@@ -142,7 +143,7 @@ public final class SiftSurfaceSculkRegionFeature implements Feature {
       if (roll < 0.0015) {
          decoration = Blocks.SCULK_CATALYST.defaultBlockState();
       } else if (roll < 0.0055) {
-         decoration = (BlockState)Blocks.SCULK_SHRIEKER.defaultBlockState().setValue(SculkShriekerBlock.CAN_SUMMON, true);
+         decoration = Blocks.SCULK_SHRIEKER.defaultBlockState().setValue(SculkShriekerBlock.CAN_SUMMON, true);
       } else if (roll < 0.021) {
          decoration = Blocks.SCULK_SENSOR.defaultBlockState();
       } else {
@@ -150,7 +151,7 @@ public final class SiftSurfaceSculkRegionFeature implements Feature {
             return false;
          }
 
-         decoration = (BlockState)Blocks.SCULK_VEIN.defaultBlockState().setValue(MultifaceBlock.getFaceProperty(Direction.DOWN), true);
+         decoration = Blocks.SCULK_VEIN.defaultBlockState().setValue(MultifaceBlock.getFaceProperty(Direction.DOWN), true);
       }
 
       if (!level.ensureCanWrite(pos)) {
@@ -227,23 +228,21 @@ public final class SiftSurfaceSculkRegionFeature implements Feature {
       return (double)(value >>> 11) * (double)1.110223E-16F;
    }
 
-   private static record SculkRegion(double centerX, double centerZ, double majorRadius, double minorRadius, double cos, double sin, long seed, SculkBlob[] blobs) {
+   private record SculkRegion(double centerX, double centerZ, double majorRadius, double minorRadius, double cos, double sin, long seed, SculkBlob[] blobs) {
       boolean intersects(int minX, int minZ, int maxX, int maxZ) {
          return this.centerX + this.majorRadius >= (double)minX && this.centerX - this.majorRadius <= (double)maxX && this.centerZ + this.majorRadius >= (double)minZ && this.centerZ - this.majorRadius <= (double)maxZ;
       }
 
       boolean contains(int x, int z) {
-         if (!this.insideEnvelope(x, z)) {
-            return false;
-         } else {
-            for (SculkBlob blob : this.blobs) {
-               if (blob.contains(x, z)) {
-                  return true;
-               }
-            }
+          if (this.insideEnvelope(x, z)) {
+              for (SculkBlob blob : this.blobs) {
+                  if (blob.contains(x, z)) {
+                      return true;
+                  }
+              }
 
-            return false;
-         }
+          }
+          return false;
       }
 
       boolean isVeinFringe(int x, int z) {
@@ -268,7 +267,7 @@ public final class SiftSurfaceSculkRegionFeature implements Feature {
       }
    }
 
-   private static record SculkBlob(double centerX, double centerZ, double radiusX, double radiusZ, double cos, double sin, long seed) {
+   private record SculkBlob(double centerX, double centerZ, double radiusX, double radiusZ, double cos, double sin, long seed) {
       boolean contains(int x, int z) {
          double dx = (double)x + (double)0.5F - this.centerX;
          double dz = (double)z + (double)0.5F - this.centerZ;
@@ -280,6 +279,6 @@ public final class SiftSurfaceSculkRegionFeature implements Feature {
       }
    }
 
-   private static record DarkSpawnPlan(SculkBlob blob, List sites) {
+   private record DarkSpawnPlan(SculkBlob blob, List sites) {
    }
 }

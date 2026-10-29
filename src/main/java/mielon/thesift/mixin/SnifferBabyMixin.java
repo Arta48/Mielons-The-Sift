@@ -33,7 +33,6 @@ public abstract class SnifferBabyMixin {
                sniffer.setBaby(true);
             }
 
-            return;
          }
       }
 

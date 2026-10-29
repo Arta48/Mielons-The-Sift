@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin({NoteParticle.class})
 public abstract class NoteParticleMixin {
-   private static final double THE_SIFT_NOTE_MARKER = (double)100.0F;
+   private static final double THE_SIFT_NOTE_MARKER = 100.0F;
 
    @Inject(
       method = {"<init>"},
@@ -23,16 +23,12 @@ public abstract class NoteParticleMixin {
          if (encoded >= 0 && encoded <= 23) {
             int soundIndex = encoded / 3 + 1;
             int shadeIndex = encoded % 3;
-            if (soundIndex >= 1 && soundIndex <= 8) {
-               if (shadeIndex >= 0 && shadeIndex <= 2) {
-                  int[] shades = SonorousColors.shades(soundIndex);
-                  int rgb = shades[shadeIndex];
-                  float red = (float)(rgb >> 16 & 255) / 255.0F;
-                  float green = (float)(rgb >> 8 & 255) / 255.0F;
-                  float blue = (float)(rgb & 255) / 255.0F;
-                  ((NoteParticle)(Object)this).setColor(red, green, blue);
-               }
-            }
+             int[] shades = SonorousColors.shades(soundIndex);
+             int rgb = shades[shadeIndex];
+             float red = (float) (rgb >> 16 & 255) / 255.0F;
+             float green = (float) (rgb >> 8 & 255) / 255.0F;
+             float blue = (float) (rgb & 255) / 255.0F;
+             ((NoteParticle) (Object) this).setColor(red, green, blue);
          }
       }
    }

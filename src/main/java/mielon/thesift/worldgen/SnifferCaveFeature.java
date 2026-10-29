@@ -1,10 +1,9 @@
 package mielon.thesift.worldgen;
 
 import com.mojang.serialization.MapCodec;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+
+import java.util.*;
+
 import mielon.thesift.block.ModBlocks;
 import mielon.thesift.fluid.ModFluids;
 import net.minecraft.core.BlockPos;
@@ -19,6 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import org.jspecify.annotations.NonNull;
 
 public final class SnifferCaveFeature implements Feature {
    public static final MapCodec OVERGROWN_CODEC = MapCodec.unit(() -> new SnifferCaveFeature(16, 6002815919507592773L, 4));
@@ -35,11 +35,11 @@ public final class SnifferCaveFeature implements Feature {
       this.candidateCount = candidateCount;
    }
 
-   public MapCodec codec() {
+   public @NonNull MapCodec codec() {
       return this.cellChunks == 16 && this.placementSalt == 6002815919507592773L && this.candidateCount == 4 ? OVERGROWN_CODEC : WASTES_CODEC;
    }
 
-   public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+   public boolean place(WorldGenLevel level, @NonNull ChunkGenerator generator, @NonNull RandomSource random, @NonNull BlockPos origin) {
       if (!SiftLandmarkPlacement.isSelectedChunk(level.getSeed(), origin, this.cellChunks, this.placementSalt, this.candidateCount)) {
          return false;
       } else {
@@ -67,7 +67,7 @@ public final class SnifferCaveFeature implements Feature {
             }
 
             BlockPos nestCenter = lastCenter.relative(direction).above();
-            addEllipsoid(nestCenter, 5.2, 3.7, (double)5.0F, interior, shell);
+            addEllipsoid(nestCenter, 5.2, 3.7, 5.0F, interior, shell);
             IchorPoolPlan pool = createIchorPoolPlan(nestCenter, sideways, random);
             addOrientedEllipsoid(pool.chamberCenter(), pool.chamberOutwardRadius(), pool.chamberVerticalRadius(), pool.chamberCrossRadius(), pool.outward(), interior, shell);
             shell.removeAll(interior);
@@ -101,13 +101,11 @@ public final class SnifferCaveFeature implements Feature {
                scatterSnifferPlants(level, random, interior, nestCenter);
                List<BlockPos> nest = buildNest(level, random, nestCenter);
                SiftLandmarkTracker.record(SiftLandmarkTracker.Kind.SNIFFER_CAVE, nestCenter);
-               if (nest.isEmpty()) {
-                  return true;
-               } else {
-                  placeNestContents(level, random, nest);
-                  SiftDeferredSnifferSpawner.enqueueFamily(level, random, nest);
-                  return true;
-               }
+                if (!nest.isEmpty()) {
+                    placeNestContents(level, random, nest);
+                    SiftDeferredSnifferSpawner.enqueueFamily(level, random, nest);
+                }
+                return true;
             } else {
                return false;
             }
@@ -141,7 +139,7 @@ public final class SnifferCaveFeature implements Feature {
          }
       }
 
-      return (Direction)candidates.stream().max((first, second) -> Integer.compare(first.score(), second.score())).map(DirectionScore::direction).orElse(null);
+      return candidates.stream().max(Comparator.comparingInt(DirectionScore::score)).map(DirectionScore::direction).orElse(null);
    }
 
    private static void addEllipsoid(BlockPos center, double radiusX, double radiusY, double radiusZ, Set interior, Set shell) {
@@ -182,15 +180,15 @@ public final class SnifferCaveFeature implements Feature {
          case 1 -> var10000 = 4.4;
          case 2 -> var10000 = 3.8;
          case 3 -> var10000 = 4.1;
-         default -> var10000 = (double)4.0F;
+         default -> var10000 = 4.0F;
       }
 
       double chamberOutward = var10000;
       switch (variant) {
          case 1 -> var10000 = 2.7;
-         case 2 -> var10000 = (double)3.5F;
+         case 2 -> var10000 = 3.5F;
          case 3 -> var10000 = 3.1;
-         default -> var10000 = (double)3.0F;
+         default -> var10000 = 3.0F;
       }
 
       double chamberCross = var10000;
@@ -202,18 +200,15 @@ public final class SnifferCaveFeature implements Feature {
    private static IchorBasin createIchorBasin(IchorPoolPlan plan) {
       byte var10000;
       switch (plan.variant()) {
-         case 1 -> var10000 = 3;
-         case 2 -> var10000 = 2;
-         case 3 -> var10000 = 3;
+         case 1, 3 -> var10000 = 3;
          default -> var10000 = 2;
       }
 
       int outwardRadius = var10000;
-      switch (plan.variant()) {
-         case 1 -> var10000 = 2;
-         case 2 -> var10000 = 3;
-         case 3 -> var10000 = 2;
-         default -> var10000 = 2;
+      if (plan.variant() == 2) {
+          var10000 = 3;
+      } else {
+          var10000 = 2;
       }
 
       int crossRadius = var10000;
@@ -336,7 +331,7 @@ public final class SnifferCaveFeature implements Feature {
       SiftSnifferPlantPlacement.PlantType blobType = SiftSnifferPlantPlacement.chooseBlobType(random, 0.6F);
 
       for (int attempt = 0; attempt < 72 && placed < 14; ++attempt) {
-         BlockPos air = (BlockPos)sample.get(random.nextInt(sample.size()));
+         BlockPos air = sample.get(random.nextInt(sample.size()));
          BlockPos floor = findFloor(level, air.getX(), air.getZ(), nestCenter.getY());
          if (floor != null && level.isEmptyBlock(floor.above())) {
             BlockState floorState = level.getBlockState(floor);
@@ -353,7 +348,7 @@ public final class SnifferCaveFeature implements Feature {
 
    private static List buildNest(WorldGenLevel level, RandomSource random, BlockPos center) {
       List<BlockPos> nest = new ArrayList();
-      BlockState foliage = (BlockState)ModBlocks.OVERGROWN_WILLOW_FOLIAGE.defaultBlockState().setValue(LeavesBlock.PERSISTENT, true);
+      BlockState foliage = ModBlocks.OVERGROWN_WILLOW_FOLIAGE.defaultBlockState().setValue(LeavesBlock.PERSISTENT, true);
 
       for (int dx = -3; dx <= 3; ++dx) {
          for (int dz = -3; dz <= 3; ++dz) {
@@ -440,15 +435,15 @@ public final class SnifferCaveFeature implements Feature {
       NEST_PLANTS = new Block[]{ModBlocks.OVERGROWN_FRONDS, ModBlocks.OVERGROWN_CHARD, ModBlocks.OVERGROWN_STALKS, ModBlocks.SIFTSLATE_STALKS, ModBlocks.HEALTHY_SCULK_SPROUTS, ModBlocks.DRY_HEALTHY_SCULK_SPROUTS};
    }
 
-   private static record IchorBasin(Set fluid, Set lining, Set clearance) {
+   private record IchorBasin(Set fluid, Set lining, Set clearance) {
    }
 
-   private static record CaveEntrance(BlockPos pos) {
+   private record CaveEntrance(BlockPos pos) {
    }
 
-   private static record DirectionScore(Direction direction, int score) {
+   private record DirectionScore(Direction direction, int score) {
    }
 
-   private static record IchorPoolPlan(BlockPos chamberCenter, Direction outward, int variant, double chamberOutwardRadius, double chamberVerticalRadius, double chamberCrossRadius) {
+   private record IchorPoolPlan(BlockPos chamberCenter, Direction outward, int variant, double chamberOutwardRadius, double chamberVerticalRadius, double chamberCrossRadius) {
    }
 }

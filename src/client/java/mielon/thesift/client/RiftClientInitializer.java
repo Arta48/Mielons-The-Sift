@@ -10,34 +10,30 @@ import mielon.thesift.network.RiftLoadingPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 
 public final class RiftClientInitializer implements ClientModInitializer {
    public void onInitializeClient() {
       ClientPlayNetworking.registerGlobalReceiver(RiftLoadingPayload.TYPE, (payload, context) -> {
-         RiftLoadingPayload packet = (RiftLoadingPayload) payload;
-         Minecraft client = context.client();
-         if (packet.start() && client.player != null) {
-            if (packet.rift()) {
+          Minecraft client = context.client();
+         if (payload.start() && client.player != null) {
+            if (payload.rift()) {
                SiftClientPortalTransition.beginRiftTransition(client.player);
             }
 
-            SiftLoadingScreenState.begin(client.player.level().dimension(), packet.rift());
+            SiftLoadingScreenState.begin(client.player.level().dimension(), payload.rift());
             client.gui.setScreen(new SiftTransitionScreen());
          } else {
-            if (!packet.start()) {
-               if (packet.rift() && client.player != null) {
+            if (!payload.start()) {
+               if (payload.rift() && client.player != null) {
                   SiftClientPortalTransition.endRiftTransition(client.player);
                }
 
-               Screen patt0$temp = client.gui.screen();
-               if (patt0$temp instanceof SiftTransitionScreen) {
-                  SiftTransitionScreen transition = (SiftTransitionScreen)patt0$temp;
+               if (client.gui.screen() instanceof SiftTransitionScreen transition) {
                   if (!transition.hasRealTracker()) {
                      SiftLoadingScreenState.clear();
-                     client.gui.setScreen((Screen)null);
+                     client.gui.setScreen(null);
                   }
                }
             }
@@ -46,6 +42,6 @@ public final class RiftClientInitializer implements ClientModInitializer {
       });
       EntityRenderers.register(ModEntities.RIFT, RiftRenderer::new);
       EntityRenderers.register(ModEntities.MINI_RIFT, MiniRiftRenderer::new);
-      EntityRenderers.register(ModEntities.SIFTITE_RETURN, (context) -> new ThrownItemRenderer(context, 1.0F, true));
+      EntityRenderers.register(ModEntities.SIFTITE_RETURN, (context) -> new ThrownItemRenderer<>(context, 1.0F, true));
    }
 }

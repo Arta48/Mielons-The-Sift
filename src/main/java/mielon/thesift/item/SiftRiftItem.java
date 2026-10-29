@@ -9,18 +9,18 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import org.jspecify.annotations.NonNull;
 
 public final class SiftRiftItem extends Item {
    public SiftRiftItem(Item.Properties properties) {
       super(properties);
    }
 
-   public InteractionResult useOn(UseOnContext context) {
+   public @NonNull InteractionResult useOn(UseOnContext context) {
       Player player = context.getPlayer();
       if (player != null && player.getAbilities().instabuild) {
          Level var4 = context.getLevel();
-         if (var4 instanceof ServerLevel) {
-            ServerLevel level = (ServerLevel)var4;
+         if (var4 instanceof ServerLevel level) {
             BlockPos var6 = context.getClickedPos().relative(context.getClickedFace());
             boolean longAlongX = RiftManager.axisFromFacing(context.getHorizontalDirection());
             if (RiftManager.tryPlaceCreativeRift(level, var6, longAlongX)) {

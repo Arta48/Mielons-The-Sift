@@ -13,17 +13,18 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import org.jspecify.annotations.NonNull;
 
 public final class SiftIchorSnowFeature implements Feature {
    public static final MapCodec CODEC = MapCodec.unit(SiftIchorSnowFeature::new);
    private static final long SNOW_SALT = 5279142693729160783L;
    private static final long DETAIL_SALT = 6002822589557593153L;
 
-   public MapCodec codec() {
+   public @NonNull MapCodec codec() {
       return CODEC;
    }
 
-   public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+   public boolean place(WorldGenLevel level, @NonNull ChunkGenerator generator, @NonNull RandomSource random, BlockPos origin) {
       int minX = origin.getX() & -16;
       int minZ = origin.getZ() & -16;
       long seed = level.getSeed();
@@ -62,7 +63,7 @@ public final class SiftIchorSnowFeature implements Feature {
          double field = valueNoise(seed ^ salt, x, z, 26);
          double detail = valueNoise(seed ^ 6002822589557593153L ^ salt, x, z, 9);
          int layers = field + detail * 0.35 > 0.88 ? 2 : 1;
-         BlockState snow = (BlockState)ModBlocks.ICHOR_SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
+         BlockState snow = ModBlocks.ICHOR_SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layers);
          if (!snow.canSurvive(level, snowPos)) {
             return false;
          } else {
@@ -70,7 +71,7 @@ public final class SiftIchorSnowFeature implements Feature {
             level.setBlock(snowPos, snow, 2);
             BlockState support = level.getBlockState(supportPos);
             if (support.is(ModBlocks.SIFTSLATE_GROWTH) && !(Boolean)support.getValue(SiftslateGrowthBlock.SNOWY)) {
-               level.setBlock(supportPos, (BlockState)support.setValue(SiftslateGrowthBlock.SNOWY, true), 2);
+               level.setBlock(supportPos, support.setValue(SiftslateGrowthBlock.SNOWY, true), 2);
             }
 
             return true;

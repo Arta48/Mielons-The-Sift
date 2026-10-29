@@ -17,14 +17,13 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.ConversionParams;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.animal.sniffer.Sniffer;
 import net.minecraft.world.entity.animal.sniffer.Sniffer.State;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -48,7 +47,7 @@ public abstract class SnifferInfectionMixin implements SnifferInfectionAccess {
    @Unique
    private int theSift$infectionTicks;
    @Unique
-   private static final double THE_SIFT$DARK_SNIFFER_FLEE_RANGE = (double)20.0F;
+   private static final double THE_SIFT$DARK_SNIFFER_FLEE_RANGE = 20.0F;
 
    @Inject(
       method = {"defineSynchedData"},
@@ -92,7 +91,7 @@ public abstract class SnifferInfectionMixin implements SnifferInfectionAccess {
    private void theSift$beginSculkInfection(Sniffer.State state, CallbackInfoReturnable cir) {
       if (state == State.DIGGING && !((Object)this instanceof DarkSnifferEntity)) {
          Sniffer sniffer = (Sniffer)(Object)this;
-         Vec3 head = sniffer.position().add(sniffer.getForward().scale((double)2.25F));
+         Vec3 head = sniffer.position().add(sniffer.getForward().scale(2.25F));
          BlockPos sniffed = BlockPos.containing(head.x(), sniffer.getY() + 0.2, head.z()).below();
          if (sniffer.level().getBlockState(sniffed).is(Blocks.SCULK) && this.theSift$infectionTicks <= 0) {
             this.theSift$setSculkInfectionTicks(1);
@@ -127,9 +126,8 @@ public abstract class SnifferInfectionMixin implements SnifferInfectionAccess {
    private static void theSift$fleeFromDarkSniffer(Sniffer sniffer) {
       if (!(sniffer instanceof DarkSnifferEntity)) {
          Level var2 = sniffer.level();
-         if (var2 instanceof ServerLevel) {
-            ServerLevel level = (ServerLevel)var2;
-            Stream var10000 = level.getEntitiesOfClass(DarkSnifferEntity.class, sniffer.getBoundingBox().inflate((double)20.0F), (entity) -> entity.isAlive()).stream();
+         if (var2 instanceof ServerLevel level) {
+             Stream var10000 = level.getEntitiesOfClass(DarkSnifferEntity.class, sniffer.getBoundingBox().inflate(20.0F), LivingEntity::isAlive).stream();
             Objects.requireNonNull(sniffer);
             DarkSnifferEntity threat = (DarkSnifferEntity)var10000.min(Comparator.comparingDouble((DarkSnifferEntity e) -> sniffer.distanceToSqr(e))).orElse(null);
             if (threat == null) {
@@ -138,10 +136,9 @@ public abstract class SnifferInfectionMixin implements SnifferInfectionAccess {
 
             Vec3 away = DefaultRandomPos.getPosAway(sniffer, 16, 8, threat.position());
             if (away != null) {
-               sniffer.getNavigation().moveTo(away.x(), away.y(), away.z(), (double)1.25F);
+               sniffer.getNavigation().moveTo(away.x(), away.y(), away.z(), 1.25F);
             }
 
-            return;
          }
       }
 

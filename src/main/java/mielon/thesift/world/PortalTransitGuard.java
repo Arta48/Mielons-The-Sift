@@ -6,7 +6,6 @@ import java.util.UUID;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 public final class PortalTransitGuard {
@@ -39,6 +38,6 @@ public final class PortalTransitGuard {
       blocked.keySet().removeIf((id) -> server.overworld().getEntityInAnyDimension((UUID) id) == null);
    }
 
-   private static record Arrival(ResourceKey dimension, Vec3 pos) {
+   private record Arrival(ResourceKey dimension, Vec3 pos) {
    }
 }

@@ -41,9 +41,9 @@ public abstract class SiftWeatherTextureMixin {
    @Redirect(
       method = {"extractRenderState"},
       at = {@At(
-   value = "INVOKE",
-   target = "Lnet/minecraft/client/multiplayer/ClientLevel;getPrecipitationAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/biome/Biome$Precipitation;"
-)}
+         value = "INVOKE",
+         target = "Lnet/minecraft/client/multiplayer/ClientLevel;getPrecipitationAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/biome/Biome$Precipitation;"
+      )}
    )
    private Biome.Precipitation theSift$restrictSnowColumns(ClientLevel level, BlockPos pos) {
       Biome.Precipitation original = level.getPrecipitationAt(pos);

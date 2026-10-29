@@ -8,6 +8,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.TintedParticleLeavesBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import org.jspecify.annotations.NonNull;
 
 public final class OvergrownWillowFoliageBlock extends TintedParticleLeavesBlock {
    private static final int FALLING_LEAF_COLOR = 4063205;
@@ -16,7 +17,7 @@ public final class OvergrownWillowFoliageBlock extends TintedParticleLeavesBlock
       super(leafParticleChance, properties);
    }
 
-   protected void spawnFallingLeavesParticle(Level level, BlockPos pos, RandomSource random) {
+   protected void spawnFallingLeavesParticle(@NonNull Level level, @NonNull BlockPos pos, @NonNull RandomSource random) {
       ParticleUtils.spawnParticleBelow(level, pos, random, ColorParticleOption.create(ParticleTypes.TINTED_LEAVES, 4063205));
    }
 }

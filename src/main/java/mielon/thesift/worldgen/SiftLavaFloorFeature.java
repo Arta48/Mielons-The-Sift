@@ -7,16 +7,17 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import org.jspecify.annotations.NonNull;
 
 public final class SiftLavaFloorFeature implements Feature {
    public static final MapCodec CODEC = MapCodec.unit(SiftLavaFloorFeature::new);
    private static final int LAVA_SURFACE_Y = 11;
 
-   public MapCodec codec() {
+   public @NonNull MapCodec codec() {
       return CODEC;
    }
 
-   public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+   public boolean place(WorldGenLevel level, @NonNull ChunkGenerator generator, @NonNull RandomSource random, BlockPos origin) {
       int chunkMinX = origin.getX() & -16;
       int chunkMinZ = origin.getZ() & -16;
       int maxY = Math.min(11, level.getMaxY() - 1);

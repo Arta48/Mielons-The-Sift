@@ -18,12 +18,13 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.jspecify.annotations.NonNull;
 
 public class SiftPortalRenderer extends AbstractEndPortalRenderer<SiftPortalBlockEntity, EndPortalRenderState> {
    private static final Identifier SHADERPACK_TEXTURE = Identifier.fromNamespaceAndPath("the_sift", "textures/misc/sift_portal_shaderpack.png");
    private static final int FULL_BRIGHT = 15728880;
 
-   public EndPortalRenderState createRenderState() {
+   public @NonNull EndPortalRenderState createRenderState() {
       return new EndPortalRenderState();
    }
 
@@ -31,29 +32,29 @@ public class SiftPortalRenderer extends AbstractEndPortalRenderer<SiftPortalBloc
       return 512;
    }
 
-   public void extractRenderState(SiftPortalBlockEntity blockEntity, EndPortalRenderState state, float tickProgress, Vec3 cameraPos, ModelFeatureRenderer.CrumblingOverlay crumblingOverlay) {
+   public void extractRenderState(@NonNull SiftPortalBlockEntity blockEntity, @NonNull EndPortalRenderState state, float tickProgress, @NonNull Vec3 cameraPos, ModelFeatureRenderer.CrumblingOverlay crumblingOverlay) {
       super.extractRenderState(blockEntity, state, tickProgress, cameraPos, crumblingOverlay);
    }
 
-   public void submit(EndPortalRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState cameraState) {
+   public void submit(@NonNull EndPortalRenderState state, @NonNull PoseStack poseStack, @NonNull SubmitNodeCollector collector, @NonNull CameraRenderState cameraState) {
       if (!SiftShaderCompat.isShaderPackInUse()) {
          submitCube(state.facesToShow, SiftPortalRenderTypes.SIFT_PORTAL, poseStack, collector);
       } else {
-         BlockPos blockPos = state.blockPos == null ? BlockPos.ZERO : state.blockPos;
+         BlockPos blockPos = state.blockPos;
          Vec3 cameraPos = cameraState.pos;
          Quaternionf inverseCamera = (new Quaternionf(cameraState.orientation)).conjugate();
          collector.submitCustomGeometry(poseStack, RenderTypes.beaconBeam(SHADERPACK_TEXTURE, false), (pose, buffer) -> drawShaderpackPortal(state.facesToShow, blockPos, cameraPos, inverseCamera, pose, buffer));
       }
    }
 
-   private static void drawShaderpackPortal(Set faces, BlockPos blockPos, Vec3 cameraPos, Quaternionf inverseCamera, PoseStack.Pose pose, VertexConsumer buffer) {
+   private static void drawShaderpackPortal(Set<Direction> faces, BlockPos blockPos, Vec3 cameraPos, Quaternionf inverseCamera, PoseStack.Pose pose, VertexConsumer buffer) {
       Minecraft minecraft = Minecraft.getInstance();
       if (minecraft.level != null) {
          float partial = minecraft.getDeltaTracker().getGameTimeDeltaPartialTick(false);
-         float seconds = ((float)Math.floorMod(minecraft.level.getGameTime(), 24000L) + partial) / 20.0F;
-         float aspect = (float)minecraft.getWindow().getWidth() / (float)Math.max(1, minecraft.getWindow().getHeight());
+         float seconds = ((float) Math.floorMod(minecraft.level.getGameTime(), 24000L) + partial) / 20.0F;
+         float aspect = (float) minecraft.getWindow().getWidth() / (float) Math.max(1, minecraft.getWindow().getHeight());
 
-         for (Direction direction : (Iterable<Direction>) faces) {
+         for (Direction direction : faces) {
             switch (direction) {
                case DOWN:
                   face(blockPos, cameraPos, inverseCamera, pose, buffer, aspect, seconds, direction, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 1.0F, 0.0F, 1.0F);
@@ -87,16 +88,16 @@ public class SiftPortalRenderer extends AbstractEndPortalRenderer<SiftPortalBloc
 
    private static void vertex(BlockPos blockPos, Vec3 cameraPos, Quaternionf inverseCamera, PoseStack.Pose pose, VertexConsumer buffer, float aspect, float seconds, Direction normal, float x, float y, float z) {
       Minecraft minecraft = Minecraft.getInstance();
-      double worldX = (double)((float)blockPos.getX() + x);
-      double worldY = (double)((float)blockPos.getY() + y);
-      double worldZ = (double)((float)blockPos.getZ() + z);
+      double worldX = (float) blockPos.getX() + x;
+      double worldY = (float) blockPos.getY() + y;
+      double worldZ = (float) blockPos.getZ() + z;
       Vec3 screen = minecraft.gameRenderer.projectPointToScreen(new Vec3(worldX, worldY, worldZ));
-      float u = (float)screen.x * 0.5F * aspect * 0.65F + 0.5F;
-      float v = (float)screen.y * 0.5F + 0.5F;
-      Vector3f view = (new Vector3f((float)(worldX - cameraPos.x), (float)(worldY - cameraPos.y), (float)(worldZ - cameraPos.z))).rotate(inverseCamera);
+      float u = (float) screen.x * 0.5F * aspect * 0.65F + 0.5F;
+      float v = (float) screen.y * 0.5F + 0.5F;
+      Vector3f view = (new Vector3f((float) (worldX - cameraPos.x), (float) (worldY - cameraPos.y), (float) (worldZ - cameraPos.z))).rotate(inverseCamera);
       float denominator = Math.max(Math.abs(view.z), 1.0F);
       u += view.x / denominator * 0.055F + seconds * 0.006F;
       v += view.y / denominator * 0.055F - seconds * 0.004F;
-      buffer.addVertex(pose.pose(), x, y, z).setColor(255, 255, 255, 255).setUv(u, v).setLight(15728880).setNormal((float)normal.getStepX(), (float)normal.getStepY(), (float)normal.getStepZ());
+      buffer.addVertex(pose.pose(), x, y, z).setColor(255, 255, 255, 255).setUv(u, v).setLight(15728880).setNormal((float) normal.getStepX(), (float) normal.getStepY(), (float) normal.getStepZ());
    }
 }

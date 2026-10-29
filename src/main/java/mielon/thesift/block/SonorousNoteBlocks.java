@@ -3,7 +3,6 @@ package mielon.thesift.block;
 import mielon.thesift.sound.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.NoteBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,14 +24,14 @@ public final class SonorousNoteBlocks {
    }
 
    public static int getIndex(BlockState noteBlockState) {
-      return (Integer)noteBlockState.getValue(NoteBlock.NOTE) % 8;
+      return noteBlockState.getValue(NoteBlock.NOTE) % 8;
    }
 
    public static void playSound(Level level, BlockPos pos, int index) {
-      level.playSound((Entity)null, pos, ModSounds.BY_INDEX[index], SoundSource.RECORDS, 3.0F, 1.0F);
+      level.playSound(null, pos, ModSounds.BY_INDEX[index], SoundSource.RECORDS, 3.0F, 1.0F);
    }
 
    public static void playHornGlitch(Level level, BlockPos pos) {
-      level.playSound((Entity)null, pos, ModSounds.SONOROUS_AUTOPLAY_GLITCH, SoundSource.RECORDS, 3.0F, 1.0F);
+      level.playSound(null, pos, ModSounds.SONOROUS_AUTOPLAY_GLITCH, SoundSource.RECORDS, 3.0F, 1.0F);
    }
 }

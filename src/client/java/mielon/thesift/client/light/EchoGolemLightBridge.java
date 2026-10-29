@@ -4,12 +4,10 @@ import mielon.thesift.entity.EchoGolemEntity;
 import net.minecraft.world.phys.Vec3;
 
 public final class EchoGolemLightBridge {
-   private static final Handler NO_OP = (golem, position) -> {
-   };
+   private static final Handler NO_OP = (golem, position) -> {};
    private static volatile Handler handler;
 
-   private EchoGolemLightBridge() {
-   }
+   private EchoGolemLightBridge() {}
 
    public static void install(Handler newHandler) {
       handler = newHandler == null ? NO_OP : newHandler;

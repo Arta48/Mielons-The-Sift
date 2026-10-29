@@ -16,7 +16,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 public final class SonorousConsoles {
@@ -112,7 +111,7 @@ public final class SonorousConsoles {
          BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
 
          while(!queue.isEmpty()) {
-            BlockPos current = (BlockPos)queue.poll();
+            BlockPos current = queue.poll();
 
             for (int dx = -16; dx <= 16; ++dx) {
                for (int dy = -16; dy <= 16; ++dy) {
@@ -161,7 +160,7 @@ public final class SonorousConsoles {
       BUFFERS = new HashMap();
    }
 
-   public static enum SequenceType {
+   public enum SequenceType {
       OPENING,
       CLOSING;
 
@@ -171,12 +170,12 @@ public final class SonorousConsoles {
       }
    }
 
-   public static record PlayedNote(BlockPos notePos, int soundIndex1to8) {
+   public record PlayedNote(BlockPos notePos, int soundIndex1to8) {
    }
 
-   public static record MatchedSequence(List notes, SequenceType type) {
+   public record MatchedSequence(List notes, SequenceType type) {
    }
 
-   private static record ConsoleKey(ResourceKey dimension, BlockPos anchor) {
+   private record ConsoleKey(ResourceKey dimension, BlockPos anchor) {
    }
 }

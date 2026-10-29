@@ -12,6 +12,6 @@ public final class IchorState {
    }
 
    public static BlockState dryDefault(BlockState state) {
-      return state.hasProperty(ICHORLOGGED) ? (BlockState)state.setValue(ICHORLOGGED, false) : state;
+      return state.hasProperty(ICHORLOGGED) ? state.setValue(ICHORLOGGED, false) : state;
    }
 }

@@ -18,11 +18,9 @@ public final class ModParticles {
    public static final SimpleParticleType ICHOR_SPLASH = FabricParticleTypes.simple();
    public static final SimpleParticleType ICHOR_RAIN_SPLASH = FabricParticleTypes.simple();
 
-   private ModParticles() {
-   }
+   private ModParticles() {}
 
-   public static void initialize() {
-   }
+   public static void initialize() {}
 
    private static void register(String name, SimpleParticleType type) {
       Registry.register(BuiltInRegistries.PARTICLE_TYPE, Identifier.fromNamespaceAndPath("the_sift", name), type);

@@ -40,7 +40,7 @@ public final class SiftSoulCanyonParticles {
                if (level.getChunkSource().getChunkNow(Math.floorDiv(center.getX(), 16), Math.floorDiv(center.getZ(), 16)) != null) {
                   BlockPos source = findOpenSoulBlock(level, center);
                   if (source != null) {
-                     level.sendParticles(ModParticles.CANYON_SOUL, (double)source.getX() - (double)1.75F + level.getRandom().nextDouble() * (double)4.5F, (double)source.getY() + 0.95, (double)source.getZ() - (double)1.75F + level.getRandom().nextDouble() * (double)4.5F, 1, 0.04, 0.01, 0.04, (double)0.0F);
+                     level.sendParticles(ModParticles.CANYON_SOUL, (double)source.getX() - (double)1.75F + level.getRandom().nextDouble() * (double)4.5F, (double)source.getY() + 0.95, (double)source.getZ() - (double)1.75F + level.getRandom().nextDouble() * (double)4.5F, 1, 0.04, 0.01, 0.04, 0.0F);
                   }
                }
             }
@@ -64,17 +64,17 @@ public final class SiftSoulCanyonParticles {
          int maximum = Math.min(indexed.size(), 12);
 
          for (int offset = 0; offset < maximum; ++offset) {
-            BlockPos candidate = (BlockPos)indexed.get((start + offset) % indexed.size());
+            BlockPos candidate = indexed.get((start + offset) % indexed.size());
             if (hasFiftyOpenBlocks(level, candidate)) {
                SOURCE_CACHE.put(center.asLong(), new CachedSource(candidate, now + 6L));
                return candidate;
             }
          }
 
-         SOURCE_CACHE.put(center.asLong(), new CachedSource((BlockPos)null, now + 20L));
+         SOURCE_CACHE.put(center.asLong(), new CachedSource(null, now + 20L));
          return null;
       } else if (SiftLandmarkTracker.hasIndexedSoulPositionsNear(center, 12, 10)) {
-         SOURCE_CACHE.put(center.asLong(), new CachedSource((BlockPos)null, now + 40L));
+         SOURCE_CACHE.put(center.asLong(), new CachedSource(null, now + 40L));
          return null;
       } else {
          BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
@@ -91,7 +91,7 @@ public final class SiftSoulCanyonParticles {
             }
          }
 
-         SOURCE_CACHE.put(center.asLong(), new CachedSource((BlockPos)null, now + 20L));
+         SOURCE_CACHE.put(center.asLong(), new CachedSource(null, now + 20L));
          return null;
       }
    }
@@ -113,6 +113,6 @@ public final class SiftSoulCanyonParticles {
       SOURCE_CACHE.clear();
    }
 
-   private static record CachedSource(BlockPos source, long validUntil) {
+   private record CachedSource(BlockPos source, long validUntil) {
    }
 }

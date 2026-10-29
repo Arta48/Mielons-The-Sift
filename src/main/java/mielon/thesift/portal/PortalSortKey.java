@@ -3,7 +3,7 @@ package mielon.thesift.portal;
 record PortalSortKey(double layer, int vertical, int horizontal, int depth) implements Comparable<PortalSortKey> {
    static PortalSortKey fromEdge(int horizontal, int vertical, int depth, int minHorizontal, int maxHorizontal, int minVertical, int maxVertical) {
       int distanceToEdge = Math.min(Math.min(horizontal - minHorizontal, maxHorizontal - horizontal), Math.min(vertical - minVertical, maxVertical - vertical));
-      return new PortalSortKey((double)distanceToEdge, vertical, horizontal, depth);
+      return new PortalSortKey(distanceToEdge, vertical, horizontal, depth);
    }
 
    static PortalSortKey fromCenter(int horizontal, int vertical, int depth, double centerHorizontal, double centerVertical) {

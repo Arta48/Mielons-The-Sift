@@ -50,7 +50,7 @@ public final class SiftSifterSpawner {
             if (center != null) {
                SpawnProfile profile = profileAt(level, center);
                if (profile != null && !(random.nextDouble() >= profile.chance())) {
-                  AABB local = (new AABB(center)).inflate((double)96.0F, (double)48.0F, (double)96.0F);
+                  AABB local = (new AABB(center)).inflate(96.0F, 48.0F, 96.0F);
                   int localPopulation = level.getEntitiesOfClass(SifterEntity.class, local).size();
                   int available = profile.localCap() - localPopulation;
                   if (available < profile.minimumGroup()) {
@@ -87,7 +87,7 @@ public final class SiftSifterSpawner {
          if (feet != null) {
             SifterEntity sifter = (SifterEntity)ModEntities.SIFTER.create(level, EntitySpawnReason.NATURAL);
             if (sifter != null) {
-               sifter.snapTo((double)feet.getX() + (double)0.5F, (double)feet.getY(), (double)feet.getZ() + (double)0.5F, random.nextFloat() * 360.0F, 0.0F);
+               sifter.snapTo((double)feet.getX() + (double)0.5F, feet.getY(), (double)feet.getZ() + (double)0.5F, random.nextFloat() * 360.0F, 0.0F);
                if (level.noCollision(sifter) && level.addFreshEntity(sifter)) {
                   ++spawned;
                } else {
@@ -147,7 +147,7 @@ public final class SiftSifterSpawner {
       checkCooldown = 0;
    }
 
-   private static enum SpawnProfile {
+   private enum SpawnProfile {
       OVERGROWN_FOREST(0.36, 8),
       OVERGROWN(0.28, 6),
       WASTES(0.22, 5),
@@ -156,7 +156,7 @@ public final class SiftSifterSpawner {
       private final double chance;
       private final int localCap;
 
-      private SpawnProfile(double chance, int localCap) {
+      SpawnProfile(double chance, int localCap) {
          this.chance = chance;
          this.localCap = localCap;
       }

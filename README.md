@@ -116,7 +116,7 @@ Includes:
 * Spear
 * Full armor set
 
-Siftite tools are **20% faster than Netherite**, have increased durability and slightly higher base damage. Siftite equipment is fire resistant, while the armor retains Netherite-level defense and toughness with increased knockback resistance.
+Siftite tools are **20% faster than Netherite**, have increased durability and slightly higher base damage. Siftite equipment is fire-resistant, while the armor retains Netherite-level defense and toughness with increased knockback resistance.
 
 Siftite equipment is upgraded in a Smithing Table using **Netherite equipment + Siftite Ingot + Siftite Upgrade Smithing Template**.
 

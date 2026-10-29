@@ -9,6 +9,7 @@ import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.NonNull;
 
 public final class IchorFluidRendering {
    private IchorFluidRendering() {
@@ -23,11 +24,11 @@ public final class IchorFluidRendering {
    }
 
    private static final class IchorTint implements BlockTintSource {
-      public int color(BlockState state) {
+      public int color(@NonNull BlockState state) {
          return -1;
       }
 
-      public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+      public int colorInWorld(@NonNull BlockState state, @NonNull BlockAndTintGetter level, @NonNull BlockPos pos) {
          return -1;
       }
    }

@@ -9,13 +9,14 @@ import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.NonNull;
 
 public final class DryHealthySculkGrowthBlock extends Block {
    public DryHealthySculkGrowthBlock(BlockBehaviour.Properties properties) {
       super(properties);
    }
 
-   protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+   protected void randomTick(@NonNull BlockState state, ServerLevel level, BlockPos pos, @NonNull RandomSource random) {
       BlockPos abovePos = pos.above();
       BlockState above = level.getBlockState(abovePos);
       if (!above.getFluidState().isEmpty() || above.isCollisionShapeFullBlock(level, abovePos) || level.getMaxLocalRawBrightness(abovePos) < 4) {
@@ -24,7 +25,7 @@ public final class DryHealthySculkGrowthBlock extends Block {
 
    }
 
-   protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
+   protected @NonNull BlockState updateShape(@NonNull BlockState state, @NonNull LevelReader level, @NonNull ScheduledTickAccess scheduledTickAccess, @NonNull BlockPos pos, @NonNull Direction direction, @NonNull BlockPos neighbourPos, @NonNull BlockState neighbourState, @NonNull RandomSource random) {
       return direction != Direction.UP || !neighbourState.isCollisionShapeFullBlock(level, neighbourPos) && neighbourState.getFluidState().isEmpty() ? super.updateShape(state, level, scheduledTickAccess, pos, direction, neighbourPos, neighbourState, random) : ModBlocks.DRY_HEALTHY_SCULK.defaultBlockState();
    }
 }

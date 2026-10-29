@@ -7,16 +7,17 @@ import com.geckolib.renderer.layer.GeoRenderLayer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
+import org.jspecify.annotations.NonNull;
 
 public final class SiftGlowingOutlineLayer extends GeoRenderLayer {
    public SiftGlowingOutlineLayer(GeoRenderer renderer) {
       super(renderer);
    }
 
-   public void submitRenderTask(RenderPassInfo renderPassInfo, SubmitNodeCollector renderTasks) {
+   public void submitRenderTask(RenderPassInfo renderPassInfo, @NonNull SubmitNodeCollector renderTasks) {
       EntityRenderState state = (EntityRenderState)renderPassInfo.renderState();
       if (renderPassInfo.willRender() && state.appearsGlowing()) {
-         int previousColor = (Integer)renderPassInfo.getOrDefaultGeckolibData(DataTickets.RENDER_COLOR, -1);
+         int previousColor = (Integer) renderPassInfo.getOrDefaultGeckolibData(DataTickets.RENDER_COLOR, -1);
          int outlineColor = state.outlineColor == 0 ? -1 : state.outlineColor;
          state.addGeckolibData(DataTickets.RENDER_COLOR, outlineColor);
 

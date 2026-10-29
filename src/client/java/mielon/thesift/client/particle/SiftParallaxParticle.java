@@ -4,12 +4,12 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.SingleQuadParticle;
 import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.client.particle.SingleQuadParticle.Layer;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.RandomSource;
+import org.jspecify.annotations.NonNull;
 
 public class SiftParallaxParticle extends SingleQuadParticle {
-   private final SingleQuadParticle.Layer layer;
+   private final Layer layer;
    private final float fragmentU;
    private final float fragmentV;
    private final float fragmentWidth;
@@ -50,7 +50,7 @@ public class SiftParallaxParticle extends SingleQuadParticle {
       return 15728880;
    }
 
-   protected SingleQuadParticle.Layer getLayer() {
+   protected @NonNull Layer getLayer() {
       return this.layer;
    }
 
@@ -61,7 +61,7 @@ public class SiftParallaxParticle extends SingleQuadParticle {
          this.sprites = sprites;
       }
 
-      public SiftParallaxParticle createParticle(SimpleParticleType type, ClientLevel level, double x, double y, double z, double xd, double yd, double zd, RandomSource random) {
+      public SiftParallaxParticle createParticle(@NonNull SimpleParticleType type, @NonNull ClientLevel level, double x, double y, double z, double xd, double yd, double zd, @NonNull RandomSource random) {
          return new SiftParallaxParticle(level, x, y, z, xd, yd, zd, this.sprites);
       }
    }

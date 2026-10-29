@@ -1,6 +1,5 @@
 package mielon.thesift.world;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -17,8 +16,8 @@ import net.minecraft.server.MinecraftServer;
 
 public final class RiftDirectory {
    private static final Identifier KEY = Identifier.fromNamespaceAndPath("the_sift", "rift_exits");
-   private static final Map exits = new HashMap();
-   private static final Map loaded = new HashMap();
+   private static final Map<UUID, Exit> exits = new HashMap<>();
+   private static final Map<UUID, RiftEntity> loaded = new HashMap<>();
    private static boolean initialized;
    private static boolean dirty;
 
@@ -27,24 +26,21 @@ public final class RiftDirectory {
          initialized = true;
 
          for (Tag raw : server.getCommandStorage().get(KEY).getListOrEmpty("exits")) {
-            if (raw instanceof CompoundTag) {
-               CompoundTag t = (CompoundTag)raw;
-
-               try {
+            if (raw instanceof CompoundTag t) {
+                try {
                   UUID id = UUID.fromString(t.getStringOr("id", ""));
                   exits.put(id, new Exit(id, new BlockPos(t.getIntOr("x", 0), t.getIntOr("y", 0), t.getIntOr("z", 0)), new BlockPos(t.getIntOr("ax", 0), t.getIntOr("ay", 0), t.getIntOr("az", 0)), t.getLongOr("expires", 0L)));
-               } catch (IllegalArgumentException var6) {
-               }
+               } catch (IllegalArgumentException var6) {}
             }
          }
       }
 
-      dirty |= exits.values().removeIf((ex) -> ((Exit) ex).expires <= server.overworld().getGameTime());
+      dirty |= exits.values().removeIf((ex) -> ex.expires <= server.overworld().getGameTime());
       if (dirty) {
          CompoundTag tag = new CompoundTag();
          ListTag list = new ListTag();
 
-         for (Exit e : (Iterable<Exit>) exits.values()) {
+         for (Exit e : exits.values()) {
             CompoundTag t = new CompoundTag();
             t.putString("id", e.id.toString());
             t.putInt("x", e.pos.getX());
@@ -66,7 +62,7 @@ public final class RiftDirectory {
 
    public static void track(RiftEntity rift) {
       loaded.put(rift.getUUID(), rift);
-      Exit e = (Exit)exits.get(rift.getUUID());
+      Exit e = exits.get(rift.getUUID());
       if (e != null) {
          rift.extendExpiresAt(e.expires);
       }
@@ -81,17 +77,17 @@ public final class RiftDirectory {
 
    }
 
-   public static List loaded() {
+   public static List<RiftEntity> loaded() {
       return List.copyOf(loaded.values());
    }
 
-   public static Optional near(BlockPos anchor, long now) {
-      return ((Collection<Exit>) (Collection<?>) exits.values()).stream().filter((e) -> e.expires - now > 20L && (horizontal(e.anchor, anchor) <= (double)4096.0F || horizontal(e.pos, anchor) <= (double)4096.0F)).min(Comparator.comparingDouble((e) -> horizontal(e.pos, anchor)));
+   public static Optional<Exit> near(BlockPos anchor, long now) {
+      return exits.values().stream().filter((e) -> e.expires - now > 20L && (horizontal(e.anchor, anchor) <= (double) 4096.0F || horizontal(e.pos, anchor) <= (double) 4096.0F)).min(Comparator.comparingDouble((e) -> horizontal(e.pos, anchor)));
    }
 
    private static double horizontal(BlockPos a, BlockPos b) {
-      double x = (double)a.getX() - (double)b.getX();
-      double z = (double)a.getZ() - (double)b.getZ();
+      double x = (double) a.getX() - (double) b.getX();
+      double z = (double) a.getZ() - (double) b.getZ();
       return x * x + z * z;
    }
 
@@ -108,7 +104,7 @@ public final class RiftDirectory {
          dirty = true;
       }
 
-      RiftEntity rift = (RiftEntity)loaded.get(e.id);
+      RiftEntity rift = loaded.get(e.id);
       if (rift != null) {
          rift.extendExpiresAt(e.expires);
       }
@@ -123,6 +119,5 @@ public final class RiftDirectory {
       dirty = false;
    }
 
-   public static record Exit(UUID id, BlockPos pos, BlockPos anchor, long expires) {
-   }
+   public record Exit(UUID id, BlockPos pos, BlockPos anchor, long expires) {}
 }

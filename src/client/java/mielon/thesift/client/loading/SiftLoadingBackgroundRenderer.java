@@ -10,11 +10,10 @@ public final class SiftLoadingBackgroundRenderer {
    private static final RenderPipeline PORTAL_PIPELINE = createPipeline(false);
    private static final RenderPipeline RIFT_PIPELINE = createPipeline(true);
 
-   private SiftLoadingBackgroundRenderer() {
-   }
+   private SiftLoadingBackgroundRenderer() {}
 
    public static void draw(GuiGraphicsExtractor graphics, int width, int height) {
-      int clock = (int)(System.nanoTime() / 16666667L) & 16777215;
+      int clock = (int) (System.nanoTime() / 16666667L) & 16777215;
       boolean targetSift = !TheSiftDimension.LEVEL_KEY.equals(SiftLoadingScreenState.sourceDimension());
       Identifier texture = id("textures/entity/rift/" + (targetSift ? "sift" : "overworld") + ".png");
       RenderPipeline pipeline = SiftLoadingScreenState.isRift() ? RIFT_PIPELINE : PORTAL_PIPELINE;
@@ -22,7 +21,7 @@ public final class SiftLoadingBackgroundRenderer {
    }
 
    private static RenderPipeline createPipeline(boolean rift) {
-      RenderPipeline.Builder builder = RenderPipeline.builder(new RenderPipeline.Snippet[]{RenderPipelines.GUI_TEXTURED_SNIPPET}).withLocation(id(rift ? "pipeline/rift_loading" : "pipeline/portal_loading")).withFragmentShader(id("core/sift_loading"));
+      RenderPipeline.Builder builder = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET).withLocation(id(rift ? "pipeline/rift_loading" : "pipeline/portal_loading")).withFragmentShader(id("core/sift_loading"));
       if (rift) {
          builder.withShaderDefine("RIFT_LOADING");
       }

@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin({EnchantmentScreen.class})
 public abstract class SiftEnchantmentScreenMixin extends AbstractContainerScreen {
    @Unique
-   private static final List THE_SIFT$FUEL_ICONS = List.of(Identifier.withDefaultNamespace("container/slot/lapis_lazuli"), Identifier.fromNamespaceAndPath("the_sift", "container/slot/charoite"));
+   private static final List<Identifier> THE_SIFT$FUEL_ICONS = List.of(Identifier.withDefaultNamespace("container/slot/lapis_lazuli"), Identifier.fromNamespaceAndPath("the_sift", "container/slot/charoite"));
    @Unique
    private final CyclingSlotBackground theSift$fuelIcon = new CyclingSlotBackground(1);
 

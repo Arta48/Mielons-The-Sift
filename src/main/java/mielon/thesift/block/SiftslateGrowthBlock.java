@@ -13,17 +13,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.Property;
+import org.jspecify.annotations.NonNull;
 
 public class SiftslateGrowthBlock extends Block {
    public static final BooleanProperty SNOWY;
 
    public SiftslateGrowthBlock(BlockBehaviour.Properties properties) {
       super(properties);
-      this.registerDefaultState((BlockState)((BlockState)this.stateDefinition.any()).setValue(SNOWY, false));
+      this.registerDefaultState(this.stateDefinition.any().setValue(SNOWY, false));
    }
 
-   protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+   protected void randomTick(@NonNull BlockState state, ServerLevel level, BlockPos pos, @NonNull RandomSource random) {
       BlockPos abovePos = pos.above();
       BlockState above = level.getBlockState(abovePos);
       boolean ichorSnowCover = isIchorSnowCover(above);
@@ -31,8 +31,8 @@ public class SiftslateGrowthBlock extends Block {
       boolean coveredByFullBlock = above.isCollisionShapeFullBlock(level, abovePos);
       boolean tooDark = level.getMaxLocalRawBrightness(abovePos) < 4;
       if (ichorSnowCover || !submerged && !coveredByFullBlock && !tooDark) {
-         if ((Boolean)state.getValue(SNOWY) != ichorSnowCover) {
-            level.setBlockAndUpdate(pos, (BlockState)state.setValue(SNOWY, ichorSnowCover));
+         if (state.getValue(SNOWY) != ichorSnowCover) {
+            level.setBlockAndUpdate(pos, state.setValue(SNOWY, ichorSnowCover));
          }
       } else {
          level.setBlockAndUpdate(pos, ModBlocks.SIFTSLATE.defaultBlockState());
@@ -40,24 +40,24 @@ public class SiftslateGrowthBlock extends Block {
 
    }
 
-   protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
+   protected @NonNull BlockState updateShape(@NonNull BlockState state, @NonNull LevelReader level, @NonNull ScheduledTickAccess scheduledTickAccess, @NonNull BlockPos pos, @NonNull Direction direction, @NonNull BlockPos neighbourPos, @NonNull BlockState neighbourState, @NonNull RandomSource random) {
       if (direction == Direction.UP) {
          if (isIchorSnowCover(neighbourState)) {
-            return (BlockState)state.setValue(SNOWY, true);
+            return state.setValue(SNOWY, true);
          } else {
-            return neighbourState.isCollisionShapeFullBlock(level, neighbourPos) ? ModBlocks.SIFTSLATE.defaultBlockState() : (BlockState)state.setValue(SNOWY, false);
+            return neighbourState.isCollisionShapeFullBlock(level, neighbourPos) ? ModBlocks.SIFTSLATE.defaultBlockState() : state.setValue(SNOWY, false);
          }
       } else {
          return super.updateShape(state, level, scheduledTickAccess, pos, direction, neighbourPos, neighbourState, random);
       }
    }
 
-   protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+   protected void onPlace(@NonNull BlockState state, @NonNull Level level, @NonNull BlockPos pos, @NonNull BlockState oldState, boolean movedByPiston) {
       super.onPlace(state, level, pos, oldState, movedByPiston);
       if (!level.isClientSide()) {
          boolean snowy = isIchorSnowCover(level.getBlockState(pos.above()));
-         if ((Boolean)state.getValue(SNOWY) != snowy) {
-            level.setBlockAndUpdate(pos, (BlockState)state.setValue(SNOWY, snowy));
+         if (state.getValue(SNOWY) != snowy) {
+            level.setBlockAndUpdate(pos, state.setValue(SNOWY, snowy));
          }
       }
 
@@ -68,7 +68,7 @@ public class SiftslateGrowthBlock extends Block {
    }
 
    protected void createBlockStateDefinition(StateDefinition.Builder builder) {
-      builder.add(new Property[]{SNOWY});
+      builder.add(SNOWY);
    }
 
    static {

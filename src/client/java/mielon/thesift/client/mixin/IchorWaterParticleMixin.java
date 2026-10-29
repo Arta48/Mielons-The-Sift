@@ -27,14 +27,13 @@ public abstract class IchorWaterParticleMixin {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void theSift$replaceBlueWaterParticles(ParticleOptions options, double x, double y, double z, double xd, double yd, double zd, CallbackInfoReturnable cir) {
+   private void theSift$replaceBlueWaterParticles(ParticleOptions options, double x, double y, double z, double xd, double yd, double zd, CallbackInfoReturnable<Particle> cir) {
       ClientLevel level = Minecraft.getInstance().level;
       if (level != null) {
          boolean siftRain = options.getType() == ParticleTypes.RAIN && level.dimension().equals(TheSiftDimension.LEVEL_KEY) && level.isRaining();
-         ParticleType<?> replacement = (ParticleType<?>)(siftRain ? ModParticles.ICHOR_RAIN_SPLASH : theSift$replacement(options.getType()));
-         if (replacement != null && (siftRain || theSift$isNearIchor(level, BlockPos.containing(x, y, z))) && replacement instanceof ParticleOptions) {
-            ParticleOptions replacementOptions = (ParticleOptions)replacement;
-            Particle custom = ((ParticleEngine)(Object)this).createParticle(replacementOptions, x, y, z, xd, yd, zd);
+         ParticleType<?> replacement = siftRain ? ModParticles.ICHOR_RAIN_SPLASH : theSift$replacement(options.getType());
+         if (replacement != null && (siftRain || theSift$isNearIchor(level, BlockPos.containing(x, y, z))) && replacement instanceof ParticleOptions replacementOptions) {
+             Particle custom = ((ParticleEngine) (Object) this).createParticle(replacementOptions, x, y, z, xd, yd, zd);
             cir.setReturnValue(custom);
          }
       }
@@ -44,23 +43,22 @@ public abstract class IchorWaterParticleMixin {
       method = {"createParticle(Lnet/minecraft/core/particles/ParticleOptions;DDDDDD)Lnet/minecraft/client/particle/Particle;"},
       at = {@At("RETURN")}
    )
-   private void theSift$tintIchorWaterParticles(ParticleOptions options, double x, double y, double z, double xd, double yd, double zd, CallbackInfoReturnable cir) {
-      Particle particle = (Particle)cir.getReturnValue();
+   private void theSift$tintIchorWaterParticles(ParticleOptions options, double x, double y, double z, double xd, double yd, double zd, CallbackInfoReturnable<Particle> cir) {
+      Particle particle = cir.getReturnValue();
       ClientLevel level = Minecraft.getInstance().level;
       if (level != null && theSift$isWaterParticle(options.getType())) {
          BlockPos pos = BlockPos.containing(x, y, z);
          boolean siftRainParticle = level.dimension().equals(TheSiftDimension.LEVEL_KEY) && level.isRaining() && theSift$isWeatherWaterParticle(options.getType());
          if (siftRainParticle || theSift$isNearIchor(level, pos) || theSift$isDripParticle(options.getType()) && theSift$hasIchorAbove(level, pos)) {
-            if (particle instanceof SingleQuadParticle) {
-               SingleQuadParticle quad = (SingleQuadParticle)particle;
+            if (particle instanceof SingleQuadParticle quad) {
                if (siftRainParticle && options.getType() == ParticleTypes.RAIN) {
                   IchorFluidParticle.tintIchor(quad, level, x, y, z, true);
                } else {
-                  double time = (double)level.getGameTime() * 0.035;
+                  double time = (double) level.getGameTime() * 0.035;
                   boolean drip = theSift$isDripParticle(options.getType());
-                  double variation = drip ? Math.sin(x * 12.9898 + y * 31.733 + z * 7.271 + (double)level.getGameTime() * 0.11) * 0.24 : (double)0.0F;
-                  float phase = (float)Mth.clamp(Math.sin(x * 0.19 + z * 0.13 + time) * (double)0.5F + (double)0.5F + variation, (double)0.0F, (double)1.0F);
-                  float second = (float)Mth.clamp(Math.sin(x * -0.11 + y * 0.17 + z * 0.21 - time * 0.72) * (double)0.5F + (double)0.5F - variation * 0.72, (double)0.0F, (double)1.0F);
+                  double variation = drip ? Math.sin(x * 12.9898 + y * 31.733 + z * 7.271 + (double) level.getGameTime() * 0.11) * 0.24 : (double) 0.0F;
+                  float phase = (float) Mth.clamp(Math.sin(x * 0.19 + z * 0.13 + time) * (double) 0.5F + (double) 0.5F + variation, 0.0F, 1.0F);
+                  float second = (float) Mth.clamp(Math.sin(x * -0.11 + y * 0.17 + z * 0.21 - time * 0.72) * (double) 0.5F + (double) 0.5F - variation * 0.72, 0.0F, 1.0F);
                   float red = Mth.lerp(phase, 0.0F, 1.0F);
                   float green = Mth.lerp(phase, 0.96F, 0.07F);
                   float blue = Mth.lerp(phase, 1.0F, 0.82F);
@@ -88,11 +86,11 @@ public abstract class IchorWaterParticleMixin {
       return state.getType() == ModFluids.ICHOR || state.getType() == ModFluids.FLOWING_ICHOR;
    }
 
-   private static boolean theSift$isWaterParticle(ParticleType type) {
+   private static boolean theSift$isWaterParticle(ParticleType<?> type) {
       return type == ParticleTypes.UNDERWATER || type == ParticleTypes.CURRENT_DOWN || type == ParticleTypes.RAIN || type == ParticleTypes.DRIPPING_WATER || type == ParticleTypes.FALLING_WATER || type == ParticleTypes.DRIPPING_DRIPSTONE_WATER || type == ParticleTypes.FALLING_DRIPSTONE_WATER;
    }
 
-   private static ParticleType theSift$replacement(ParticleType type) {
+   private static ParticleType<?> theSift$replacement(ParticleType<?> type) {
       if (type == ParticleTypes.BUBBLE) {
          return ModParticles.ICHOR_BUBBLE;
       } else {
@@ -100,11 +98,11 @@ public abstract class IchorWaterParticleMixin {
       }
    }
 
-   private static boolean theSift$isDripParticle(ParticleType type) {
+   private static boolean theSift$isDripParticle(ParticleType<?> type) {
       return type == ParticleTypes.DRIPPING_WATER || type == ParticleTypes.FALLING_WATER || type == ParticleTypes.DRIPPING_DRIPSTONE_WATER || type == ParticleTypes.FALLING_DRIPSTONE_WATER;
    }
 
-   private static boolean theSift$isWeatherWaterParticle(ParticleType type) {
+   private static boolean theSift$isWeatherWaterParticle(ParticleType<?> type) {
       return type == ParticleTypes.RAIN || type == ParticleTypes.DRIPPING_WATER || type == ParticleTypes.FALLING_WATER;
    }
 

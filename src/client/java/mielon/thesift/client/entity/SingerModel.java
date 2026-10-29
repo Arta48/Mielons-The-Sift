@@ -4,17 +4,18 @@ import com.geckolib.model.GeoModel;
 import com.geckolib.renderer.base.GeoRenderState;
 import mielon.thesift.entity.SingerEntity;
 import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.NonNull;
 
 public class SingerModel extends GeoModel<SingerEntity> {
-   public Identifier getModelResource(GeoRenderState state) {
+   public @NonNull Identifier getModelResource(@NonNull GeoRenderState state) {
       return Identifier.fromNamespaceAndPath("the_sift", "entity/singer");
    }
 
-   public Identifier getTextureResource(GeoRenderState state) {
+   public @NonNull Identifier getTextureResource(@NonNull GeoRenderState state) {
       return Identifier.fromNamespaceAndPath("the_sift", "textures/entity/singer.png");
    }
 
-   public Identifier getAnimationResource(SingerEntity animatable) {
+   public @NonNull Identifier getAnimationResource(@NonNull SingerEntity animatable) {
       return Identifier.fromNamespaceAndPath("the_sift", "entity/singer");
    }
 }

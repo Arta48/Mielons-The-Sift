@@ -1,6 +1,7 @@
 package mielon.thesift.entity;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import mielon.thesift.mixin.SnifferStateAccess;
 import mielon.thesift.particle.ModParticles;
@@ -17,7 +18,6 @@ import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.sniffer.Sniffer;
-import net.minecraft.world.entity.animal.sniffer.Sniffer.State;
 import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -27,19 +27,20 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.NonNull;
 
 public final class DarkSnifferEntity extends Sniffer {
-   private static final double AGGRO_RANGE = (double)32.0F;
+   private static final double AGGRO_RANGE = 32.0F;
    private static final double ATTACK_REACH = 3.15;
    private static final int ATTACK_COOLDOWN_TICKS = 24;
    private static final int SONIC_WINDUP_TICKS = 10;
    private static final int SONIC_COOLDOWN_TICKS = 100;
    private static final int SONIC_MIN_OUT_OF_REACH_TICKS = 8;
-   private static final double SONIC_MIN_DISTANCE = (double)5.0F;
-   private static final double SONIC_WAVE_SPEED = (double)1.5F;
+   private static final double SONIC_MIN_DISTANCE = 5.0F;
+   private static final double SONIC_WAVE_SPEED = 1.5F;
    private static final double SONIC_HIT_RADIUS = 0.8;
-   private static final double SONIC_OVERSHOOT_DISTANCE = (double)7.5F;
-   private static final double SONIC_MAX_LEAD_TICKS = (double)20.0F;
+   private static final double SONIC_OVERSHOOT_DISTANCE = 7.5F;
+   private static final double SONIC_MAX_LEAD_TICKS = 20.0F;
    private static final double SONIC_PULL_STRENGTH = 0.3;
    private static final double NORMAL_SPEED = 0.1;
    private static final double WARDEN_CHASE_SPEED = 1.2;
@@ -57,7 +58,7 @@ public final class DarkSnifferEntity extends Sniffer {
    private LivingEntity observedCombatTarget;
    private Vec3 sonicOrigin;
    private Vec3 sonicDirection;
-   private final Set sonicPulledEntityIds;
+   private final Set<Integer> sonicPulledEntityIds;
    private double homeX;
    private double homeY;
    private double homeZ;
@@ -67,7 +68,7 @@ public final class DarkSnifferEntity extends Sniffer {
       super(type, level);
       this.sonicOrigin = Vec3.ZERO;
       this.sonicDirection = Vec3.ZERO;
-      this.sonicPulledEntityIds = new HashSet();
+      this.sonicPulledEntityIds = new HashSet<Integer>();
       this.targetRefreshCooldown = level.getRandom().nextInt(10);
       this.pathRefreshCooldown = level.getRandom().nextInt(6);
       this.setPathfindingMalus(PathType.LEAVES, 0.0F);
@@ -81,22 +82,22 @@ public final class DarkSnifferEntity extends Sniffer {
    }
 
    public static AttributeSupplier.Builder createAttributes() {
-      return Sniffer.createAttributes().add(Attributes.MAX_HEALTH, (double)40.0F).add(Attributes.MOVEMENT_SPEED, 0.1).add(Attributes.ATTACK_DAMAGE, (double)7.0F).add(Attributes.FOLLOW_RANGE, (double)32.0F).add(Attributes.STEP_HEIGHT, (double)1.25F).add(Attributes.MOVEMENT_EFFICIENCY, (double)1.0F).add(Attributes.ATTACK_KNOCKBACK, (double)0.75F);
+      return Sniffer.createAttributes().add(Attributes.MAX_HEALTH, 40.0F).add(Attributes.MOVEMENT_SPEED, 0.1).add(Attributes.ATTACK_DAMAGE, 7.0F).add(Attributes.FOLLOW_RANGE, 32.0F).add(Attributes.STEP_HEIGHT, 1.25F).add(Attributes.MOVEMENT_EFFICIENCY, 1.0F).add(Attributes.ATTACK_KNOCKBACK, 0.75F);
    }
 
    protected boolean canBeABaby() {
       return false;
    }
 
-   public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob partner) {
+   public AgeableMob getBreedOffspring(@NonNull ServerLevel level, @NonNull AgeableMob partner) {
       return null;
    }
 
-   public boolean canMate(Animal other) {
+   public boolean canMate(@NonNull Animal other) {
       return false;
    }
 
-   public boolean isFood(ItemStack stack) {
+   public boolean isFood(@NonNull ItemStack stack) {
       return false;
    }
 
@@ -104,15 +105,14 @@ public final class DarkSnifferEntity extends Sniffer {
       return this.wardenPettingTicks <= 0 && !this.hasCombatTarget() && super.canSniff();
    }
 
-   public boolean canAttack(LivingEntity target) {
+   public boolean canAttack(@NonNull LivingEntity target) {
       if (this.level().getDifficulty() == Difficulty.PEACEFUL) {
          return false;
       } else {
          boolean var10000;
          label39: {
-            if (target instanceof Player) {
-               Player player = (Player)target;
-               if (!player.isCreative() && !player.isSpectator()) {
+            if (target instanceof Player player) {
+                if (!player.isCreative() && !player.isSpectator()) {
                   var10000 = true;
                   break label39;
                }
@@ -169,22 +169,22 @@ public final class DarkSnifferEntity extends Sniffer {
             LivingEntity target = this.getTarget();
             if (!this.isValidTarget(target)) {
                target = null;
-               this.setTarget((LivingEntity)null);
+               this.setTarget(null);
             }
 
             if (--this.targetRefreshCooldown <= 0) {
                this.targetRefreshCooldown = 10;
-               Player nearestPlayer = this.level().getNearestPlayer(this.getX(), this.getY(), this.getZ(), (double)32.0F, (entity) -> {
+               Player nearestPlayer = this.level().getNearestPlayer(this.getX(), this.getY(), this.getZ(), 32.0F, (entity) -> {
                   boolean var10000;
                   if (entity instanceof Player player) {
                      if (!player.isCreative() && !player.isSpectator() && player.isAlive()) {
                         var10000 = true;
-                        return var10000;
+                        return true;
                      }
                   }
 
                   var10000 = false;
-                  return var10000;
+                  return false;
                });
                Sniffer nearestSniffer = this.findNearestOrdinarySniffer(serverLevel);
                target = nearestPlayer;
@@ -198,7 +198,7 @@ public final class DarkSnifferEntity extends Sniffer {
             if (target == null) {
                this.observedCombatTarget = null;
                this.ticksWithoutMeleeContact = 0;
-               this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.1);
+               Objects.requireNonNull(this.getAttribute(Attributes.MOVEMENT_SPEED)).setBaseValue(0.1);
                this.setAggressive(false);
                if (this.distanceToSqr(this.homeX, this.homeY, this.homeZ) > (double)10000.0F) {
                   if (this.getNavigation().isDone()) {
@@ -305,9 +305,9 @@ public final class DarkSnifferEntity extends Sniffer {
       Vec3 directDelta = targetPosition.subtract(start);
       double directDistance = directDelta.length();
       if (!(directDistance < 0.001) && this.getSensing().hasLineOfSight(victim)) {
-         double leadTicks = Math.min((double)20.0F, directDistance / (double)1.5F);
+         double leadTicks = Math.min(20.0F, directDistance / (double)1.5F);
          Vec3 victimVelocity = victim.getDeltaMovement();
-         Vec3 predictedTarget = targetPosition.add(victimVelocity.x() * leadTicks, (double)0.0F, victimVelocity.z() * leadTicks);
+         Vec3 predictedTarget = targetPosition.add(victimVelocity.x() * leadTicks, 0.0F, victimVelocity.z() * leadTicks);
          Vec3 delta = predictedTarget.subtract(start);
          double predictedDistance = delta.length();
          if (predictedDistance < 0.001) {
@@ -323,7 +323,7 @@ public final class DarkSnifferEntity extends Sniffer {
          this.setSnifferState(State.SNIFFING);
          this.playSound(ModSounds.DARK_SNIFFER_SNIFF, 2.5F, 0.78F);
          double encodedMagnitude = (double)1.0F + (double)this.sonicFlightTicks / (double)100.0F;
-         serverLevel.sendParticles(ModParticles.SOUND_WAVE, start.x(), start.y(), start.z(), 0, this.sonicDirection.x() * encodedMagnitude, this.sonicDirection.y() * encodedMagnitude, this.sonicDirection.z() * encodedMagnitude, (double)1.0F);
+         serverLevel.sendParticles(ModParticles.SOUND_WAVE, start.x(), start.y(), start.z(), 0, this.sonicDirection.x() * encodedMagnitude, this.sonicDirection.y() * encodedMagnitude, this.sonicDirection.z() * encodedMagnitude, 1.0F);
       } else {
          this.cancelSonicSniff();
          this.transitionTo(State.IDLING);
@@ -360,7 +360,7 @@ public final class DarkSnifferEntity extends Sniffer {
    }
 
    private void setSnifferState(Sniffer.State state) {
-      ((SnifferStateAccess)(Object)this).theSift$setState(state);
+      ((SnifferStateAccess) (Object) this).theSift$setState(state);
    }
 
    private boolean hasCombatTarget() {
@@ -373,9 +373,9 @@ public final class DarkSnifferEntity extends Sniffer {
 
    private Sniffer findNearestOrdinarySniffer(ServerLevel level) {
       Sniffer nearest = null;
-      double nearestDistance = (double)1024.0F;
+      double nearestDistance = 1024.0F;
 
-      for (Sniffer candidate : level.getEntitiesOfClass(Sniffer.class, this.getBoundingBox().inflate((double)32.0F), (candidatex) -> candidatex != this && !(candidatex instanceof DarkSnifferEntity) && candidatex.isAlive())) {
+      for (Sniffer candidate : level.getEntitiesOfClass(Sniffer.class, this.getBoundingBox().inflate(32.0F), (candidatex) -> !(candidatex instanceof DarkSnifferEntity) && candidatex.isAlive())) {
          double distance = this.distanceToSqr(candidate);
          if (distance < nearestDistance) {
             nearest = candidate;
@@ -386,7 +386,7 @@ public final class DarkSnifferEntity extends Sniffer {
       return nearest;
    }
 
-   protected void addAdditionalSaveData(ValueOutput output) {
+   protected void addAdditionalSaveData(@NonNull ValueOutput output) {
       super.addAdditionalSaveData(output);
       output.putBoolean("TheSiftHomeSet", this.homeSet);
       if (this.homeSet) {
@@ -397,7 +397,7 @@ public final class DarkSnifferEntity extends Sniffer {
 
    }
 
-   protected void readAdditionalSaveData(ValueInput input) {
+   protected void readAdditionalSaveData(@NonNull ValueInput input) {
       super.readAdditionalSaveData(input);
       this.homeSet = input.getBooleanOr("TheSiftHomeSet", false);
       if (this.homeSet) {
@@ -429,7 +429,7 @@ public final class DarkSnifferEntity extends Sniffer {
    }
 
    private void clearCombatTarget() {
-      this.setTarget((LivingEntity)null);
+      this.setTarget(null);
       this.setAggressive(false);
       this.getNavigation().stop();
    }

@@ -21,7 +21,7 @@ public final class SiftPortalRenderTypes {
    }
 
    static {
-      SIFT_PORTAL_PIPELINE = RenderPipeline.builder(new RenderPipeline.Snippet[0]).withLocation(PIPELINE_ID).withVertexShader(SHADER_ID).withFragmentShader(SHADER_ID).withBindGroupLayout(BindGroupLayouts.GLOBALS).withBindGroupLayout(BindGroupLayouts.DYNAMIC_TRANSFORMS).withBindGroupLayout(BindGroupLayouts.PROJECTION).withBindGroupLayout(BindGroupLayouts.FOG).withBindGroupLayout(BindGroupLayouts.SAMPLER0_SAMPLER1).withVertexBinding(0, DefaultVertexFormat.POSITION).withPrimitiveTopology(PrimitiveTopology.QUADS).withDepthStencilState(DepthStencilState.DEFAULT).withColorTargetState(ColorTargetState.DEFAULT).withCull(true).withShaderDefine("PORTAL_LAYERS", 15).build();
+      SIFT_PORTAL_PIPELINE = RenderPipeline.builder().withLocation(PIPELINE_ID).withVertexShader(SHADER_ID).withFragmentShader(SHADER_ID).withBindGroupLayout(BindGroupLayouts.GLOBALS).withBindGroupLayout(BindGroupLayouts.DYNAMIC_TRANSFORMS).withBindGroupLayout(BindGroupLayouts.PROJECTION).withBindGroupLayout(BindGroupLayouts.FOG).withBindGroupLayout(BindGroupLayouts.SAMPLER0_SAMPLER1).withVertexBinding(0, DefaultVertexFormat.POSITION).withPrimitiveTopology(PrimitiveTopology.QUADS).withDepthStencilState(DepthStencilState.DEFAULT).withColorTargetState(ColorTargetState.DEFAULT).withCull(true).withShaderDefine("PORTAL_LAYERS", 15).build();
       SIFT_PORTAL = RenderType.create("the_sift_portal", RenderSetup.builder(SIFT_PORTAL_PIPELINE).withTexture("Sampler0", MIST_TEXTURE).withTexture("Sampler1", MIST_TEXTURE).createRenderSetup());
    }
 }

@@ -13,17 +13,19 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 public class SonorousDeepslateBlockEntity extends BlockEntity {
    private static final int BEAM_GROW_TICKS = 40;
@@ -93,16 +95,16 @@ public class SonorousDeepslateBlockEntity extends BlockEntity {
       if (this.beamColor == -1) {
          return 0.0F;
       } else if (this.shrinking) {
-         float shrinkFraction = Mth.clamp(((float)this.shrinkAge + partialTick) / 40.0F, 0.0F, 1.0F);
+         float shrinkFraction = Mth.clamp(((float) this.shrinkAge + partialTick) / 40.0F, 0.0F, 1.0F);
          return 1.0F - shrinkFraction;
       } else {
-         return Mth.clamp(((float)this.growAge + partialTick) / 40.0F, 0.0F, 1.0F);
+         return Mth.clamp(((float) this.growAge + partialTick) / 40.0F, 0.0F, 1.0F);
       }
    }
 
    public void startAutoplay(SonorousConsoles.MatchedSequence matched) {
       int count = matched.notes().size();
-      if (count <= 0) {
+      if (count == 0) {
          this.stopAutoplay();
       } else {
          this.autoplayNotePositions = new long[count];
@@ -161,7 +163,7 @@ public class SonorousDeepslateBlockEntity extends BlockEntity {
                   this.markPersistentChanged();
                } else {
                   SonorousBeams.clearGroup(level, this.worldPosition);
-                  level.playSound((Entity)null, notePos, ModSounds.SONOROUS_AUTOPLAY_GLITCH, SoundSource.RECORDS, 3.0F, 1.0F);
+                  level.playSound(null, notePos, ModSounds.SONOROUS_AUTOPLAY_GLITCH, SoundSource.RECORDS, 3.0F, 1.0F);
                   this.clearAutoplayState();
                   this.markPersistentChanged();
                }
@@ -174,7 +176,7 @@ public class SonorousDeepslateBlockEntity extends BlockEntity {
    }
 
    private void finishAutoplay(ServerLevel level) {
-      List<SonorousConsoles.PlayedNote> sequence = new ArrayList(this.autoplayNotePositions.length);
+      List<SonorousConsoles.PlayedNote> sequence = new ArrayList<>(this.autoplayNotePositions.length);
 
       for (int i = 0; i < this.autoplayNotePositions.length; ++i) {
          sequence.add(new SonorousConsoles.PlayedNote(BlockPos.of(this.autoplayNotePositions[i]), this.autoplaySoundIndices[i]));
@@ -239,7 +241,7 @@ public class SonorousDeepslateBlockEntity extends BlockEntity {
       }
    }
 
-   protected void saveAdditional(ValueOutput output) {
+   protected void saveAdditional(@NonNull ValueOutput output) {
       super.saveAdditional(output);
       output.putInt("beam_color", this.beamColor);
       output.putInt("beam_grow_age", this.growAge);
@@ -260,7 +262,7 @@ public class SonorousDeepslateBlockEntity extends BlockEntity {
 
    }
 
-   protected void loadAdditional(ValueInput input) {
+   protected void loadAdditional(@NonNull ValueInput input) {
       super.loadAdditional(input);
       this.beamColor = input.getIntOr("beam_color", -1);
       this.growAge = Math.max(0, input.getIntOr("beam_grow_age", 0));
@@ -272,12 +274,12 @@ public class SonorousDeepslateBlockEntity extends BlockEntity {
       this.autoplayClosing = input.getBooleanOr("autoplay_closing", false);
       this.autoplayIndex = Math.max(0, input.getIntOr("autoplay_index", 0));
       this.autoplayCooldown = Math.max(0, input.getIntOr("autoplay_cooldown", 0));
-      int count = Math.max(0, Math.min(64, input.getIntOr("autoplay_note_count", 0)));
+      int count = Math.clamp(input.getIntOr("autoplay_note_count", 0), 0, 64);
       this.autoplayNotePositions = new long[count];
       this.autoplaySoundIndices = new int[count];
 
       for (int i = 0; i < count; ++i) {
-         this.autoplayNotePositions[i] = (Long)input.getLong("autoplay_note_pos_" + i).orElse(0L);
+         this.autoplayNotePositions[i] = input.getLong("autoplay_note_pos_" + i).orElse(0L);
          this.autoplaySoundIndices[i] = input.getIntOr("autoplay_note_sound_" + i, 1);
       }
 
@@ -293,11 +295,11 @@ public class SonorousDeepslateBlockEntity extends BlockEntity {
 
    }
 
-   public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+   public @NonNull CompoundTag getUpdateTag(HolderLookup.@NonNull Provider registries) {
       return this.saveWithoutMetadata(registries);
    }
 
-   public Packet getUpdatePacket() {
+   public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
       return ClientboundBlockEntityDataPacket.create(this);
    }
 

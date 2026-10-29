@@ -17,6 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.NonNull;
 
 public final class MiniRiftEntity extends Entity {
    public static final int ANIMATION_TICKS = 12;
@@ -109,7 +110,7 @@ public final class MiniRiftEntity extends Entity {
       });
    }
 
-   protected void addAdditionalSaveData(ValueOutput output) {
+   protected void addAdditionalSaveData(@NonNull ValueOutput output) {
       if (this.ownerId != null) {
          output.putString("Owner", this.ownerId.toString());
       }
@@ -119,9 +120,8 @@ public final class MiniRiftEntity extends Entity {
       output.putLong("BatchOrder", this.batchOrder);
       output.putInt("NextDeliveryIndex", this.nextDeliveryIndex);
       ValueOutput.TypedOutputList<ItemStack> list = output.list("Pending", ItemStack.CODEC);
-      Deque var10000 = this.pending;
-      Objects.requireNonNull(list);
-      var10000.forEach((item) -> list.add((ItemStack) item));
+       Objects.requireNonNull(list);
+      this.pending.forEach((item) -> list.add((ItemStack) item));
    }
 
    private static UUID parseUuid(String value) {
@@ -132,11 +132,11 @@ public final class MiniRiftEntity extends Entity {
       }
    }
 
-   public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+   public boolean hurtServer(@NonNull ServerLevel level, @NonNull DamageSource source, float amount) {
       return false;
    }
 
-   public boolean hurtClient(DamageSource source) {
+   public boolean hurtClient(@NonNull DamageSource source) {
       return false;
    }
 
@@ -156,7 +156,7 @@ public final class MiniRiftEntity extends Entity {
       return false;
    }
 
-   public boolean canCollideWith(Entity other) {
+   public boolean canCollideWith(@NonNull Entity other) {
       return false;
    }
 
@@ -164,7 +164,7 @@ public final class MiniRiftEntity extends Entity {
       return false;
    }
 
-   public boolean skipAttackInteraction(Entity attacker) {
+   public boolean skipAttackInteraction(@NonNull Entity attacker) {
       return true;
    }
 

@@ -18,7 +18,7 @@ public abstract class CropBlockMixin {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void theSift$allowOnlyTorchflowerOnSiftSoil(BlockState floor, BlockGetter level, BlockPos floorPos, CallbackInfoReturnable cir) {
+   private void theSift$allowOnlyTorchflowerOnSiftSoil(BlockState floor, BlockGetter level, BlockPos floorPos, CallbackInfoReturnable<Boolean> cir) {
       if ((Object)this == Blocks.TORCHFLOWER_CROP && theSift$isSiftSoil(floor)) {
          cir.setReturnValue(true);
       }

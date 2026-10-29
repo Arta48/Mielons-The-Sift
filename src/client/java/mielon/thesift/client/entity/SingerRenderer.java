@@ -9,9 +9,10 @@ import mielon.thesift.entity.SingerEntity;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import org.jspecify.annotations.NonNull;
 
 public class SingerRenderer extends GeoEntityRenderer {
-   private static final DataTicket SINGER_ENTITY = DataTicket.create("the_sift_singer_entity", SingerEntity.class);
+   private static final DataTicket<SingerEntity> SINGER_ENTITY = DataTicket.create("the_sift_singer_entity", SingerEntity.class);
 
    public SingerRenderer(EntityRendererProvider.Context context) {
       super(context, new SingerModel());
@@ -25,8 +26,8 @@ public class SingerRenderer extends GeoEntityRenderer {
       renderState.addGeckolibData(SINGER_ENTITY, animatable);
    }
 
-   public void preRenderPass(RenderPassInfo renderPassInfo, SubmitNodeCollector renderTasks) {
-      SingerEntity singer = (SingerEntity)renderPassInfo.getGeckolibData(SINGER_ENTITY);
+   public void preRenderPass(RenderPassInfo renderPassInfo, @NonNull SubmitNodeCollector renderTasks) {
+      SingerEntity singer = (SingerEntity) renderPassInfo.getGeckolibData(SINGER_ENTITY);
       if (singer != null) {
          renderPassInfo.addLocatorPositionListener("head_light", (worldPos, modelPos, localPos) -> {
             if (worldPos != null) {

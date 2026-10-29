@@ -8,7 +8,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.LevelChunk;
 
@@ -26,7 +25,7 @@ public final class RiftLightCleanup {
       Iterator<Entry> it = pending.iterator();
 
       while(it.hasNext()) {
-         Entry e = (Entry)it.next();
+         Entry e = it.next();
          ServerLevel level = server.getLevel(e.dimension);
          if (level == null) {
             it.remove();
@@ -51,6 +50,6 @@ public final class RiftLightCleanup {
    private RiftLightCleanup() {
    }
 
-   private static record Entry(ResourceKey dimension, BlockPos pos) {
+   private record Entry(ResourceKey dimension, BlockPos pos) {
    }
 }

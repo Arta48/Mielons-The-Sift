@@ -17,6 +17,6 @@ public abstract class WardenRendererMixin {
       at = {@At("TAIL")}
    )
    private void theSift$copyPettingState(Warden warden, WardenRenderState state, float partialTick, CallbackInfo ci) {
-      ((WardenPettingRenderState)state).theSift$setPettingDarkSniffer(((WardenPettingAccess)warden).theSift$isPettingDarkSniffer());
+      ((WardenPettingRenderState) state).theSift$setPettingDarkSniffer(((WardenPettingAccess) warden).theSift$isPettingDarkSniffer());
    }
 }

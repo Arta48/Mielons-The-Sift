@@ -8,7 +8,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -52,7 +51,7 @@ public final class IchorBottleItem extends Item {
                      ItemStack filled = new ItemStack(ModItems.ICHOR_BOTTLE);
                      player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, filled));
                      player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
-                     level.playSound((Entity)null, pos, ModSounds.ICHOR_BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+                     level.playSound(null, pos, ModSounds.ICHOR_BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
                      level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
                   }
 
@@ -70,7 +69,7 @@ public final class IchorBottleItem extends Item {
    }
 
    public static InteractionResult fillFromCauldron(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, ItemStack stack) {
-      int levelValue = (Integer)state.getValue(LayeredCauldronBlock.LEVEL);
+      int levelValue = state.getValue(LayeredCauldronBlock.LEVEL);
       if (levelValue <= 0) {
          return InteractionResult.TRY_WITH_EMPTY_HAND;
       } else {
@@ -80,7 +79,7 @@ public final class IchorBottleItem extends Item {
             player.awardStat(Stats.USE_CAULDRON);
             player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
             LayeredCauldronBlock.lowerFillLevel(state, level, pos);
-            level.playSound((Entity)null, pos, ModSounds.ICHOR_BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+            level.playSound(null, pos, ModSounds.ICHOR_BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
             level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
          }
 

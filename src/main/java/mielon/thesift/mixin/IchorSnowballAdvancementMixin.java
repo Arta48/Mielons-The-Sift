@@ -30,12 +30,11 @@ public abstract class IchorSnowballAdvancementMixin {
          if (var8 instanceof ServerPlayer player) {
             if (snowball.getItem().is(ModItems.ICHOR_SNOWBALL)) {
                Vec3 impact = hit.getLocation();
-               AABB vibrationRange = (new AABB(impact, impact)).inflate((double)16.0F);
+               AABB vibrationRange = (new AABB(impact, impact)).inflate(16.0F);
                if (!level.getEntitiesOfClass(Warden.class, vibrationRange, (warden) -> warden.isAlive() && !warden.isRemoved()).isEmpty()) {
                   ModAdvancements.award(player, "the_sift/false_alarm");
                }
 
-               return;
             }
          }
       }

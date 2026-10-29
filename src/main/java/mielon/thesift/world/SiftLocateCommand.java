@@ -19,11 +19,9 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 
 public final class SiftLocateCommand {
-   private SiftLocateCommand() {
-   }
+   private SiftLocateCommand() {}
 
-   public static void register() {
-   }
+   public static void register() {}
 
    public static int locateMainPortal(CommandSourceStack source) {
       if (!source.getLevel().dimension().equals(TheSiftDimension.LEVEL_KEY)) {
@@ -40,7 +38,7 @@ public final class SiftLocateCommand {
             source.sendFailure(Component.literal("The Sift main portal could not be generated."));
             return 0;
          } else {
-            return sendLocated(source, "the_sift:main_portal", (BlockPos)located.get());
+            return sendLocated(source, "the_sift:main_portal", located.get());
          }
       }
    }
@@ -65,7 +63,7 @@ public final class SiftLocateCommand {
       SiftLandmarkTracker.tick(source.getServer());
       BlockPos origin = BlockPos.containing(source.getPosition());
       Optional<BlockPos> best = SiftLandmarkTracker.nearest(kind, origin);
-      double bestDistance = (Double)best.map((pos) -> horizontalDistanceSquared(source, pos.getX(), pos.getZ())).orElse(Double.POSITIVE_INFINITY);
+      double bestDistance = best.map((pos) -> horizontalDistanceSquared(source, pos.getX(), pos.getZ())).orElse(Double.POSITIVE_INFINITY);
       int generated = 0;
 
       for (LandmarkCandidate candidate : (Iterable<LandmarkCandidate>) candidates) {
@@ -79,7 +77,7 @@ public final class SiftLocateCommand {
          ++generated;
          Optional<BlockPos> newlyRecorded = SiftLandmarkTracker.nearest(kind, origin);
          if (newlyRecorded.isPresent()) {
-            double distance = horizontalDistanceSquared(source, ((BlockPos)newlyRecorded.get()).getX(), ((BlockPos)newlyRecorded.get()).getZ());
+            double distance = horizontalDistanceSquared(source, newlyRecorded.get().getX(), newlyRecorded.get().getZ());
             if (distance < bestDistance) {
                best = newlyRecorded;
                bestDistance = distance;
@@ -91,7 +89,7 @@ public final class SiftLocateCommand {
          source.sendFailure(Component.literal("No successfully generated " + id + " was found nearby."));
          return 0;
       } else {
-         return sendLocated(source, id, (BlockPos)best.get());
+         return sendLocated(source, id, best.get());
       }
    }
 
@@ -140,8 +138,8 @@ public final class SiftLocateCommand {
       int distance = (int)Math.floor(Math.sqrt(horizontalDistanceSquared(source, pos.getX(), pos.getZ())));
       int var10000 = pos.getX();
       String teleportCommand = "/tp @s " + var10000 + " ~ " + pos.getZ();
-      MutableComponent coordinates = ComponentUtils.wrapInSquareBrackets(Component.translatable("chat.coordinates", new Object[]{pos.getX(), "~", pos.getZ()})).withStyle((style) -> style.withColor(ChatFormatting.GREEN).withClickEvent(new ClickEvent.SuggestCommand(teleportCommand)).withHoverEvent(new HoverEvent.ShowText(Component.translatable("chat.coordinates.tooltip"))));
-      source.sendSuccess(() -> Component.translatable("commands.locate.structure.success", new Object[]{id, coordinates, distance}), false);
+      MutableComponent coordinates = ComponentUtils.wrapInSquareBrackets(Component.translatable("chat.coordinates", pos.getX(), "~", pos.getZ())).withStyle((style) -> style.withColor(ChatFormatting.GREEN).withClickEvent(new ClickEvent.SuggestCommand(teleportCommand)).withHoverEvent(new HoverEvent.ShowText(Component.translatable("chat.coordinates.tooltip"))));
+      source.sendSuccess(() -> Component.translatable("commands.locate.structure.success", id, coordinates, distance), false);
       return distance;
    }
 
@@ -151,6 +149,6 @@ public final class SiftLocateCommand {
       return dx * dx + dz * dz;
    }
 
-   private static record LandmarkCandidate(BlockPos pos, double distanceSquared) {
+   private record LandmarkCandidate(BlockPos pos, double distanceSquared) {
    }
 }

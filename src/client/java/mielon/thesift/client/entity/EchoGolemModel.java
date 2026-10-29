@@ -4,17 +4,18 @@ import com.geckolib.model.GeoModel;
 import com.geckolib.renderer.base.GeoRenderState;
 import mielon.thesift.entity.EchoGolemEntity;
 import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.NonNull;
 
 public final class EchoGolemModel extends GeoModel<EchoGolemEntity> {
-   public Identifier getModelResource(GeoRenderState state) {
+   public @NonNull Identifier getModelResource(@NonNull GeoRenderState state) {
       return Identifier.fromNamespaceAndPath("the_sift", "entity/echo_golem");
    }
 
-   public Identifier getTextureResource(GeoRenderState state) {
+   public @NonNull Identifier getTextureResource(@NonNull GeoRenderState state) {
       return Identifier.fromNamespaceAndPath("the_sift", "textures/entity/echo_golem.png");
    }
 
-   public Identifier getAnimationResource(EchoGolemEntity animatable) {
+   public @NonNull Identifier getAnimationResource(@NonNull EchoGolemEntity animatable) {
       return Identifier.fromNamespaceAndPath("the_sift", "entity/echo_golem");
    }
 }

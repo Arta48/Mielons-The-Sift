@@ -18,7 +18,7 @@ public abstract class IchorFlowAcceptanceMixin {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private static void theSift$acceptIchor(BlockGetter level, BlockPos pos, BlockState state, Fluid fluid, CallbackInfoReturnable cir) {
+   private static void theSift$acceptIchor(BlockGetter level, BlockPos pos, BlockState state, Fluid fluid, CallbackInfoReturnable<Boolean> cir) {
       if (IchorWaterlogging.isIchor(fluid) && IchorWaterlogging.canIchorlog(state)) {
          cir.setReturnValue(IchorWaterlogging.canFill(state));
       }

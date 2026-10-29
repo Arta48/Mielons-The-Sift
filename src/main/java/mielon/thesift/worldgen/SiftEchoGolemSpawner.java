@@ -8,14 +8,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.phys.AABB;
 
 public final class SiftEchoGolemSpawner {
    private static final int CHECK_INTERVAL = 80;
-   private static final double MINIMUM_SPACING = (double)165.0F;
+   private static final double MINIMUM_SPACING = 165.0F;
    private static int checkCooldown;
 
    private SiftEchoGolemSpawner() {
@@ -28,7 +27,7 @@ public final class SiftEchoGolemSpawner {
          if (level != null) {
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                if (player.level() == level && !player.isSpectator() && player.isAlive()) {
-                  AABB nearby = (new AABB(player.blockPosition())).inflate((double)165.0F, (double)96.0F, (double)165.0F);
+                  AABB nearby = (new AABB(player.blockPosition())).inflate(165.0F, 96.0F, 165.0F);
                   if (level.getEntitiesOfClass(EchoGolemEntity.class, nearby).isEmpty() && trySpawn(level, player.blockPosition())) {
                      return;
                   }
@@ -50,17 +49,17 @@ public final class SiftEchoGolemSpawner {
          if (level.getChunkSource().getChunkNow(Math.floorDiv(x, 16), Math.floorDiv(z, 16)) != null) {
             BlockPos feet = findSpawnFeet(level, x, z);
             if (feet != null) {
-               AABB spacing = (new AABB(feet)).inflate((double)165.0F, (double)96.0F, (double)165.0F);
+               AABB spacing = (new AABB(feet)).inflate(165.0F, 96.0F, 165.0F);
                if (level.getEntitiesOfClass(EchoGolemEntity.class, spacing).isEmpty()) {
                   EchoGolemEntity golem = (EchoGolemEntity)ModEntities.ECHO_GOLEM.create(level, EntitySpawnReason.NATURAL);
                   if (golem == null) {
                      return false;
                   }
 
-                  golem.snapTo((double)x + (double)0.5F, (double)feet.getY(), (double)z + (double)0.5F, level.getRandom().nextFloat() * 360.0F, 0.0F);
+                  golem.snapTo((double)x + (double)0.5F, feet.getY(), (double)z + (double)0.5F, level.getRandom().nextFloat() * 360.0F, 0.0F);
                   golem.setPersistenceRequired();
                   if (level.noCollision(golem) && level.addFreshEntity(golem)) {
-                     level.playSound((Entity)null, feet, ModSounds.ECHO_GOLEM_SPAWN, golem.getSoundSource(), 0.8F, 0.94F);
+                     level.playSound(null, feet, ModSounds.ECHO_GOLEM_SPAWN, golem.getSoundSource(), 0.8F, 0.94F);
                      return true;
                   }
 

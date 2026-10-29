@@ -27,7 +27,7 @@ public abstract class CharoiteAnvilScreenMixin extends AbstractContainerScreen {
       at = {@At("TAIL")}
    )
    private void theSift$renderCharoiteUsed(GuiGraphicsExtractor graphics, int mouseX, int mouseY, CallbackInfo ci) {
-      if (CharoiteEnchanting.blocksAnvil(((AnvilMenu)this.menu).getSlot(0).getItem(), ((AnvilMenu)this.menu).getSlot(1).getItem())) {
+      if (CharoiteEnchanting.blocksAnvil(this.menu.getSlot(0).getItem(), this.menu.getSlot(1).getItem())) {
          int x = this.imageWidth - 8 - this.font.width(THE_SIFT$CHAROITE_USED) - 2;
          graphics.fill(x - 2, 67, this.imageWidth - 8, 79, 1325400064);
          graphics.text(this.font, THE_SIFT$CHAROITE_USED, x, 69, -40864);

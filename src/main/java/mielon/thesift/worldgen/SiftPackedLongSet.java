@@ -13,7 +13,7 @@ final class SiftPackedLongSet {
    SiftPackedLongSet(int expectedSize) {
       int capacity = 2;
 
-      for (int needed = Math.max(2, (int)Math.ceil((double)((float)expectedSize / 0.65F))); capacity < needed; capacity <<= 1) {
+      for (int needed = Math.max(2, (int)Math.ceil((float)expectedSize / 0.65F)); capacity < needed; capacity <<= 1) {
       }
 
       this.keys = new long[capacity];
@@ -21,23 +21,21 @@ final class SiftPackedLongSet {
       this.maxFill = Math.min(capacity - 1, (int)((float)capacity * 0.65F));
    }
 
-   boolean add(long key) {
+   void add(long key) {
       if (key == 0L) {
          if (this.hasZero) {
-            return false;
          } else {
             this.hasZero = true;
             if (++this.size >= this.maxFill) {
                this.rehash(this.keys.length << 1);
             }
 
-            return true;
          }
       } else {
          int position;
          for (position = this.position(key); this.keys[position] != 0L; position = position + 1 & this.mask) {
             if (this.keys[position] == key) {
-               return false;
+               return;
             }
          }
 
@@ -46,7 +44,6 @@ final class SiftPackedLongSet {
             this.rehash(this.keys.length << 1);
          }
 
-         return true;
       }
    }
 

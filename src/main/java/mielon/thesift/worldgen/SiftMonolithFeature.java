@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import org.jspecify.annotations.NonNull;
 
 public final class SiftMonolithFeature implements Feature {
    public static final MapCodec LUSH_CODEC = MapCodec.unit(() -> new SiftMonolithFeature(true));
@@ -19,11 +20,11 @@ public final class SiftMonolithFeature implements Feature {
       this.lush = lush;
    }
 
-   public MapCodec codec() {
+   public @NonNull MapCodec codec() {
       return this.lush ? LUSH_CODEC : BARE_CODEC;
    }
 
-   public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos placementOrigin) {
+   public boolean place(@NonNull WorldGenLevel level, @NonNull ChunkGenerator generator, RandomSource random, BlockPos placementOrigin) {
       int centerX = (placementOrigin.getX() & -16) + 8 + random.nextInt(5) - 2;
       int centerZ = (placementOrigin.getZ() & -16) + 8 + random.nextInt(5) - 2;
       int centerY = findTerrainSurface(level, centerX, centerZ);
@@ -148,8 +149,8 @@ public final class SiftMonolithFeature implements Feature {
                int z = origin.getZ() + dz;
                int localSurface = findTerrainSurface(level, x, z);
                if (localSurface >= 0 && Math.abs(localSurface - origin.getY()) <= 8) {
-                  double distance = Math.sqrt((double)distanceSquared);
-                  double centerStrength = (double)1.0F - Math.min((double)1.0F, distance / (double)rootRadius);
+                  double distance = Math.sqrt(distanceSquared);
+                  double centerStrength = (double)1.0F - Math.min(1.0F, distance / (double)rootRadius);
                   int targetTop = origin.getY() + (int)Math.round(centerStrength * (double)2.0F);
                   if (localSurface <= targetTop + 1) {
                      for (int y = localSurface - 2; y <= targetTop; ++y) {
@@ -193,7 +194,7 @@ public final class SiftMonolithFeature implements Feature {
    }
 
    private static double terraceBoost(double progress, boolean mainPillar) {
-      double boost = (double)0.0F;
+      double boost = 0.0F;
       if (Math.abs(progress - 0.28) < 0.035) {
          boost += mainPillar ? 1.35 : (double)0.75F;
       }

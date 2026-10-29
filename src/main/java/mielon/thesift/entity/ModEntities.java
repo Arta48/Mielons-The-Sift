@@ -26,17 +26,16 @@ public final class ModEntities {
    private ModEntities() {
    }
 
-   private static ResourceKey key(String path) {
+   private static ResourceKey<EntityType<?>> key(String path) {
       return ResourceKey.create(BuiltInRegistries.ENTITY_TYPE.key(), Identifier.fromNamespaceAndPath("the_sift", path));
    }
 
-   private static EntityType register(String path, EntityType.Builder builder) {
+   private static EntityType<?> register(String path, EntityType.Builder<?> builder) {
       ResourceKey<EntityType<?>> key = key(path);
-      return (EntityType)Registry.register(BuiltInRegistries.ENTITY_TYPE, key, builder.build(key));
+      return Registry.register(BuiltInRegistries.ENTITY_TYPE, key, builder.build(key));
    }
 
-   public static void initialize() {
-   }
+   public static void initialize() {}
 
    static {
       SINGER = register("singer", Builder.of(SingerEntity::new, MobCategory.MISC).sized(0.8F, 4.0F));

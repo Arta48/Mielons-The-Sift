@@ -16,12 +16,12 @@ public class PortalFrameScanner {
    private static final int MIN_TOTAL_SIZE = 3;
    private static final int MAX_SCAN = 23;
 
-   public static Optional scan(Level level, BlockPos clicked) {
+   public static Optional<Frame> scan(Level level, BlockPos clicked) {
       Optional<Frame> onX = scanAxis(level, clicked, Axis.X, false);
       return onX.isPresent() ? onX : scanAxis(level, clicked, Axis.Z, false);
    }
 
-   public static Optional scanForClosing(Level level, BlockPos clicked) {
+   public static Optional<Frame> scanForClosing(Level level, BlockPos clicked) {
       Optional<Frame> onX = scanAxis(level, clicked, Axis.X, true);
       return onX.isPresent() ? onX : scanAxis(level, clicked, Axis.Z, true);
    }
@@ -43,7 +43,7 @@ public class PortalFrameScanner {
       }
    }
 
-   private static Optional scanAxis(Level level, BlockPos clicked, Direction.Axis axis, boolean closing) {
+   private static Optional<Frame> scanAxis(Level level, BlockPos clicked, Direction.Axis axis, boolean closing) {
       Direction positiveDir = axis == Axis.X ? Direction.EAST : Direction.SOUTH;
       Direction negativeDir = positiveDir.getOpposite();
       BlockPos anchor = clicked;
@@ -86,7 +86,7 @@ public class PortalFrameScanner {
       }
 
       if (width >= 3 && height >= 3) {
-         List<BlockPos> interior = new ArrayList();
+         List<BlockPos> interior = new ArrayList<>();
          boolean hasPortalBlock = false;
 
          for (int w = 0; w < width; ++w) {
@@ -122,6 +122,6 @@ public class PortalFrameScanner {
       }
    }
 
-   public static record Frame(List interior, Direction.Axis axis, Vec3 bottomCenter) {
+   public record Frame(List<BlockPos> interior, Direction.Axis axis, Vec3 bottomCenter) {
    }
 }

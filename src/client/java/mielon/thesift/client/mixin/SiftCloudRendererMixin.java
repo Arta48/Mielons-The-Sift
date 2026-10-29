@@ -28,7 +28,7 @@ public abstract class SiftCloudRendererMixin {
       if (level != null && level.dimension().equals(TheSiftDimension.LEVEL_KEY)) {
          float rain = level.getRainLevel(1.0F);
          int originalAlpha = originalColor >>> 24 & 255;
-         int fadedAlpha = Math.round((float)originalAlpha * rain * 0.66F);
+         int fadedAlpha = Math.round((float) originalAlpha * rain * 0.66F);
          if (SiftShaderCompat.isShaderPackInUse()) {
             return fadedAlpha << 24 | originalColor & 16777215;
          } else {
@@ -63,9 +63,9 @@ public abstract class SiftCloudRendererMixin {
    @Redirect(
       method = {"renderOit"},
       at = {@At(
-   value = "FIELD",
-   target = "Lnet/minecraft/client/renderer/RenderPipelines;OIT_CLOUDS:Lnet/minecraft/client/renderer/oit/OitPipelineSet;"
-)}
+         value = "FIELD",
+         target = "Lnet/minecraft/client/renderer/RenderPipelines;OIT_CLOUDS:Lnet/minecraft/client/renderer/oit/OitPipelineSet;"
+      )}
    )
    private OitPipelineSet theSift$useAnimatedIchorOitClouds() {
       ClientLevel level = Minecraft.getInstance().level;
@@ -75,9 +75,9 @@ public abstract class SiftCloudRendererMixin {
    @Redirect(
       method = {"renderOit"},
       at = {@At(
-   value = "FIELD",
-   target = "Lnet/minecraft/client/renderer/RenderPipelines;OIT_FLAT_CLOUDS:Lnet/minecraft/client/renderer/oit/OitPipelineSet;"
-)}
+         value = "FIELD",
+         target = "Lnet/minecraft/client/renderer/RenderPipelines;OIT_FLAT_CLOUDS:Lnet/minecraft/client/renderer/oit/OitPipelineSet;"
+      )}
    )
    private OitPipelineSet theSift$useAnimatedFlatIchorOitClouds() {
       ClientLevel level = Minecraft.getInstance().level;

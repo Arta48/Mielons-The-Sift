@@ -27,7 +27,7 @@ public abstract class SodiumIchorFluidUvMixin {
    @Unique
    private static final Identifier THE_SIFT$ICHOR_FLOW = Identifier.fromNamespaceAndPath("the_sift", "block/ichor_flow");
    @Unique
-   private static final ThreadLocal THE_SIFT$ICHOR_CONTEXT = new ThreadLocal();
+   private static final ThreadLocal<UvContext> THE_SIFT$ICHOR_CONTEXT = new ThreadLocal<>();
 
    @ModifyVariable(
       method = {"render"},
@@ -56,14 +56,13 @@ public abstract class SodiumIchorFluidUvMixin {
       method = {"render"},
       at = {@At(
    value = "INVOKE",
-   target = "Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;getU0()F",
-   remap = true
-)},
+   target = "Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;getU0()F"
+      )},
       require = 0,
       remap = false
    )
    private float theSift$worldU0(TextureAtlasSprite sprite) {
-      UvContext context = (UvContext)THE_SIFT$ICHOR_CONTEXT.get();
+      UvContext context = THE_SIFT$ICHOR_CONTEXT.get();
       return context != null && theSift$isIchorSprite(sprite) ? sprite.getU(context.baseU()) : sprite.getU0();
    }
 
@@ -71,14 +70,13 @@ public abstract class SodiumIchorFluidUvMixin {
       method = {"render"},
       at = {@At(
    value = "INVOKE",
-   target = "Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;getU1()F",
-   remap = true
-)},
+   target = "Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;getU1()F"
+      )},
       require = 0,
       remap = false
    )
    private float theSift$worldU1(TextureAtlasSprite sprite) {
-      UvContext context = (UvContext)THE_SIFT$ICHOR_CONTEXT.get();
+      UvContext context = THE_SIFT$ICHOR_CONTEXT.get();
       return context != null && theSift$isIchorSprite(sprite) ? sprite.getU(context.baseU() + 0.0625F) : sprite.getU1();
    }
 
@@ -86,59 +84,55 @@ public abstract class SodiumIchorFluidUvMixin {
       method = {"render"},
       at = {@At(
    value = "INVOKE",
-   target = "Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;getV0()F",
-   remap = true
-)},
+   target = "Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;getV0()F"
+      )},
       require = 0,
       remap = false
    )
    private float theSift$worldV0(TextureAtlasSprite sprite) {
-      UvContext context = (UvContext)THE_SIFT$ICHOR_CONTEXT.get();
+      UvContext context = THE_SIFT$ICHOR_CONTEXT.get();
       return context != null && theSift$isIchorSprite(sprite) ? sprite.getV(context.baseV()) : sprite.getV0();
    }
 
    @Redirect(
       method = {"render"},
       at = {@At(
-   value = "INVOKE",
-   target = "Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;getV1()F",
-   remap = true
-)},
+         value = "INVOKE",
+         target = "Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;getV1()F"
+      )},
       require = 0,
       remap = false
    )
    private float theSift$worldV1(TextureAtlasSprite sprite) {
-      UvContext context = (UvContext)THE_SIFT$ICHOR_CONTEXT.get();
+      UvContext context = THE_SIFT$ICHOR_CONTEXT.get();
       return context != null && theSift$isIchorSprite(sprite) ? sprite.getV(context.baseV() + 0.0625F) : sprite.getV1();
    }
 
    @Redirect(
       method = {"render"},
       at = {@At(
-   value = "INVOKE",
-   target = "Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;getU(F)F",
-   remap = true
-)},
+         value = "INVOKE",
+         target = "Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;getU(F)F"
+      )},
       require = 0,
       remap = false
    )
    private float theSift$worldFlowU(TextureAtlasSprite sprite, float localU) {
-      UvContext context = (UvContext)THE_SIFT$ICHOR_CONTEXT.get();
+      UvContext context = THE_SIFT$ICHOR_CONTEXT.get();
       return context != null && theSift$isIchorSprite(sprite) ? sprite.getU(context.baseU() + theSift$clampUnit(localU) * 0.0625F) : sprite.getU(localU);
    }
 
    @Redirect(
       method = {"render"},
       at = {@At(
-   value = "INVOKE",
-   target = "Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;getV(F)F",
-   remap = true
-)},
+         value = "INVOKE",
+         target = "Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;getV(F)F"
+      )},
       require = 0,
       remap = false
    )
    private float theSift$worldFlowV(TextureAtlasSprite sprite, float localV) {
-      UvContext context = (UvContext)THE_SIFT$ICHOR_CONTEXT.get();
+      UvContext context = THE_SIFT$ICHOR_CONTEXT.get();
       return context != null && theSift$isIchorSprite(sprite) ? sprite.getV(context.baseV() + theSift$clampUnit(localV) * 0.0625F) : sprite.getV(localV);
    }
 
@@ -150,25 +144,13 @@ public abstract class SodiumIchorFluidUvMixin {
 
    @Unique
    private static float theSift$clampUnit(float coordinate) {
-      return Math.max(0.0F, Math.min(1.0F, coordinate));
+      return Math.clamp(coordinate, 0.0F, 1.0F);
    }
 
    @Unique
-   private static final class UvContext {
-      private final float baseU;
-      private final float baseV;
-
-      private UvContext(int worldX, int worldZ) {
-         this.baseU = (float)Math.floorMod(worldX, 16) * 0.0625F;
-         this.baseV = (float)Math.floorMod(worldZ, 16) * 0.0625F;
-      }
-
-      private float baseU() {
-         return this.baseU;
-      }
-
-      private float baseV() {
-         return this.baseV;
+   private record UvContext(float baseU, float baseV) {
+      private UvContext(int baseU, int baseV) {
+          this((float) Math.floorMod(baseU, 16) * 0.0625F, (float) Math.floorMod(baseV, 16) * 0.0625F);
       }
    }
 }

@@ -10,7 +10,6 @@ import net.minecraft.world.item.component.BlockItemStateProperties;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -18,21 +17,21 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.Property;
+import org.jspecify.annotations.NonNull;
 
 public class SonorousDeepslateBlock extends BaseEntityBlock {
    public static final EnumProperty MODE = EnumProperty.create("mode", Mode.class);
 
    public SonorousDeepslateBlock(BlockBehaviour.Properties properties) {
       super(properties);
-      this.registerDefaultState((BlockState)((BlockState)this.stateDefinition.any()).setValue(MODE, SonorousDeepslateBlock.Mode.HORN));
+      this.registerDefaultState(this.stateDefinition.any().setValue(MODE, Mode.HORN));
    }
 
    protected void createBlockStateDefinition(StateDefinition.Builder builder) {
-      builder.add(new Property[]{MODE});
+      builder.add(MODE);
    }
 
-   protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
+   protected @NonNull ItemStack getCloneItemStack(@NonNull LevelReader level, @NonNull BlockPos pos, @NonNull BlockState state, boolean includeData) {
       ItemStack stack = super.getCloneItemStack(level, pos, state, includeData);
       if (stack.isEmpty()) {
          stack = new ItemStack(ModBlocks.SONOROUS_DEEPSLATE_ITEM);
@@ -42,25 +41,25 @@ public class SonorousDeepslateBlock extends BaseEntityBlock {
       return stack;
    }
 
-   public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+   public BlockEntity newBlockEntity(@NonNull BlockPos pos, @NonNull BlockState state) {
       return new SonorousDeepslateBlockEntity(pos, state);
    }
 
-   public BlockEntityTicker getTicker(Level level, BlockState state, BlockEntityType type) {
+   public BlockEntityTicker getTicker(@NonNull Level level, @NonNull BlockState state, @NonNull BlockEntityType type) {
       return createTickerHelper(type, ModBlocks.SONOROUS_DEEPSLATE_BLOCK_ENTITY, SonorousDeepslateBlockEntity::tick);
    }
 
-   public static enum Mode implements StringRepresentable {
+   public enum Mode implements StringRepresentable {
       HORN("horn"),
       NOTE("note");
 
       private final String name;
 
-      private Mode(String name) {
+      Mode(String name) {
          this.name = name;
       }
 
-      public String getSerializedName() {
+      public @NonNull String getSerializedName() {
          return this.name;
       }
 

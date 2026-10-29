@@ -47,8 +47,8 @@ public final class SiftLandmarkPlacement {
       long indexedSalt = salt ^ (long)candidateIndex * -2960836687051489901L;
       long first = mix(worldSeed, cellX, cellZ, indexedSalt);
       long second = mix(worldSeed, cellZ, cellX, indexedSalt ^ -7046029254386353131L);
-      int offsetX = (int)Long.remainderUnsigned(first, (long)cellChunks);
-      int offsetZ = (int)Long.remainderUnsigned(second, (long)cellChunks);
+      int offsetX = (int)Long.remainderUnsigned(first, cellChunks);
+      int offsetZ = (int)Long.remainderUnsigned(second, cellChunks);
       return new ChunkPos(cellX * cellChunks + offsetX, cellZ * cellChunks + offsetZ);
    }
 

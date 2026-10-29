@@ -27,7 +27,7 @@ public abstract class WardenModelPettingMixin {
    )
    private void theSift$animatePetting(WardenRenderState state, CallbackInfo ci) {
       if (((WardenPettingRenderState)state).theSift$isPettingDarkSniffer()) {
-         float stroke = Mth.sin((double)(state.ageInTicks * 0.32F)) * 0.16F;
+         float stroke = Mth.sin(state.ageInTicks * 0.32F) * 0.16F;
          this.rightArm.xRot = -0.66F + stroke;
          this.rightArm.yRot = -0.1F;
          this.rightArm.zRot = -0.08F;

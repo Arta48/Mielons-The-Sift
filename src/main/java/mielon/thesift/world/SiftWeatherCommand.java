@@ -19,14 +19,14 @@ public final class SiftWeatherCommand {
    }
 
    public static void register() {
-      CommandRegistrationCallback.EVENT.register((CommandRegistrationCallback)(dispatcher, registryAccess, environment) -> registerDimensionArguments(dispatcher));
+      CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> registerDimensionArguments(dispatcher));
    }
 
    private static void registerDimensionArguments(CommandDispatcher dispatcher) {
-      LiteralArgumentBuilder<CommandSourceStack> root = (LiteralArgumentBuilder)Commands.literal("weather").requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS));
+      LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal("weather").requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS));
 
       for (Mode mode : SiftWeatherCommand.Mode.values()) {
-         root.then(((LiteralArgumentBuilder)Commands.literal(mode.commandName).then(Commands.argument("dimension", DimensionArgument.dimension()).executes((context) -> set((CommandSourceStack)context.getSource(), DimensionArgument.getDimension(context, "dimension"), mode, -1, true)))).then(Commands.argument("duration", TimeArgument.time(1)).then(Commands.argument("dimension", DimensionArgument.dimension()).executes((context) -> set((CommandSourceStack)context.getSource(), DimensionArgument.getDimension(context, "dimension"), mode, IntegerArgumentType.getInteger(context, "duration"), true)))));
+         root.then(((LiteralArgumentBuilder)Commands.literal(mode.commandName).then(Commands.argument("dimension", DimensionArgument.dimension()).executes((context) -> set(context.getSource(), DimensionArgument.getDimension(context, "dimension"), mode, -1, true)))).then(Commands.argument("duration", TimeArgument.time(1)).then(Commands.argument("dimension", DimensionArgument.dimension()).executes((context) -> set(context.getSource(), DimensionArgument.getDimension(context, "dimension"), mode, IntegerArgumentType.getInteger(context, "duration"), true)))));
       }
 
       dispatcher.register(root);
@@ -46,7 +46,7 @@ public final class SiftWeatherCommand {
       weather.setThundering(mode == SiftWeatherCommand.Mode.THUNDER);
       source.sendSuccess(() -> {
          MutableComponent message = Component.translatable("commands.weather.set." + mode.commandName);
-         return showDimension ? message.append(" [" + String.valueOf(target.dimension().identifier()) + "]") : message;
+         return showDimension ? message.append(" [" + target.dimension().identifier() + "]") : message;
       }, true);
       return duration;
    }
@@ -60,7 +60,7 @@ public final class SiftWeatherCommand {
             case 0 -> var10000 = ServerLevel.RAIN_DELAY;
             case 1 -> var10000 = ServerLevel.RAIN_DURATION;
             case 2 -> var10000 = ServerLevel.THUNDER_DURATION;
-            default -> throw new MatchException((String)null, (Throwable)null);
+            default -> throw new MatchException(null, null);
          }
 
          IntProvider provider = var10000;
@@ -68,14 +68,14 @@ public final class SiftWeatherCommand {
       }
    }
 
-   public static enum Mode {
+   public enum Mode {
       CLEAR("clear"),
       RAIN("rain"),
       THUNDER("thunder");
 
       private final String commandName;
 
-      private Mode(String commandName) {
+      Mode(String commandName) {
          this.commandName = commandName;
       }
 

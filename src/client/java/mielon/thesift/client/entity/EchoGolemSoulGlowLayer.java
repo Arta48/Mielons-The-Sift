@@ -6,6 +6,7 @@ import com.geckolib.renderer.layer.builtin.AutoGlowingGeoLayer;
 import mielon.thesift.entity.EchoGolemEntity;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.NonNull;
 
 public final class EchoGolemSoulGlowLayer extends AutoGlowingGeoLayer {
    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("the_sift", "textures/entity/echo_golem/echo_golem_emissive.png");
@@ -14,12 +15,12 @@ public final class EchoGolemSoulGlowLayer extends AutoGlowingGeoLayer {
       super(renderer);
    }
 
-   protected Identifier getTextureResource(GeoRenderState state) {
+   protected @NonNull Identifier getTextureResource(@NonNull GeoRenderState state) {
       return TEXTURE;
    }
 
    protected RenderType getRenderType(GeoRenderState state) {
-      EchoGolemEntity golem = (EchoGolemEntity)state.getGeckolibData(EchoGolemRenderer.ECHO_GOLEM_ENTITY);
+      EchoGolemEntity golem = state.getGeckolibData(EchoGolemRenderer.ECHO_GOLEM_ENTITY);
       return golem != null && golem.hasSoulBlock() ? super.getRenderType(state) : null;
    }
 }

@@ -16,13 +16,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 public final class SiftPlantInteractions {
-   private static final List GROWTH_PLANTS;
+   private static final List<Block> GROWTH_PLANTS;
 
    private SiftPlantInteractions() {
    }
 
    public static void register() {
-      UseBlockCallback.EVENT.register((UseBlockCallback)(player, level, hand, hit) -> {
+      UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
          ItemStack stack = player.getItemInHand(hand);
          if (!stack.is(Items.BONE_MEAL)) {
             return InteractionResult.PASS;
@@ -46,9 +46,7 @@ public final class SiftPlantInteractions {
 
                return InteractionResult.SUCCESS;
             } else {
-               Block patt0$temp = state.getBlock();
-               if (patt0$temp instanceof SiftPlantBlock) {
-                  SiftPlantBlock plant = (SiftPlantBlock)patt0$temp;
+               if (state.getBlock() instanceof SiftPlantBlock plant) {
                   if (!level.isClientSide()) {
                      spreadSamePlant((ServerLevel)level, pos, plant);
                      consume(player, stack);
@@ -79,7 +77,7 @@ public final class SiftPlantInteractions {
       int patches = 3 + random.nextInt(3);
 
       for (int p = 0; p < patches; ++p) {
-         Block plant = (Block)GROWTH_PLANTS.get(random.nextInt(GROWTH_PLANTS.size()));
+         Block plant = GROWTH_PLANTS.get(random.nextInt(GROWTH_PLANTS.size()));
          int cx = origin.getX() + random.nextInt(7) - 3;
          int cz = origin.getZ() + random.nextInt(7) - 3;
          int attempts = 4 + random.nextInt(7);
@@ -98,7 +96,6 @@ public final class SiftPlantInteractions {
 
    private static void spreadSamePlant(ServerLevel level, BlockPos origin, SiftPlantBlock plant) {
       RandomSource random = level.getRandom();
-      Block block = plant;
       int attempts = 7 + random.nextInt(7);
 
       for (int i = 0; i < attempts; ++i) {
@@ -106,7 +103,7 @@ public final class SiftPlantInteractions {
          int z = origin.getZ() + random.nextInt(7) - 3;
          BlockPos floor = findAnySiftFloor(level, x, origin.getY() - 1, z);
          if (floor != null) {
-            placePlant(level, floor.above(), block);
+            placePlant(level, floor.above(), plant);
          }
       }
 

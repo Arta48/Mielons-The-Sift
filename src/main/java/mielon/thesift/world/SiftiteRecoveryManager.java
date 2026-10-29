@@ -36,10 +36,10 @@ public final class SiftiteRecoveryManager {
    public static void register() {
       if (!registered) {
          registered = true;
-         ServerLivingEntityEvents.ALLOW_DEATH.register((ServerLivingEntityEvents.AllowDeath)(entity, source, amount) -> {
+         ServerLivingEntityEvents.ALLOW_DEATH.register((entity, source, amount) -> {
             if (!(entity instanceof ServerPlayer player)) {
                return true;
-            } else if ((Boolean)player.level().getGameRules().get(GameRules.KEEP_INVENTORY)) {
+            } else if (player.level().getGameRules().get(GameRules.KEEP_INVENTORY)) {
                return true;
             } else {
                List<ItemStack> protectedStacks = new ArrayList();
@@ -55,11 +55,8 @@ public final class SiftiteRecoveryManager {
 
                if (!protectedStacks.isEmpty()) {
                   MinecraftServer server = player.level().getServer();
-                  if (server == null) {
-                     return true;
-                  }
 
-                  List<ItemStack> allPending = new ArrayList(loadPending(server, player.getUUID()));
+                   List<ItemStack> allPending = new ArrayList(loadPending(server, player.getUUID()));
                   allPending.addAll(protectedStacks);
                   savePending(server, player.getUUID(), allPending);
                   PENDING.put(player.getUUID(), allPending);
@@ -72,14 +69,14 @@ public final class SiftiteRecoveryManager {
                return true;
             }
          });
-         ServerPlayerEvents.AFTER_RESPAWN.register((ServerPlayerEvents.AfterRespawn)(oldPlayer, newPlayer, alive) -> {
-            if (ensureLoaded(newPlayer).size() > 0) {
+         ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
+            if (!ensureLoaded(newPlayer).isEmpty()) {
                DUE_AT.put(newPlayer.getUUID(), newPlayer.level().getGameTime() + 40L);
             }
 
          });
-         ServerPlayerEvents.JOIN.register((ServerPlayerEvents.Join)(player) -> {
-            if (ensureLoaded(player).size() > 0) {
+         ServerPlayerEvents.JOIN.register((player) -> {
+            if (!ensureLoaded(player).isEmpty()) {
                DUE_AT.putIfAbsent(player.getUUID(), player.level().getGameTime() + 40L);
             }
 
@@ -114,11 +111,11 @@ public final class SiftiteRecoveryManager {
    private static boolean spawnMiniRift(ServerPlayer player, List stacks) {
       ServerLevel level = player.level();
       Vec3 origin = player.position();
-      Vec3 position = origin.add(1.55, (double)0.75F, (double)0.0F);
+      Vec3 position = origin.add(1.55, 0.75F, 0.0F);
 
       for (int i = 0; i < 8; ++i) {
          double angle = (double)i * Math.PI / (double)4.0F;
-         Vec3 candidate = origin.add(Math.cos(angle) * 1.55, (double)0.75F, Math.sin(angle) * 1.55);
+         Vec3 candidate = origin.add(Math.cos(angle) * 1.55, 0.75F, Math.sin(angle) * 1.55);
          BlockPos blockPos = BlockPos.containing(candidate);
          if (level.getBlockState(blockPos).isAir() && level.getBlockState(blockPos.above()).isAir()) {
             position = candidate;
@@ -134,7 +131,7 @@ public final class SiftiteRecoveryManager {
 
    private static List ensureLoaded(ServerPlayer player) {
       MinecraftServer server = player.level().getServer();
-      return server == null ? List.of() : (List)PENDING.computeIfAbsent(player.getUUID(), (playerId) -> loadPending(server, (UUID) playerId));
+      return (List)PENDING.computeIfAbsent(player.getUUID(), (playerId) -> loadPending(server, (UUID) playerId));
    }
 
    private static List loadPending(MinecraftServer server, UUID playerId) {
@@ -146,9 +143,8 @@ public final class SiftiteRecoveryManager {
          List<ItemStack> result = new ArrayList();
 
          for (Tag raw : stored.getListOrEmpty("Items")) {
-            if (raw instanceof CompoundTag) {
-               CompoundTag entry = (CompoundTag)raw;
-               entry.read("Stack", ItemStack.CODEC, ops).ifPresent((stack) -> {
+            if (raw instanceof CompoundTag entry) {
+                entry.read("Stack", ItemStack.CODEC, ops).ifPresent((stack) -> {
                   if (!stack.isEmpty()) {
                      result.add(stack.copy());
                   }
@@ -183,7 +179,7 @@ public final class SiftiteRecoveryManager {
    }
 
    private static Identifier storageId(UUID playerId) {
-      return Identifier.fromNamespaceAndPath("the_sift", "siftite_recovery/" + String.valueOf(playerId));
+      return Identifier.fromNamespaceAndPath("the_sift", "siftite_recovery/" + playerId);
    }
 
    public static void clearTransientState() {

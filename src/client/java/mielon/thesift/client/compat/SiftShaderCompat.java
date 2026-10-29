@@ -11,7 +11,7 @@ public final class SiftShaderCompat {
    private static Object irisApi;
    private static Method isShaderPackInUse;
    private static Method assignPipeline;
-   private static Class irisProgramClass;
+   private static Class<?> irisProgramClass;
 
    private SiftShaderCompat() {
    }
@@ -72,13 +72,13 @@ public final class SiftShaderCompat {
             Object program = enumValue(irisProgramClass, irisProgram);
             assignPipeline.invoke(irisApi, pipeline, program);
          } catch (IllegalArgumentException | ReflectiveOperationException exception) {
-            TheSiftMod.LOGGER.warn("Could not assign The Sift pipeline {} to Iris program {}.", new Object[]{pipeline.getLocation(), irisProgram, exception});
+            TheSiftMod.LOGGER.warn("Could not assign The Sift pipeline {} to Iris program {}.", pipeline.getLocation(), irisProgram, exception);
          }
 
       }
    }
 
-   private static Object enumValue(Class enumClass, String name) {
+   private static Object enumValue(Class<?> enumClass, String name) {
       return Enum.valueOf(enumClass.asSubclass(Enum.class), name);
    }
 }

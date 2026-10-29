@@ -22,16 +22,16 @@ import net.minecraft.world.phys.Vec3;
 public final class SingerSummoner {
    private static final int FRAME_RADIUS = 40;
    private static final int SONOROUS_RADIUS = 20;
-   private static final double EXISTING_SINGER_RADIUS = (double)2.0F;
+   private static final double EXISTING_SINGER_RADIUS = 2.0F;
    private static final int SUMMON_DELAY_TICKS = 60;
-   private static final List PENDING = new ArrayList();
+   private static final List<PendingSummon> PENDING = new ArrayList();
 
    private SingerSummoner() {
    }
 
    public static void register() {
-      ServerTickEvents.END_SERVER_TICK.register((ServerTickEvents.EndTick)(server) -> tick());
-      ServerLifecycleEvents.SERVER_STOPPED.register((ServerLifecycleEvents.ServerStopped)(server) -> PENDING.clear());
+      ServerTickEvents.END_SERVER_TICK.register((server) -> tick());
+      ServerLifecycleEvents.SERVER_STOPPED.register((server) -> PENDING.clear());
    }
 
    public static void onGoatHornFinished(ServerLevel level, Player player) {
@@ -46,18 +46,17 @@ public final class SingerSummoner {
       Iterator<PendingSummon> iterator = PENDING.iterator();
 
       while(iterator.hasNext()) {
-         PendingSummon pending = (PendingSummon)iterator.next();
+         PendingSummon pending = iterator.next();
          if (pending.tick()) {
             iterator.remove();
          }
       }
-
    }
 
    private static void trySummon(ServerLevel level, Vec3 origin) {
       Optional<PortalFrameScanner.Frame> frameOptional = findNearestFrame(level, origin);
-      if (!frameOptional.isEmpty()) {
-         PortalFrameScanner.Frame frame = (PortalFrameScanner.Frame)frameOptional.get();
+      if (frameOptional.isPresent()) {
+         PortalFrameScanner.Frame frame = frameOptional.get();
          Vec3 spawnPos = frame.bottomCenter();
          BlockPos portalCenter = BlockPos.containing(spawnPos);
          if (!hasSingerForPortal(level, portalCenter, spawnPos)) {
@@ -79,7 +78,7 @@ public final class SingerSummoner {
    }
 
    private static boolean hasSingerForPortal(ServerLevel level, BlockPos portalCenter, Vec3 spawnPos) {
-      double radius = (double)2.0F;
+      double radius = 2.0F;
       AABB box = new AABB(spawnPos.x - radius, spawnPos.y - radius, spawnPos.z - radius, spawnPos.x + radius, spawnPos.y + radius, spawnPos.z + radius);
 
       for (SingerEntity singer : level.getEntitiesOfClass(SingerEntity.class, box)) {
@@ -92,7 +91,7 @@ public final class SingerSummoner {
       return false;
    }
 
-   private static Optional findNearestFrame(ServerLevel level, Vec3 origin) {
+   private static Optional<PortalFrameScanner.Frame> findNearestFrame(ServerLevel level, Vec3 origin) {
       double bestDistance = Double.MAX_VALUE;
       PortalFrameScanner.Frame best = null;
       Set<Vec3> seenCenters = new HashSet();
@@ -109,8 +108,8 @@ public final class SingerSummoner {
                   cursor.set(originX + dx, originY + dy, originZ + dz);
                   if (level.getBlockState(cursor).is(Blocks.REINFORCED_DEEPSLATE)) {
                      Optional<PortalFrameScanner.Frame> candidate = PortalFrameScanner.scan(level, cursor);
-                     if (!candidate.isEmpty()) {
-                        PortalFrameScanner.Frame frame = (PortalFrameScanner.Frame)candidate.get();
+                     if (candidate.isPresent()) {
+                        PortalFrameScanner.Frame frame = candidate.get();
                         if (seenCenters.add(frame.bottomCenter())) {
                            double distance = frame.bottomCenter().distanceToSqr(origin);
                            if (distance <= (double)1600.0F && distance < bestDistance) {

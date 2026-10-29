@@ -56,23 +56,21 @@ public final class ModSounds {
    public static final SoundEvent MUSIC_DISC_RIFT = register("music_disc.rift");
    public static final SoundEvent[] BY_INDEX;
 
-   private ModSounds() {
-   }
+   private ModSounds() {}
 
-   public static void initialize() {
-   }
+   public static void initialize() {}
 
    private static SoundEvent register(String path) {
       ResourceKey<SoundEvent> key = key(path);
-      return (SoundEvent)Registry.register(BuiltInRegistries.SOUND_EVENT, key, SoundEvent.createVariableRangeEvent(key.identifier()));
+      return Registry.register(BuiltInRegistries.SOUND_EVENT, key, SoundEvent.createVariableRangeEvent(key.identifier()));
    }
 
    private static SoundEvent registerFixedRange(String path, float range) {
       ResourceKey<SoundEvent> key = key(path);
-      return (SoundEvent)Registry.register(BuiltInRegistries.SOUND_EVENT, key, SoundEvent.createFixedRangeEvent(key.identifier(), range));
+      return Registry.register(BuiltInRegistries.SOUND_EVENT, key, SoundEvent.createFixedRangeEvent(key.identifier(), range));
    }
 
-   private static ResourceKey key(String path) {
+   private static ResourceKey<SoundEvent> key(String path) {
       return ResourceKey.create(BuiltInRegistries.SOUND_EVENT.key(), Identifier.fromNamespaceAndPath("the_sift", path));
    }
 

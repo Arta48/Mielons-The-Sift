@@ -22,7 +22,7 @@ public final class RiftRenderTypes {
    }
 
    private static RenderPipeline createPipeline(boolean glow) {
-      RenderPipeline.Builder builder = RenderPipeline.builder(new RenderPipeline.Snippet[0]).withLocation(id(glow ? "pipeline/rift_glow" : "pipeline/rift_surface")).withVertexShader(id("core/rift")).withFragmentShader(id("core/rift")).withBindGroupLayout(BindGroupLayouts.GLOBALS).withBindGroupLayout(BindGroupLayouts.DYNAMIC_TRANSFORMS).withBindGroupLayout(BindGroupLayouts.PROJECTION).withBindGroupLayout(BindGroupLayouts.SAMPLER0).withVertexBinding(0, DefaultVertexFormat.POSITION_TEX_COLOR).withPrimitiveTopology(PrimitiveTopology.QUADS).withDepthStencilState(new DepthStencilState(DepthStencilState.DEFAULT.depthTest(), !glow)).withColorTargetState(glow ? new ColorTargetState(BlendFunction.TRANSLUCENT) : ColorTargetState.DEFAULT).withCull(true);
+      RenderPipeline.Builder builder = RenderPipeline.builder().withLocation(id(glow ? "pipeline/rift_glow" : "pipeline/rift_surface")).withVertexShader(id("core/rift")).withFragmentShader(id("core/rift")).withBindGroupLayout(BindGroupLayouts.GLOBALS).withBindGroupLayout(BindGroupLayouts.DYNAMIC_TRANSFORMS).withBindGroupLayout(BindGroupLayouts.PROJECTION).withBindGroupLayout(BindGroupLayouts.SAMPLER0).withVertexBinding(0, DefaultVertexFormat.POSITION_TEX_COLOR).withPrimitiveTopology(PrimitiveTopology.QUADS).withDepthStencilState(new DepthStencilState(DepthStencilState.DEFAULT.depthTest(), !glow)).withColorTargetState(glow ? new ColorTargetState(BlendFunction.TRANSLUCENT) : ColorTargetState.DEFAULT).withCull(true);
       return builder.build();
    }
 

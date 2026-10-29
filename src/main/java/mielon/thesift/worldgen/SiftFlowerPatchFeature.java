@@ -14,15 +14,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import org.jspecify.annotations.NonNull;
 
 public final class SiftFlowerPatchFeature implements Feature {
    public static final MapCodec CODEC = MapCodec.unit(SiftFlowerPatchFeature::new);
 
-   public MapCodec codec() {
+   public @NonNull MapCodec codec() {
       return CODEC;
    }
 
-   public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+   public boolean place(WorldGenLevel level, @NonNull ChunkGenerator generator, RandomSource random, BlockPos origin) {
       int centerX = (origin.getX() & -16) + 8;
       int centerZ = (origin.getZ() & -16) + 8;
       int target = 3 + random.nextInt(2);
@@ -67,6 +68,6 @@ public final class SiftFlowerPatchFeature implements Feature {
    }
 
    static BlockState wildflowersState(RandomSource random) {
-      return (BlockState)((BlockState)Blocks.WILDFLOWERS.defaultBlockState().setValue(FlowerBedBlock.FACING, Direction.from2DDataValue(random.nextInt(4)))).setValue(FlowerBedBlock.AMOUNT, 1 + random.nextInt(4));
+      return Blocks.WILDFLOWERS.defaultBlockState().setValue(FlowerBedBlock.FACING, Direction.from2DDataValue(random.nextInt(4))).setValue(FlowerBedBlock.AMOUNT, 1 + random.nextInt(4));
    }
 }

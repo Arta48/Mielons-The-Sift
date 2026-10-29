@@ -7,15 +7,16 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import org.jspecify.annotations.NonNull;
 
 public final class SiftDrySpikeFeature implements Feature {
    public static final MapCodec CODEC = MapCodec.unit(SiftDrySpikeFeature::new);
 
-   public MapCodec codec() {
+   public @NonNull MapCodec codec() {
       return CODEC;
    }
 
-   public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+   public boolean place(@NonNull WorldGenLevel level, @NonNull ChunkGenerator generator, RandomSource random, BlockPos origin) {
       int centerX = (origin.getX() & -16) + 8 + random.nextInt(5) - 2;
       int centerZ = (origin.getZ() & -16) + 8 + random.nextInt(5) - 2;
       int centerY = SiftMonolithFeature.findTerrainSurface(level, centerX, centerZ);
@@ -65,7 +66,7 @@ public final class SiftDrySpikeFeature implements Feature {
             BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
 
             for (int dy = 0; dy <= height; ++dy) {
-               double progress = Math.max((double)0.0F, (double)dy / (double)height);
+               double progress = Math.max(0.0F, (double)dy / (double)height);
                int centerX = origin.getX() + (int)Math.round((double)leanX * progress * progress);
                int centerZ = origin.getZ() + (int)Math.round((double)leanZ * progress * progress);
                double radius = Math.max(0.32, (double)baseRadius * Math.pow((double)1.0F - progress, 0.72));
@@ -106,8 +107,8 @@ public final class SiftDrySpikeFeature implements Feature {
                int z = origin.getZ() + dz;
                int localSurface = SiftMonolithFeature.findTerrainSurface(level, x, z);
                if (localSurface >= 0 && Math.abs(localSurface - origin.getY()) <= 6) {
-                  double distance = Math.sqrt((double)distanceSquared);
-                  double centerStrength = (double)1.0F - Math.min((double)1.0F, distance / (double)rootRadius);
+                  double distance = Math.sqrt(distanceSquared);
+                  double centerStrength = (double)1.0F - Math.min(1.0F, distance / (double)rootRadius);
                   int targetTop = origin.getY() + (int)Math.round(centerStrength * (double)1.5F);
                   if (localSurface <= targetTop + 1) {
                      for (int y = localSurface - 2; y <= targetTop; ++y) {

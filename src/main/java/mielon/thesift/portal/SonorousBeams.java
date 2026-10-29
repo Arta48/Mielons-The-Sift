@@ -16,9 +16,8 @@ public final class SonorousBeams {
       BlockPos deepslatePos = notePos.below();
       if (level.getBlockState(deepslatePos).is(ModBlocks.SONOROUS_DEEPSLATE)) {
          BlockEntity var5 = level.getBlockEntity(deepslatePos);
-         if (var5 instanceof SonorousDeepslateBlockEntity) {
-            SonorousDeepslateBlockEntity beam = (SonorousDeepslateBlockEntity)var5;
-            beam.startBeam(SonorousColors.packedRGB(soundIndex1to8));
+         if (var5 instanceof SonorousDeepslateBlockEntity beam) {
+             beam.startBeam(SonorousColors.packedRGB(soundIndex1to8));
          }
 
       }

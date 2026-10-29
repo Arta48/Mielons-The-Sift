@@ -52,25 +52,25 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.providers.number.ints.ResolvableInt;
 
 public class ModBlocks {
-   public static final ResourceKey SIFT_PORTAL_KEY;
+   public static final ResourceKey<Block> SIFT_PORTAL_KEY;
    public static final Block SIFT_PORTAL;
-   public static final ResourceKey SIFT_PORTAL_ITEM_KEY;
+   public static final ResourceKey<Item> SIFT_PORTAL_ITEM_KEY;
    public static final BlockItem SIFT_PORTAL_ITEM;
-   public static final ResourceKey SIFT_PORTAL_BLOCK_ENTITY_KEY;
-   public static final BlockEntityType SIFT_PORTAL_BLOCK_ENTITY;
-   public static final ResourceKey SONOROUS_DEEPSLATE_KEY;
+   public static final ResourceKey<BlockEntityType<?>> SIFT_PORTAL_BLOCK_ENTITY_KEY;
+   public static final BlockEntityType<SiftPortalBlockEntity> SIFT_PORTAL_BLOCK_ENTITY;
+   public static final ResourceKey<Block> SONOROUS_DEEPSLATE_KEY;
    public static final Block SONOROUS_DEEPSLATE;
-   public static final ResourceKey SONOROUS_DEEPSLATE_ITEM_KEY;
+   public static final ResourceKey<Item> SONOROUS_DEEPSLATE_ITEM_KEY;
    public static final BlockItem SONOROUS_DEEPSLATE_ITEM;
-   public static final ResourceKey SONOROUS_DEEPSLATE_BLOCK_ENTITY_KEY;
-   public static final BlockEntityType SONOROUS_DEEPSLATE_BLOCK_ENTITY;
-   public static final ResourceKey SIFTSLATE_KEY;
+   public static final ResourceKey<BlockEntityType<?>> SONOROUS_DEEPSLATE_BLOCK_ENTITY_KEY;
+   public static final BlockEntityType<SonorousDeepslateBlockEntity> SONOROUS_DEEPSLATE_BLOCK_ENTITY;
+   public static final ResourceKey<Block> SIFTSLATE_KEY;
    public static final Block SIFTSLATE;
-   public static final ResourceKey SIFTSLATE_ITEM_KEY;
+   public static final ResourceKey<Item> SIFTSLATE_ITEM_KEY;
    public static final BlockItem SIFTSLATE_ITEM;
-   public static final ResourceKey SIFTSLATE_GROWTH_KEY;
+   public static final ResourceKey<Block> SIFTSLATE_GROWTH_KEY;
    public static final Block SIFTSLATE_GROWTH;
-   public static final ResourceKey SIFTSLATE_GROWTH_ITEM_KEY;
+   public static final ResourceKey<Item> SIFTSLATE_GROWTH_ITEM_KEY;
    public static final BlockItem SIFTSLATE_GROWTH_ITEM;
    public static final Block ICHOR_SNOW_BLOCK;
    public static final BlockItem ICHOR_SNOW_BLOCK_ITEM;
@@ -79,59 +79,59 @@ public class ModBlocks {
    public static final SculkflowerCropBlock SCULKFLOWER_CROP;
    public static final SculkflowerBlock SCULKFLOWER;
    public static final BlockItem SCULKFLOWER_ITEM;
-   public static final ResourceKey HEALTHY_SCULK_KEY;
+   public static final ResourceKey<Block> HEALTHY_SCULK_KEY;
    public static final Block HEALTHY_SCULK;
-   public static final ResourceKey HEALTHY_SCULK_ITEM_KEY;
+   public static final ResourceKey<Item> HEALTHY_SCULK_ITEM_KEY;
    public static final BlockItem HEALTHY_SCULK_ITEM;
-   public static final ResourceKey DRY_HEALTHY_SCULK_KEY;
+   public static final ResourceKey<Block> DRY_HEALTHY_SCULK_KEY;
    public static final Block DRY_HEALTHY_SCULK;
-   public static final ResourceKey DRY_HEALTHY_SCULK_ITEM_KEY;
+   public static final ResourceKey<Item> DRY_HEALTHY_SCULK_ITEM_KEY;
    public static final BlockItem DRY_HEALTHY_SCULK_ITEM;
-   public static final ResourceKey DRY_HEALTHY_SCULK_GROWTH_KEY;
+   public static final ResourceKey<Block> DRY_HEALTHY_SCULK_GROWTH_KEY;
    public static final Block DRY_HEALTHY_SCULK_GROWTH;
-   public static final ResourceKey DRY_HEALTHY_SCULK_GROWTH_ITEM_KEY;
+   public static final ResourceKey<Item> DRY_HEALTHY_SCULK_GROWTH_ITEM_KEY;
    public static final BlockItem DRY_HEALTHY_SCULK_GROWTH_ITEM;
-   public static final ResourceKey ICHOR_CAULDRON_KEY;
+   public static final ResourceKey<Block> ICHOR_CAULDRON_KEY;
    public static final Block ICHOR_CAULDRON;
-   public static final ResourceKey SOUL_BLOCK_KEY;
+   public static final ResourceKey<Block> SOUL_BLOCK_KEY;
    public static final Block SOUL_BLOCK;
-   public static final ResourceKey SOUL_BLOCK_ITEM_KEY;
+   public static final ResourceKey<Item> SOUL_BLOCK_ITEM_KEY;
    public static final BlockItem SOUL_BLOCK_ITEM;
-   public static final ResourceKey OVERGROWN_CHARD_KEY;
+   public static final ResourceKey<Block> OVERGROWN_CHARD_KEY;
    public static final Block OVERGROWN_CHARD;
-   public static final ResourceKey OVERGROWN_CHARD_ITEM_KEY;
+   public static final ResourceKey<Item> OVERGROWN_CHARD_ITEM_KEY;
    public static final BlockItem OVERGROWN_CHARD_ITEM;
-   public static final ResourceKey OVERGROWN_STALKS_KEY;
+   public static final ResourceKey<Block> OVERGROWN_STALKS_KEY;
    public static final Block OVERGROWN_STALKS;
-   public static final ResourceKey OVERGROWN_STALKS_ITEM_KEY;
+   public static final ResourceKey<Item> OVERGROWN_STALKS_ITEM_KEY;
    public static final BlockItem OVERGROWN_STALKS_ITEM;
-   public static final ResourceKey OVERGROWN_FRONDS_KEY;
+   public static final ResourceKey<Block> OVERGROWN_FRONDS_KEY;
    public static final Block OVERGROWN_FRONDS;
-   public static final ResourceKey OVERGROWN_FRONDS_ITEM_KEY;
+   public static final ResourceKey<Item> OVERGROWN_FRONDS_ITEM_KEY;
    public static final BlockItem OVERGROWN_FRONDS_ITEM;
-   public static final ResourceKey OVERGROWN_LOTUS_KEY;
+   public static final ResourceKey<Block> OVERGROWN_LOTUS_KEY;
    public static final Block OVERGROWN_LOTUS;
-   public static final ResourceKey OVERGROWN_LOTUS_ITEM_KEY;
+   public static final ResourceKey<Item> OVERGROWN_LOTUS_ITEM_KEY;
    public static final BlockItem OVERGROWN_LOTUS_ITEM;
-   public static final ResourceKey SUNBURST_PLANT_KEY;
+   public static final ResourceKey<Block> SUNBURST_PLANT_KEY;
    public static final Block SUNBURST_PLANT;
-   public static final ResourceKey SUNBURST_PLANT_ITEM_KEY;
+   public static final ResourceKey<Item> SUNBURST_PLANT_ITEM_KEY;
    public static final BlockItem SUNBURST_PLANT_ITEM;
-   public static final ResourceKey WHISPERBLOOM_KEY;
+   public static final ResourceKey<Block> WHISPERBLOOM_KEY;
    public static final Block WHISPERBLOOM;
-   public static final ResourceKey WHISPERBLOOM_ITEM_KEY;
+   public static final ResourceKey<Item> WHISPERBLOOM_ITEM_KEY;
    public static final BlockItem WHISPERBLOOM_ITEM;
-   public static final ResourceKey SIFTSLATE_STALKS_KEY;
+   public static final ResourceKey<Block> SIFTSLATE_STALKS_KEY;
    public static final Block SIFTSLATE_STALKS;
-   public static final ResourceKey SIFTSLATE_STALKS_ITEM_KEY;
+   public static final ResourceKey<Item> SIFTSLATE_STALKS_ITEM_KEY;
    public static final BlockItem SIFTSLATE_STALKS_ITEM;
-   public static final ResourceKey HEALTHY_SCULK_SPROUTS_KEY;
+   public static final ResourceKey<Block> HEALTHY_SCULK_SPROUTS_KEY;
    public static final Block HEALTHY_SCULK_SPROUTS;
-   public static final ResourceKey HEALTHY_SCULK_SPROUTS_ITEM_KEY;
+   public static final ResourceKey<Item> HEALTHY_SCULK_SPROUTS_ITEM_KEY;
    public static final BlockItem HEALTHY_SCULK_SPROUTS_ITEM;
-   public static final ResourceKey DRY_HEALTHY_SCULK_SPROUTS_KEY;
+   public static final ResourceKey<Block> DRY_HEALTHY_SCULK_SPROUTS_KEY;
    public static final Block DRY_HEALTHY_SCULK_SPROUTS;
-   public static final ResourceKey DRY_HEALTHY_SCULK_SPROUTS_ITEM_KEY;
+   public static final ResourceKey<Item> DRY_HEALTHY_SCULK_SPROUTS_ITEM_KEY;
    public static final BlockItem DRY_HEALTHY_SCULK_SPROUTS_ITEM;
    public static final Block SIFTSLATE_HANGING_ROOTS;
    public static final BlockItem SIFTSLATE_HANGING_ROOTS_ITEM;
@@ -188,32 +188,32 @@ public class ModBlocks {
    public static final BlockItem SIFTSLATE_CHAROITE_ORE_ITEM;
    public static final DropExperienceBlock SIFTSLATE_SIFTITE_ORE;
    public static final BlockItem SIFTSLATE_SIFTITE_ORE_ITEM;
-   public static final ResourceKey REINFORCED_SIFTSLATE_KEY;
+   public static final ResourceKey<Block> REINFORCED_SIFTSLATE_KEY;
    public static final Block REINFORCED_SIFTSLATE;
-   public static final ResourceKey REINFORCED_SIFTSLATE_ITEM_KEY;
+   public static final ResourceKey<Item> REINFORCED_SIFTSLATE_ITEM_KEY;
    public static final BlockItem REINFORCED_SIFTSLATE_ITEM;
 
-   private static ResourceKey blockKey(String name) {
+   private static ResourceKey<Block> blockKey(String name) {
       return ResourceKey.create(BuiltInRegistries.BLOCK.key(), Identifier.fromNamespaceAndPath("the_sift", name));
    }
 
-   private static ResourceKey itemKey(String name) {
+   private static ResourceKey<Item> itemKey(String name) {
       return ResourceKey.create(BuiltInRegistries.ITEM.key(), Identifier.fromNamespaceAndPath("the_sift", name));
    }
 
    private static <T extends Block> T registerBlock(String name, Function<BlockBehaviour.Properties, T> factory, BlockBehaviour.Properties properties) {
       ResourceKey<Block> key = blockKey(name);
-      return (T)Registry.register(BuiltInRegistries.BLOCK, key, factory.apply(properties.setId(key)));
+      return Registry.register(BuiltInRegistries.BLOCK, key, factory.apply(properties.setId(key)));
    }
 
    private static BlockItem registerBlockItem(String name, Block block) {
       ResourceKey<Item> key = itemKey(name);
-      return (BlockItem)Registry.register(BuiltInRegistries.ITEM, key, new BlockItem(block, (new Item.Properties()).setId(key)));
+      return Registry.register(BuiltInRegistries.ITEM, key, new BlockItem(block, (new Item.Properties()).setId(key)));
    }
 
    private static <T extends Item> T registerItem(String name, Function<Item.Properties, T> factory) {
       ResourceKey<Item> key = itemKey(name);
-      return (T)Registry.register(BuiltInRegistries.ITEM, key, factory.apply((new Item.Properties()).setId(key)));
+      return Registry.register(BuiltInRegistries.ITEM, key, factory.apply((new Item.Properties()).setId(key)));
    }
 
    private static BlockBehaviour.Properties dropsLike(BlockBehaviour.Properties properties, String lootTableName) {
@@ -227,7 +227,7 @@ public class ModBlocks {
 
    public static void initialize() {
       IchorCauldronInteractions.register();
-      DefaultItemComponentEvents.MODIFY.register((DefaultItemComponentEvents.ModifyCallback)(context) -> {
+      DefaultItemComponentEvents.MODIFY.register((context) -> {
          context.modify(OVERGROWN_CHARD_ITEM, (builder) -> builder.set(DataComponents.COMPOSTABLE, compostable(30)));
          context.modify(OVERGROWN_STALKS_ITEM, (builder) -> builder.set(DataComponents.COMPOSTABLE, compostable(30)));
          context.modify(OVERGROWN_FRONDS_ITEM, (builder) -> builder.set(DataComponents.COMPOSTABLE, compostable(30)));
@@ -275,86 +275,86 @@ public class ModBlocks {
 
    static {
       SIFT_PORTAL_KEY = ResourceKey.create(BuiltInRegistries.BLOCK.key(), Identifier.fromNamespaceAndPath("the_sift", "sift_portal"));
-      SIFT_PORTAL = (Block)Registry.register(BuiltInRegistries.BLOCK, SIFT_PORTAL_KEY, new SiftPortalBlock(Properties.ofFullCopy(Blocks.NETHER_PORTAL).setId(SIFT_PORTAL_KEY).noCollision().noOcclusion().strength(-1.0F).lightLevel((state) -> 12)));
+      SIFT_PORTAL = Registry.register(BuiltInRegistries.BLOCK, SIFT_PORTAL_KEY, new SiftPortalBlock(Properties.ofFullCopy(Blocks.NETHER_PORTAL).setId(SIFT_PORTAL_KEY).noCollision().noOcclusion().strength(-1.0F).lightLevel((state) -> 12)));
       SIFT_PORTAL_ITEM_KEY = ResourceKey.create(BuiltInRegistries.ITEM.key(), Identifier.fromNamespaceAndPath("the_sift", "sift_portal"));
-      SIFT_PORTAL_ITEM = (BlockItem)Registry.register(BuiltInRegistries.ITEM, SIFT_PORTAL_ITEM_KEY, new BlockItem(SIFT_PORTAL, (new Item.Properties()).setId(SIFT_PORTAL_ITEM_KEY)));
+      SIFT_PORTAL_ITEM = Registry.register(BuiltInRegistries.ITEM, SIFT_PORTAL_ITEM_KEY, new BlockItem(SIFT_PORTAL, (new Item.Properties()).setId(SIFT_PORTAL_ITEM_KEY)));
       SIFT_PORTAL_BLOCK_ENTITY_KEY = ResourceKey.create(BuiltInRegistries.BLOCK_ENTITY_TYPE.key(), Identifier.fromNamespaceAndPath("the_sift", "sift_portal"));
-      SIFT_PORTAL_BLOCK_ENTITY = (BlockEntityType)Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, SIFT_PORTAL_BLOCK_ENTITY_KEY, new BlockEntityType(SiftPortalBlockEntity::new, Set.of(SIFT_PORTAL)));
+      SIFT_PORTAL_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, SIFT_PORTAL_BLOCK_ENTITY_KEY, new BlockEntityType<>(SiftPortalBlockEntity::new, Set.of(SIFT_PORTAL)));
       SONOROUS_DEEPSLATE_KEY = ResourceKey.create(BuiltInRegistries.BLOCK.key(), Identifier.fromNamespaceAndPath("the_sift", "sonorous_deepslate"));
-      SONOROUS_DEEPSLATE = (Block)Registry.register(BuiltInRegistries.BLOCK, SONOROUS_DEEPSLATE_KEY, new SonorousDeepslateBlock(Properties.ofFullCopy(Blocks.REINFORCED_DEEPSLATE).setId(SONOROUS_DEEPSLATE_KEY)));
+      SONOROUS_DEEPSLATE = Registry.register(BuiltInRegistries.BLOCK, SONOROUS_DEEPSLATE_KEY, new SonorousDeepslateBlock(Properties.ofFullCopy(Blocks.REINFORCED_DEEPSLATE).setId(SONOROUS_DEEPSLATE_KEY)));
       SONOROUS_DEEPSLATE_ITEM_KEY = ResourceKey.create(BuiltInRegistries.ITEM.key(), Identifier.fromNamespaceAndPath("the_sift", "sonorous_deepslate"));
-      SONOROUS_DEEPSLATE_ITEM = (BlockItem)Registry.register(BuiltInRegistries.ITEM, SONOROUS_DEEPSLATE_ITEM_KEY, new SonorousDeepslateBlockItem(SONOROUS_DEEPSLATE, (new Item.Properties()).setId(SONOROUS_DEEPSLATE_ITEM_KEY)));
+      SONOROUS_DEEPSLATE_ITEM = Registry.register(BuiltInRegistries.ITEM, SONOROUS_DEEPSLATE_ITEM_KEY, new SonorousDeepslateBlockItem(SONOROUS_DEEPSLATE, (new Item.Properties()).setId(SONOROUS_DEEPSLATE_ITEM_KEY)));
       SONOROUS_DEEPSLATE_BLOCK_ENTITY_KEY = ResourceKey.create(BuiltInRegistries.BLOCK_ENTITY_TYPE.key(), Identifier.fromNamespaceAndPath("the_sift", "sonorous_deepslate"));
-      SONOROUS_DEEPSLATE_BLOCK_ENTITY = (BlockEntityType)Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, SONOROUS_DEEPSLATE_BLOCK_ENTITY_KEY, new BlockEntityType(SonorousDeepslateBlockEntity::new, Set.of(SONOROUS_DEEPSLATE)));
+      SONOROUS_DEEPSLATE_BLOCK_ENTITY = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, SONOROUS_DEEPSLATE_BLOCK_ENTITY_KEY, new BlockEntityType<>(SonorousDeepslateBlockEntity::new, Set.of(SONOROUS_DEEPSLATE)));
       SIFTSLATE_KEY = ResourceKey.create(BuiltInRegistries.BLOCK.key(), Identifier.fromNamespaceAndPath("the_sift", "siftslate"));
-      SIFTSLATE = (Block)Registry.register(BuiltInRegistries.BLOCK, SIFTSLATE_KEY, new Block(Properties.ofFullCopy(Blocks.DEEPSLATE).setId(SIFTSLATE_KEY)));
+      SIFTSLATE = Registry.register(BuiltInRegistries.BLOCK, SIFTSLATE_KEY, new Block(Properties.ofFullCopy(Blocks.DEEPSLATE).setId(SIFTSLATE_KEY)));
       SIFTSLATE_ITEM_KEY = ResourceKey.create(BuiltInRegistries.ITEM.key(), Identifier.fromNamespaceAndPath("the_sift", "siftslate"));
-      SIFTSLATE_ITEM = (BlockItem)Registry.register(BuiltInRegistries.ITEM, SIFTSLATE_ITEM_KEY, new BlockItem(SIFTSLATE, (new Item.Properties()).setId(SIFTSLATE_ITEM_KEY)));
+      SIFTSLATE_ITEM = Registry.register(BuiltInRegistries.ITEM, SIFTSLATE_ITEM_KEY, new BlockItem(SIFTSLATE, (new Item.Properties()).setId(SIFTSLATE_ITEM_KEY)));
       SIFTSLATE_GROWTH_KEY = ResourceKey.create(BuiltInRegistries.BLOCK.key(), Identifier.fromNamespaceAndPath("the_sift", "siftslate_growth"));
-      SIFTSLATE_GROWTH = (Block)Registry.register(BuiltInRegistries.BLOCK, SIFTSLATE_GROWTH_KEY, new SiftslateGrowthBlock(Properties.ofFullCopy(Blocks.STONE).sound(SoundType.DEEPSLATE).randomTicks().setId(SIFTSLATE_GROWTH_KEY)));
+      SIFTSLATE_GROWTH = Registry.register(BuiltInRegistries.BLOCK, SIFTSLATE_GROWTH_KEY, new SiftslateGrowthBlock(Properties.ofFullCopy(Blocks.STONE).sound(SoundType.DEEPSLATE).randomTicks().setId(SIFTSLATE_GROWTH_KEY)));
       SIFTSLATE_GROWTH_ITEM_KEY = ResourceKey.create(BuiltInRegistries.ITEM.key(), Identifier.fromNamespaceAndPath("the_sift", "siftslate_growth"));
-      SIFTSLATE_GROWTH_ITEM = (BlockItem)Registry.register(BuiltInRegistries.ITEM, SIFTSLATE_GROWTH_ITEM_KEY, new BlockItem(SIFTSLATE_GROWTH, (new Item.Properties()).setId(SIFTSLATE_GROWTH_ITEM_KEY)));
+      SIFTSLATE_GROWTH_ITEM = Registry.register(BuiltInRegistries.ITEM, SIFTSLATE_GROWTH_ITEM_KEY, new BlockItem(SIFTSLATE_GROWTH, (new Item.Properties()).setId(SIFTSLATE_GROWTH_ITEM_KEY)));
       ICHOR_SNOW_BLOCK = registerBlock("ichor_snow_block", Block::new, Properties.ofFullCopy(Blocks.SNOW_BLOCK));
       ICHOR_SNOW_BLOCK_ITEM = registerBlockItem("ichor_snow_block", ICHOR_SNOW_BLOCK);
-      ICHOR_SNOW = (SnowLayerBlock)registerBlock("ichor_snow", SnowLayerBlock::new, Properties.ofFullCopy(Blocks.SNOW));
+      ICHOR_SNOW = registerBlock("ichor_snow", SnowLayerBlock::new, Properties.ofFullCopy(Blocks.SNOW));
       ICHOR_SNOW_ITEM = registerBlockItem("ichor_snow", ICHOR_SNOW);
-      SCULKFLOWER_CROP = (SculkflowerCropBlock)registerBlock("sculkflower_crop", SculkflowerCropBlock::new, Properties.ofFullCopy(Blocks.TORCHFLOWER_CROP).randomTicks());
-      SCULKFLOWER = (SculkflowerBlock)registerBlock("sculkflower", SculkflowerBlock::new, Properties.ofFullCopy(Blocks.CACTUS_FLOWER));
+      SCULKFLOWER_CROP = registerBlock("sculkflower_crop", SculkflowerCropBlock::new, Properties.ofFullCopy(Blocks.TORCHFLOWER_CROP).randomTicks());
+      SCULKFLOWER = registerBlock("sculkflower", SculkflowerBlock::new, Properties.ofFullCopy(Blocks.CACTUS_FLOWER));
       SCULKFLOWER_ITEM = registerBlockItem("sculkflower", SCULKFLOWER);
       HEALTHY_SCULK_KEY = ResourceKey.create(BuiltInRegistries.BLOCK.key(), Identifier.fromNamespaceAndPath("the_sift", "healthy_sculk"));
-      HEALTHY_SCULK = (Block)Registry.register(BuiltInRegistries.BLOCK, HEALTHY_SCULK_KEY, new Block(Properties.ofFullCopy(Blocks.SCULK).setId(HEALTHY_SCULK_KEY)));
+      HEALTHY_SCULK = Registry.register(BuiltInRegistries.BLOCK, HEALTHY_SCULK_KEY, new Block(Properties.ofFullCopy(Blocks.SCULK).setId(HEALTHY_SCULK_KEY)));
       HEALTHY_SCULK_ITEM_KEY = ResourceKey.create(BuiltInRegistries.ITEM.key(), Identifier.fromNamespaceAndPath("the_sift", "healthy_sculk"));
-      HEALTHY_SCULK_ITEM = (BlockItem)Registry.register(BuiltInRegistries.ITEM, HEALTHY_SCULK_ITEM_KEY, new BlockItem(HEALTHY_SCULK, (new Item.Properties()).setId(HEALTHY_SCULK_ITEM_KEY)));
+      HEALTHY_SCULK_ITEM = Registry.register(BuiltInRegistries.ITEM, HEALTHY_SCULK_ITEM_KEY, new BlockItem(HEALTHY_SCULK, (new Item.Properties()).setId(HEALTHY_SCULK_ITEM_KEY)));
       DRY_HEALTHY_SCULK_KEY = ResourceKey.create(BuiltInRegistries.BLOCK.key(), Identifier.fromNamespaceAndPath("the_sift", "dry_healthy_sculk"));
-      DRY_HEALTHY_SCULK = (Block)Registry.register(BuiltInRegistries.BLOCK, DRY_HEALTHY_SCULK_KEY, new Block(Properties.ofFullCopy(Blocks.SCULK).setId(DRY_HEALTHY_SCULK_KEY)));
+      DRY_HEALTHY_SCULK = Registry.register(BuiltInRegistries.BLOCK, DRY_HEALTHY_SCULK_KEY, new Block(Properties.ofFullCopy(Blocks.SCULK).setId(DRY_HEALTHY_SCULK_KEY)));
       DRY_HEALTHY_SCULK_ITEM_KEY = ResourceKey.create(BuiltInRegistries.ITEM.key(), Identifier.fromNamespaceAndPath("the_sift", "dry_healthy_sculk"));
-      DRY_HEALTHY_SCULK_ITEM = (BlockItem)Registry.register(BuiltInRegistries.ITEM, DRY_HEALTHY_SCULK_ITEM_KEY, new BlockItem(DRY_HEALTHY_SCULK, (new Item.Properties()).setId(DRY_HEALTHY_SCULK_ITEM_KEY)));
+      DRY_HEALTHY_SCULK_ITEM = Registry.register(BuiltInRegistries.ITEM, DRY_HEALTHY_SCULK_ITEM_KEY, new BlockItem(DRY_HEALTHY_SCULK, (new Item.Properties()).setId(DRY_HEALTHY_SCULK_ITEM_KEY)));
       DRY_HEALTHY_SCULK_GROWTH_KEY = blockKey("dry_healthy_sculk_growth");
-      DRY_HEALTHY_SCULK_GROWTH = (Block)Registry.register(BuiltInRegistries.BLOCK, DRY_HEALTHY_SCULK_GROWTH_KEY, new DryHealthySculkGrowthBlock(Properties.ofFullCopy(Blocks.SCULK).randomTicks().setId(DRY_HEALTHY_SCULK_GROWTH_KEY)));
+      DRY_HEALTHY_SCULK_GROWTH = Registry.register(BuiltInRegistries.BLOCK, DRY_HEALTHY_SCULK_GROWTH_KEY, new DryHealthySculkGrowthBlock(Properties.ofFullCopy(Blocks.SCULK).randomTicks().setId(DRY_HEALTHY_SCULK_GROWTH_KEY)));
       DRY_HEALTHY_SCULK_GROWTH_ITEM_KEY = itemKey("dry_healthy_sculk_growth");
-      DRY_HEALTHY_SCULK_GROWTH_ITEM = (BlockItem)Registry.register(BuiltInRegistries.ITEM, DRY_HEALTHY_SCULK_GROWTH_ITEM_KEY, new BlockItem(DRY_HEALTHY_SCULK_GROWTH, (new Item.Properties()).setId(DRY_HEALTHY_SCULK_GROWTH_ITEM_KEY)));
+      DRY_HEALTHY_SCULK_GROWTH_ITEM = Registry.register(BuiltInRegistries.ITEM, DRY_HEALTHY_SCULK_GROWTH_ITEM_KEY, new BlockItem(DRY_HEALTHY_SCULK_GROWTH, (new Item.Properties()).setId(DRY_HEALTHY_SCULK_GROWTH_ITEM_KEY)));
       ICHOR_CAULDRON_KEY = blockKey("ichor_cauldron");
-      ICHOR_CAULDRON = (Block)Registry.register(BuiltInRegistries.BLOCK, ICHOR_CAULDRON_KEY, new IchorCauldronBlock(Properties.ofFullCopy(Blocks.WATER_CAULDRON).setId(ICHOR_CAULDRON_KEY).lightLevel((state) -> (Integer)state.getValue(LayeredCauldronBlock.LEVEL) * 5)));
+      ICHOR_CAULDRON = Registry.register(BuiltInRegistries.BLOCK, ICHOR_CAULDRON_KEY, new IchorCauldronBlock(Properties.ofFullCopy(Blocks.WATER_CAULDRON).setId(ICHOR_CAULDRON_KEY).lightLevel((state) -> state.getValue(LayeredCauldronBlock.LEVEL) * 5)));
       SOUL_BLOCK_KEY = blockKey("soul_block");
-      SOUL_BLOCK = (Block)Registry.register(BuiltInRegistries.BLOCK, SOUL_BLOCK_KEY, new SoulBlock(Properties.ofFullCopy(Blocks.SOUL_SOIL).strength(0.35F, 0.35F).sound(SoundType.SOUL_SOIL).lightLevel((state) -> 14).noLootTable().setId(SOUL_BLOCK_KEY)));
+      SOUL_BLOCK = Registry.register(BuiltInRegistries.BLOCK, SOUL_BLOCK_KEY, new SoulBlock(Properties.ofFullCopy(Blocks.SOUL_SOIL).strength(0.35F, 0.35F).sound(SoundType.SOUL_SOIL).lightLevel((state) -> 14).noLootTable().setId(SOUL_BLOCK_KEY)));
       SOUL_BLOCK_ITEM_KEY = itemKey("soul_block");
-      SOUL_BLOCK_ITEM = (BlockItem)Registry.register(BuiltInRegistries.ITEM, SOUL_BLOCK_ITEM_KEY, new BlockItem(SOUL_BLOCK, (new Item.Properties()).setId(SOUL_BLOCK_ITEM_KEY)));
+      SOUL_BLOCK_ITEM = Registry.register(BuiltInRegistries.ITEM, SOUL_BLOCK_ITEM_KEY, new BlockItem(SOUL_BLOCK, (new Item.Properties()).setId(SOUL_BLOCK_ITEM_KEY)));
       OVERGROWN_CHARD_KEY = blockKey("overgrown_chard");
-      OVERGROWN_CHARD = (Block)Registry.register(BuiltInRegistries.BLOCK, OVERGROWN_CHARD_KEY, new SiftPlantBlock(Properties.ofFullCopy(Blocks.BEETROOTS).replaceable().setId(OVERGROWN_CHARD_KEY)));
+      OVERGROWN_CHARD = Registry.register(BuiltInRegistries.BLOCK, OVERGROWN_CHARD_KEY, new SiftPlantBlock(Properties.ofFullCopy(Blocks.BEETROOTS).replaceable().setId(OVERGROWN_CHARD_KEY)));
       OVERGROWN_CHARD_ITEM_KEY = itemKey("overgrown_chard");
-      OVERGROWN_CHARD_ITEM = (BlockItem)Registry.register(BuiltInRegistries.ITEM, OVERGROWN_CHARD_ITEM_KEY, new BlockItem(OVERGROWN_CHARD, (new Item.Properties()).setId(OVERGROWN_CHARD_ITEM_KEY)));
+      OVERGROWN_CHARD_ITEM = Registry.register(BuiltInRegistries.ITEM, OVERGROWN_CHARD_ITEM_KEY, new BlockItem(OVERGROWN_CHARD, (new Item.Properties()).setId(OVERGROWN_CHARD_ITEM_KEY)));
       OVERGROWN_STALKS_KEY = blockKey("overgrown_stalks");
-      OVERGROWN_STALKS = (Block)Registry.register(BuiltInRegistries.BLOCK, OVERGROWN_STALKS_KEY, new SiftPlantBlock(Properties.ofFullCopy(Blocks.NETHER_SPROUTS).setId(OVERGROWN_STALKS_KEY)));
+      OVERGROWN_STALKS = Registry.register(BuiltInRegistries.BLOCK, OVERGROWN_STALKS_KEY, new SiftPlantBlock(Properties.ofFullCopy(Blocks.NETHER_SPROUTS).setId(OVERGROWN_STALKS_KEY)));
       OVERGROWN_STALKS_ITEM_KEY = itemKey("overgrown_stalks");
-      OVERGROWN_STALKS_ITEM = (BlockItem)Registry.register(BuiltInRegistries.ITEM, OVERGROWN_STALKS_ITEM_KEY, new BlockItem(OVERGROWN_STALKS, (new Item.Properties()).setId(OVERGROWN_STALKS_ITEM_KEY)));
+      OVERGROWN_STALKS_ITEM = Registry.register(BuiltInRegistries.ITEM, OVERGROWN_STALKS_ITEM_KEY, new BlockItem(OVERGROWN_STALKS, (new Item.Properties()).setId(OVERGROWN_STALKS_ITEM_KEY)));
       OVERGROWN_FRONDS_KEY = blockKey("overgrown_fronds");
-      OVERGROWN_FRONDS = (Block)Registry.register(BuiltInRegistries.BLOCK, OVERGROWN_FRONDS_KEY, new SiftPlantBlock(Properties.ofFullCopy(Blocks.NETHER_SPROUTS).setId(OVERGROWN_FRONDS_KEY)));
+      OVERGROWN_FRONDS = Registry.register(BuiltInRegistries.BLOCK, OVERGROWN_FRONDS_KEY, new SiftPlantBlock(Properties.ofFullCopy(Blocks.NETHER_SPROUTS).setId(OVERGROWN_FRONDS_KEY)));
       OVERGROWN_FRONDS_ITEM_KEY = itemKey("overgrown_fronds");
-      OVERGROWN_FRONDS_ITEM = (BlockItem)Registry.register(BuiltInRegistries.ITEM, OVERGROWN_FRONDS_ITEM_KEY, new BlockItem(OVERGROWN_FRONDS, (new Item.Properties()).setId(OVERGROWN_FRONDS_ITEM_KEY)));
+      OVERGROWN_FRONDS_ITEM = Registry.register(BuiltInRegistries.ITEM, OVERGROWN_FRONDS_ITEM_KEY, new BlockItem(OVERGROWN_FRONDS, (new Item.Properties()).setId(OVERGROWN_FRONDS_ITEM_KEY)));
       OVERGROWN_LOTUS_KEY = blockKey("overgrown_lotus");
-      OVERGROWN_LOTUS = (Block)Registry.register(BuiltInRegistries.BLOCK, OVERGROWN_LOTUS_KEY, new OvergrownLotusBlock(Properties.ofFullCopy(Blocks.NETHER_SPROUTS).setId(OVERGROWN_LOTUS_KEY)));
+      OVERGROWN_LOTUS = Registry.register(BuiltInRegistries.BLOCK, OVERGROWN_LOTUS_KEY, new OvergrownLotusBlock(Properties.ofFullCopy(Blocks.NETHER_SPROUTS).setId(OVERGROWN_LOTUS_KEY)));
       OVERGROWN_LOTUS_ITEM_KEY = itemKey("overgrown_lotus");
-      OVERGROWN_LOTUS_ITEM = (BlockItem)Registry.register(BuiltInRegistries.ITEM, OVERGROWN_LOTUS_ITEM_KEY, new BlockItem(OVERGROWN_LOTUS, (new Item.Properties()).setId(OVERGROWN_LOTUS_ITEM_KEY)));
+      OVERGROWN_LOTUS_ITEM = Registry.register(BuiltInRegistries.ITEM, OVERGROWN_LOTUS_ITEM_KEY, new BlockItem(OVERGROWN_LOTUS, (new Item.Properties()).setId(OVERGROWN_LOTUS_ITEM_KEY)));
       SUNBURST_PLANT_KEY = blockKey("sunburst_plant");
-      SUNBURST_PLANT = (Block)Registry.register(BuiltInRegistries.BLOCK, SUNBURST_PLANT_KEY, new SiftPlantBlock(Properties.ofFullCopy(Blocks.NETHER_SPROUTS).setId(SUNBURST_PLANT_KEY), true));
+      SUNBURST_PLANT = Registry.register(BuiltInRegistries.BLOCK, SUNBURST_PLANT_KEY, new SiftPlantBlock(Properties.ofFullCopy(Blocks.NETHER_SPROUTS).setId(SUNBURST_PLANT_KEY), true));
       SUNBURST_PLANT_ITEM_KEY = itemKey("sunburst_plant");
-      SUNBURST_PLANT_ITEM = (BlockItem)Registry.register(BuiltInRegistries.ITEM, SUNBURST_PLANT_ITEM_KEY, new BlockItem(SUNBURST_PLANT, (new Item.Properties()).setId(SUNBURST_PLANT_ITEM_KEY)));
+      SUNBURST_PLANT_ITEM = Registry.register(BuiltInRegistries.ITEM, SUNBURST_PLANT_ITEM_KEY, new BlockItem(SUNBURST_PLANT, (new Item.Properties()).setId(SUNBURST_PLANT_ITEM_KEY)));
       WHISPERBLOOM_KEY = blockKey("whisperbloom");
-      WHISPERBLOOM = (Block)Registry.register(BuiltInRegistries.BLOCK, WHISPERBLOOM_KEY, new SiftPlantBlock(Properties.ofFullCopy(Blocks.NETHER_SPROUTS).setId(WHISPERBLOOM_KEY), true));
+      WHISPERBLOOM = Registry.register(BuiltInRegistries.BLOCK, WHISPERBLOOM_KEY, new SiftPlantBlock(Properties.ofFullCopy(Blocks.NETHER_SPROUTS).setId(WHISPERBLOOM_KEY), true));
       WHISPERBLOOM_ITEM_KEY = itemKey("whisperbloom");
-      WHISPERBLOOM_ITEM = (BlockItem)Registry.register(BuiltInRegistries.ITEM, WHISPERBLOOM_ITEM_KEY, new BlockItem(WHISPERBLOOM, (new Item.Properties()).setId(WHISPERBLOOM_ITEM_KEY)));
+      WHISPERBLOOM_ITEM = Registry.register(BuiltInRegistries.ITEM, WHISPERBLOOM_ITEM_KEY, new BlockItem(WHISPERBLOOM, (new Item.Properties()).setId(WHISPERBLOOM_ITEM_KEY)));
       SIFTSLATE_STALKS_KEY = blockKey("siftslate_stalks");
-      SIFTSLATE_STALKS = (Block)Registry.register(BuiltInRegistries.BLOCK, SIFTSLATE_STALKS_KEY, new SiftPlantBlock(Properties.ofFullCopy(Blocks.NETHER_SPROUTS).setId(SIFTSLATE_STALKS_KEY)));
+      SIFTSLATE_STALKS = Registry.register(BuiltInRegistries.BLOCK, SIFTSLATE_STALKS_KEY, new SiftPlantBlock(Properties.ofFullCopy(Blocks.NETHER_SPROUTS).setId(SIFTSLATE_STALKS_KEY)));
       SIFTSLATE_STALKS_ITEM_KEY = itemKey("siftslate_stalks");
-      SIFTSLATE_STALKS_ITEM = (BlockItem)Registry.register(BuiltInRegistries.ITEM, SIFTSLATE_STALKS_ITEM_KEY, new BlockItem(SIFTSLATE_STALKS, (new Item.Properties()).setId(SIFTSLATE_STALKS_ITEM_KEY)));
+      SIFTSLATE_STALKS_ITEM = Registry.register(BuiltInRegistries.ITEM, SIFTSLATE_STALKS_ITEM_KEY, new BlockItem(SIFTSLATE_STALKS, (new Item.Properties()).setId(SIFTSLATE_STALKS_ITEM_KEY)));
       HEALTHY_SCULK_SPROUTS_KEY = blockKey("healthy_sculk_sprouts");
-      HEALTHY_SCULK_SPROUTS = (Block)Registry.register(BuiltInRegistries.BLOCK, HEALTHY_SCULK_SPROUTS_KEY, new SiftPlantBlock(Properties.ofFullCopy(Blocks.NETHER_SPROUTS).setId(HEALTHY_SCULK_SPROUTS_KEY)));
+      HEALTHY_SCULK_SPROUTS = Registry.register(BuiltInRegistries.BLOCK, HEALTHY_SCULK_SPROUTS_KEY, new SiftPlantBlock(Properties.ofFullCopy(Blocks.NETHER_SPROUTS).setId(HEALTHY_SCULK_SPROUTS_KEY)));
       HEALTHY_SCULK_SPROUTS_ITEM_KEY = itemKey("healthy_sculk_sprouts");
-      HEALTHY_SCULK_SPROUTS_ITEM = (BlockItem)Registry.register(BuiltInRegistries.ITEM, HEALTHY_SCULK_SPROUTS_ITEM_KEY, new BlockItem(HEALTHY_SCULK_SPROUTS, (new Item.Properties()).setId(HEALTHY_SCULK_SPROUTS_ITEM_KEY)));
+      HEALTHY_SCULK_SPROUTS_ITEM = Registry.register(BuiltInRegistries.ITEM, HEALTHY_SCULK_SPROUTS_ITEM_KEY, new BlockItem(HEALTHY_SCULK_SPROUTS, (new Item.Properties()).setId(HEALTHY_SCULK_SPROUTS_ITEM_KEY)));
       DRY_HEALTHY_SCULK_SPROUTS_KEY = blockKey("dry_healthy_sculk_sprouts");
-      DRY_HEALTHY_SCULK_SPROUTS = (Block)Registry.register(BuiltInRegistries.BLOCK, DRY_HEALTHY_SCULK_SPROUTS_KEY, new SiftPlantBlock(Properties.ofFullCopy(Blocks.NETHER_SPROUTS).setId(DRY_HEALTHY_SCULK_SPROUTS_KEY)));
+      DRY_HEALTHY_SCULK_SPROUTS = Registry.register(BuiltInRegistries.BLOCK, DRY_HEALTHY_SCULK_SPROUTS_KEY, new SiftPlantBlock(Properties.ofFullCopy(Blocks.NETHER_SPROUTS).setId(DRY_HEALTHY_SCULK_SPROUTS_KEY)));
       DRY_HEALTHY_SCULK_SPROUTS_ITEM_KEY = itemKey("dry_healthy_sculk_sprouts");
-      DRY_HEALTHY_SCULK_SPROUTS_ITEM = (BlockItem)Registry.register(BuiltInRegistries.ITEM, DRY_HEALTHY_SCULK_SPROUTS_ITEM_KEY, new BlockItem(DRY_HEALTHY_SCULK_SPROUTS, (new Item.Properties()).setId(DRY_HEALTHY_SCULK_SPROUTS_ITEM_KEY)));
+      DRY_HEALTHY_SCULK_SPROUTS_ITEM = Registry.register(BuiltInRegistries.ITEM, DRY_HEALTHY_SCULK_SPROUTS_ITEM_KEY, new BlockItem(DRY_HEALTHY_SCULK_SPROUTS, (new Item.Properties()).setId(DRY_HEALTHY_SCULK_SPROUTS_ITEM_KEY)));
       SIFTSLATE_HANGING_ROOTS = registerBlock("siftslate_hanging_roots", HangingRootsBlock::new, Properties.ofFullCopy(Blocks.HANGING_ROOTS).sound(SoundType.NETHER_SPROUTS));
       SIFTSLATE_HANGING_ROOTS_ITEM = registerBlockItem("siftslate_hanging_roots", SIFTSLATE_HANGING_ROOTS);
       OVERGROWN_HANGING_ROOTS = registerBlock("overgrown_hanging_roots", HangingRootsBlock::new, Properties.ofFullCopy(Blocks.HANGING_ROOTS).sound(SoundType.NETHER_SPROUTS));
@@ -400,19 +400,19 @@ public class ModBlocks {
       OVERGROWN_WILLOW_VINES = registerBlock("overgrown_willow_vines", OvergrownWillowVinesBlock::new, Properties.ofFullCopy(Blocks.VINE));
       OVERGROWN_WILLOW_VINES_ITEM = registerBlockItem("overgrown_willow_vines", OVERGROWN_WILLOW_VINES);
       OVERGROWN_WILLOW_VINES_PLANT = registerBlock("overgrown_willow_vines_plant", OvergrownWillowVinesPlantBlock::new, Properties.ofFullCopy(Blocks.VINE));
-      SIFTSLATE_COAL_ORE = (DropExperienceBlock)registerBlock("siftslate_coal_ore", (properties) -> new DropExperienceBlock(UniformInt.of(0, 2), properties), Properties.ofFullCopy(Blocks.DEEPSLATE_COAL_ORE));
+      SIFTSLATE_COAL_ORE = registerBlock("siftslate_coal_ore", (properties) -> new DropExperienceBlock(UniformInt.of(0, 2), properties), Properties.ofFullCopy(Blocks.DEEPSLATE_COAL_ORE));
       SIFTSLATE_COAL_ORE_ITEM = registerBlockItem("siftslate_coal_ore", SIFTSLATE_COAL_ORE);
-      SIFTSLATE_DIAMOND_ORE = (DropExperienceBlock)registerBlock("siftslate_diamond_ore", (properties) -> new DropExperienceBlock(UniformInt.of(3, 7), properties), Properties.ofFullCopy(Blocks.DEEPSLATE_DIAMOND_ORE));
+      SIFTSLATE_DIAMOND_ORE = registerBlock("siftslate_diamond_ore", (properties) -> new DropExperienceBlock(UniformInt.of(3, 7), properties), Properties.ofFullCopy(Blocks.DEEPSLATE_DIAMOND_ORE));
       SIFTSLATE_DIAMOND_ORE_ITEM = registerBlockItem("siftslate_diamond_ore", SIFTSLATE_DIAMOND_ORE);
-      SIFTSLATE_EMERALD_ORE = (DropExperienceBlock)registerBlock("siftslate_emerald_ore", (properties) -> new DropExperienceBlock(UniformInt.of(3, 7), properties), Properties.ofFullCopy(Blocks.DEEPSLATE_EMERALD_ORE));
+      SIFTSLATE_EMERALD_ORE = registerBlock("siftslate_emerald_ore", (properties) -> new DropExperienceBlock(UniformInt.of(3, 7), properties), Properties.ofFullCopy(Blocks.DEEPSLATE_EMERALD_ORE));
       SIFTSLATE_EMERALD_ORE_ITEM = registerBlockItem("siftslate_emerald_ore", SIFTSLATE_EMERALD_ORE);
-      SIFTSLATE_CHAROITE_ORE = (DropExperienceBlock)registerBlock("siftslate_charoite_ore", (properties) -> new DropExperienceBlock(UniformInt.of(2, 5), properties), Properties.ofFullCopy(Blocks.DEEPSLATE_LAPIS_ORE));
+      SIFTSLATE_CHAROITE_ORE = registerBlock("siftslate_charoite_ore", (properties) -> new DropExperienceBlock(UniformInt.of(2, 5), properties), Properties.ofFullCopy(Blocks.DEEPSLATE_LAPIS_ORE));
       SIFTSLATE_CHAROITE_ORE_ITEM = registerBlockItem("siftslate_charoite_ore", SIFTSLATE_CHAROITE_ORE);
-      SIFTSLATE_SIFTITE_ORE = (DropExperienceBlock)registerBlock("siftslate_siftite_ore", (properties) -> new DropExperienceBlock(UniformInt.of(3, 7), properties), Properties.ofFullCopy(Blocks.DEEPSLATE_DIAMOND_ORE));
+      SIFTSLATE_SIFTITE_ORE = registerBlock("siftslate_siftite_ore", (properties) -> new DropExperienceBlock(UniformInt.of(3, 7), properties), Properties.ofFullCopy(Blocks.DEEPSLATE_DIAMOND_ORE));
       SIFTSLATE_SIFTITE_ORE_ITEM = registerBlockItem("siftslate_siftite_ore", SIFTSLATE_SIFTITE_ORE);
       REINFORCED_SIFTSLATE_KEY = ResourceKey.create(BuiltInRegistries.BLOCK.key(), Identifier.fromNamespaceAndPath("the_sift", "reinforced_siftslate"));
-      REINFORCED_SIFTSLATE = (Block)Registry.register(BuiltInRegistries.BLOCK, REINFORCED_SIFTSLATE_KEY, new Block(Properties.ofFullCopy(Blocks.REINFORCED_DEEPSLATE).strength(-1.0F, 3600000.0F).setId(REINFORCED_SIFTSLATE_KEY)));
+      REINFORCED_SIFTSLATE = Registry.register(BuiltInRegistries.BLOCK, REINFORCED_SIFTSLATE_KEY, new Block(Properties.ofFullCopy(Blocks.REINFORCED_DEEPSLATE).strength(-1.0F, 3600000.0F).setId(REINFORCED_SIFTSLATE_KEY)));
       REINFORCED_SIFTSLATE_ITEM_KEY = ResourceKey.create(BuiltInRegistries.ITEM.key(), Identifier.fromNamespaceAndPath("the_sift", "reinforced_siftslate"));
-      REINFORCED_SIFTSLATE_ITEM = (BlockItem)Registry.register(BuiltInRegistries.ITEM, REINFORCED_SIFTSLATE_ITEM_KEY, new BlockItem(REINFORCED_SIFTSLATE, (new Item.Properties()).setId(REINFORCED_SIFTSLATE_ITEM_KEY)));
+      REINFORCED_SIFTSLATE_ITEM = Registry.register(BuiltInRegistries.ITEM, REINFORCED_SIFTSLATE_ITEM_KEY, new BlockItem(REINFORCED_SIFTSLATE, (new Item.Properties()).setId(REINFORCED_SIFTSLATE_ITEM_KEY)));
    }
 }

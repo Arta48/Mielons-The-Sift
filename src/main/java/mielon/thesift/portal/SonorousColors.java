@@ -35,7 +35,7 @@ public final class SonorousColors {
    }
 
    private static int lighten(int rgb, float factor) {
-      factor = Math.max(0.0F, Math.min(1.0F, factor));
+      factor = Math.clamp(factor, 0.0F, 1.0F);
       int r = rgb >> 16 & 255;
       int g = rgb >> 8 & 255;
       int b = rgb & 255;

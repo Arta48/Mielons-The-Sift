@@ -2,6 +2,7 @@ package mielon.thesift.item;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import mielon.thesift.block.ModBlocks;
@@ -41,29 +42,26 @@ import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.component.BlockItemStateProperties;
 import net.minecraft.world.item.component.Compostable;
 import net.minecraft.world.item.component.Consumables;
-import net.minecraft.world.item.equipment.ArmorMaterial;
-import net.minecraft.world.item.equipment.ArmorMaterials;
-import net.minecraft.world.item.equipment.ArmorType;
-import net.minecraft.world.item.equipment.EquipmentAssets;
+import net.minecraft.world.item.equipment.*;
 import net.minecraft.world.level.storage.loot.providers.number.ints.ResolvableInt;
 
 public final class ModItems {
-   public static final ResourceKey SINGER_SPAWN_EGG_KEY;
+   public static final ResourceKey<Item> SINGER_SPAWN_EGG_KEY;
    public static final Item SINGER_SPAWN_EGG;
-   public static final ResourceKey ECHO_GOLEM_SPAWN_EGG_KEY;
+   public static final ResourceKey<Item> ECHO_GOLEM_SPAWN_EGG_KEY;
    public static final Item ECHO_GOLEM_SPAWN_EGG;
-   public static final ResourceKey DARK_SNIFFER_SPAWN_EGG_KEY;
+   public static final ResourceKey<Item> DARK_SNIFFER_SPAWN_EGG_KEY;
    public static final Item DARK_SNIFFER_SPAWN_EGG;
-   public static final ResourceKey SIFTER_SPAWN_EGG_KEY;
+   public static final ResourceKey<Item> SIFTER_SPAWN_EGG_KEY;
    public static final Item SIFTER_SPAWN_EGG;
-   public static final ResourceKey OVERGROWN_WILLOW_BOAT_KEY;
+   public static final ResourceKey<Item> OVERGROWN_WILLOW_BOAT_KEY;
    public static final Item OVERGROWN_WILLOW_BOAT;
-   public static final ResourceKey OVERGROWN_WILLOW_CHEST_BOAT_KEY;
+   public static final ResourceKey<Item> OVERGROWN_WILLOW_CHEST_BOAT_KEY;
    public static final Item OVERGROWN_WILLOW_CHEST_BOAT;
-   public static final TagKey SIFTITE_REPAIR_MATERIALS;
-   public static final TagKey SIFTITE_ITEMS;
+   public static final TagKey<Item> SIFTITE_REPAIR_MATERIALS;
+   public static final TagKey<Item> SIFTITE_ITEMS;
    public static final ToolMaterial SIFTITE_TOOL_MATERIAL;
-   public static final ResourceKey SIFTITE_EQUIPMENT_ASSET;
+   public static final ResourceKey<EquipmentAsset> SIFTITE_EQUIPMENT_ASSET;
    public static final ArmorMaterial SIFTITE_ARMOR_MATERIAL;
    public static final Item CHAROITE;
    public static final Item SIFTITE_NUGGET;
@@ -75,7 +73,7 @@ public final class ModItems {
    public static final Item SIFT_RIFT;
    public static final ResourceKey<JukeboxSong> RIFT_JUKEBOX_SONG_KEY;
    public static final Item MUSIC_DISC_RIFT;
-   public static final ResourceKey SCULKFLOWER_SEEDS_KEY;
+   public static final ResourceKey<Item> SCULKFLOWER_SEEDS_KEY;
    public static final Item SCULKFLOWER_SEEDS;
    public static final Item SIFTITE_SWORD;
    public static final Item SIFTITE_SHOVEL;
@@ -88,7 +86,7 @@ public final class ModItems {
    public static final Item SIFTITE_LEGGINGS;
    public static final Item SIFTITE_BOOTS;
    public static final Item SIFTITE_UPGRADE_SMITHING_TEMPLATE;
-   public static final ResourceKey CREATIVE_TAB_KEY;
+   public static final ResourceKey<CreativeModeTab> CREATIVE_TAB_KEY;
    public static final CreativeModeTab CREATIVE_TAB;
 
    private ModItems() {
@@ -96,7 +94,7 @@ public final class ModItems {
 
    public static void initialize() {
       IchorBottleItem.registerInteractions();
-      DefaultItemComponentEvents.MODIFY.register((DefaultItemComponentEvents.ModifyCallback)(context) -> {
+      DefaultItemComponentEvents.MODIFY.register((context) -> {
          context.modify(SCULKFLOWER_SEEDS, (builder) -> builder.set(DataComponents.COMPOSTABLE, new Compostable(new ResolvableInt.Constant(30))));
          context.modify(ModBlocks.SCULKFLOWER_ITEM, (builder) -> builder.set(DataComponents.COMPOSTABLE, new Compostable(new ResolvableInt.Constant(65))));
       });
@@ -105,27 +103,27 @@ public final class ModItems {
 
    private static Item registerItem(String name, Item.Properties properties) {
       ResourceKey<Item> key = ResourceKey.create(BuiltInRegistries.ITEM.key(), Identifier.fromNamespaceAndPath("the_sift", name));
-      return (Item)Registry.register(BuiltInRegistries.ITEM, key, new Item(properties.setId(key)));
+      return Registry.register(BuiltInRegistries.ITEM, key, new Item(properties.setId(key)));
    }
 
    private static <T extends Item> T registerItem(String name, Function<Item.Properties, T> factory, Item.Properties properties) {
       ResourceKey<Item> key = ResourceKey.create(BuiltInRegistries.ITEM.key(), Identifier.fromNamespaceAndPath("the_sift", name));
-      return (T)Registry.register(BuiltInRegistries.ITEM, key, factory.apply(properties.setId(key)));
+      return Registry.register(BuiltInRegistries.ITEM, key, factory.apply(properties.setId(key)));
    }
 
    static {
       SINGER_SPAWN_EGG_KEY = ResourceKey.create(BuiltInRegistries.ITEM.key(), Identifier.fromNamespaceAndPath("the_sift", "singer_spawn_egg"));
-      SINGER_SPAWN_EGG = (Item)Registry.register(BuiltInRegistries.ITEM, SINGER_SPAWN_EGG_KEY, new SpawnEggItem((new Item.Properties()).setId(SINGER_SPAWN_EGG_KEY).spawnEgg(ModEntities.SINGER)));
+      SINGER_SPAWN_EGG = Registry.register(BuiltInRegistries.ITEM, SINGER_SPAWN_EGG_KEY, new SpawnEggItem((new Item.Properties()).setId(SINGER_SPAWN_EGG_KEY).spawnEgg(ModEntities.SINGER)));
       ECHO_GOLEM_SPAWN_EGG_KEY = ResourceKey.create(BuiltInRegistries.ITEM.key(), Identifier.fromNamespaceAndPath("the_sift", "echo_golem_spawn_egg"));
-      ECHO_GOLEM_SPAWN_EGG = (Item)Registry.register(BuiltInRegistries.ITEM, ECHO_GOLEM_SPAWN_EGG_KEY, new SpawnEggItem((new Item.Properties()).setId(ECHO_GOLEM_SPAWN_EGG_KEY).spawnEgg(ModEntities.ECHO_GOLEM)));
+      ECHO_GOLEM_SPAWN_EGG = Registry.register(BuiltInRegistries.ITEM, ECHO_GOLEM_SPAWN_EGG_KEY, new SpawnEggItem((new Item.Properties()).setId(ECHO_GOLEM_SPAWN_EGG_KEY).spawnEgg(ModEntities.ECHO_GOLEM)));
       DARK_SNIFFER_SPAWN_EGG_KEY = ResourceKey.create(BuiltInRegistries.ITEM.key(), Identifier.fromNamespaceAndPath("the_sift", "dark_sniffer_spawn_egg"));
-      DARK_SNIFFER_SPAWN_EGG = (Item)Registry.register(BuiltInRegistries.ITEM, DARK_SNIFFER_SPAWN_EGG_KEY, new SpawnEggItem((new Item.Properties()).setId(DARK_SNIFFER_SPAWN_EGG_KEY).spawnEgg(ModEntities.DARK_SNIFFER)));
+      DARK_SNIFFER_SPAWN_EGG = Registry.register(BuiltInRegistries.ITEM, DARK_SNIFFER_SPAWN_EGG_KEY, new SpawnEggItem((new Item.Properties()).setId(DARK_SNIFFER_SPAWN_EGG_KEY).spawnEgg(ModEntities.DARK_SNIFFER)));
       SIFTER_SPAWN_EGG_KEY = ResourceKey.create(BuiltInRegistries.ITEM.key(), Identifier.fromNamespaceAndPath("the_sift", "sifter_spawn_egg"));
-      SIFTER_SPAWN_EGG = (Item)Registry.register(BuiltInRegistries.ITEM, SIFTER_SPAWN_EGG_KEY, new SpawnEggItem((new Item.Properties()).setId(SIFTER_SPAWN_EGG_KEY).spawnEgg(ModEntities.SIFTER)));
+      SIFTER_SPAWN_EGG = Registry.register(BuiltInRegistries.ITEM, SIFTER_SPAWN_EGG_KEY, new SpawnEggItem((new Item.Properties()).setId(SIFTER_SPAWN_EGG_KEY).spawnEgg(ModEntities.SIFTER)));
       OVERGROWN_WILLOW_BOAT_KEY = ResourceKey.create(BuiltInRegistries.ITEM.key(), Identifier.fromNamespaceAndPath("the_sift", "overgrown_willow_boat"));
-      OVERGROWN_WILLOW_BOAT = (Item)Registry.register(BuiltInRegistries.ITEM, OVERGROWN_WILLOW_BOAT_KEY, new BoatItem(ModEntities.OVERGROWN_WILLOW_BOAT, (new Item.Properties()).stacksTo(1).setId(OVERGROWN_WILLOW_BOAT_KEY)));
+      OVERGROWN_WILLOW_BOAT = Registry.register(BuiltInRegistries.ITEM, OVERGROWN_WILLOW_BOAT_KEY, new BoatItem(ModEntities.OVERGROWN_WILLOW_BOAT, (new Item.Properties()).stacksTo(1).setId(OVERGROWN_WILLOW_BOAT_KEY)));
       OVERGROWN_WILLOW_CHEST_BOAT_KEY = ResourceKey.create(BuiltInRegistries.ITEM.key(), Identifier.fromNamespaceAndPath("the_sift", "overgrown_willow_chest_boat"));
-      OVERGROWN_WILLOW_CHEST_BOAT = (Item)Registry.register(BuiltInRegistries.ITEM, OVERGROWN_WILLOW_CHEST_BOAT_KEY, new BoatItem(ModEntities.OVERGROWN_WILLOW_CHEST_BOAT, (new Item.Properties()).stacksTo(1).setId(OVERGROWN_WILLOW_CHEST_BOAT_KEY)));
+      OVERGROWN_WILLOW_CHEST_BOAT = Registry.register(BuiltInRegistries.ITEM, OVERGROWN_WILLOW_CHEST_BOAT_KEY, new BoatItem(ModEntities.OVERGROWN_WILLOW_CHEST_BOAT, (new Item.Properties()).stacksTo(1).setId(OVERGROWN_WILLOW_CHEST_BOAT_KEY)));
       SIFTITE_REPAIR_MATERIALS = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("the_sift", "siftite_repair_materials"));
       SIFTITE_ITEMS = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("the_sift", "siftite_items"));
       SIFTITE_TOOL_MATERIAL = new ToolMaterial(BlockTags.INCORRECT_FOR_NETHERITE_TOOL, ToolMaterial.NETHERITE.durability() + 470, ToolMaterial.NETHERITE.speed() * 1.2F, ToolMaterial.NETHERITE.attackDamageBonus() + 1.0F, ToolMaterial.NETHERITE.enchantmentValue(), SIFTITE_REPAIR_MATERIALS);
@@ -142,7 +140,7 @@ public final class ModItems {
       RIFT_JUKEBOX_SONG_KEY = ResourceKey.create(Registries.JUKEBOX_SONG, Identifier.fromNamespaceAndPath("the_sift", "rift"));
       MUSIC_DISC_RIFT = registerItem("music_disc_rift", (new Item.Properties()).stacksTo(1).rarity(Rarity.RARE).delayedComponent(DataComponents.JUKEBOX_PLAYABLE, (provider) -> provider.get(RIFT_JUKEBOX_SONG_KEY).map(JukeboxPlayable::new).orElse(null)));
       SCULKFLOWER_SEEDS_KEY = ResourceKey.create(BuiltInRegistries.ITEM.key(), Identifier.fromNamespaceAndPath("the_sift", "sculkflower_seeds"));
-      SCULKFLOWER_SEEDS = (Item)Registry.register(BuiltInRegistries.ITEM, SCULKFLOWER_SEEDS_KEY, new BlockItem(ModBlocks.SCULKFLOWER_CROP, (new Item.Properties()).setId(SCULKFLOWER_SEEDS_KEY)));
+      SCULKFLOWER_SEEDS = Registry.register(BuiltInRegistries.ITEM, SCULKFLOWER_SEEDS_KEY, new BlockItem(ModBlocks.SCULKFLOWER_CROP, (new Item.Properties()).setId(SCULKFLOWER_SEEDS_KEY)));
       SIFTITE_SWORD = registerItem("siftite_sword", (new Item.Properties()).sword(SIFTITE_TOOL_MATERIAL, 3.0F, -2.4F).fireResistant());
       SIFTITE_SHOVEL = registerItem("siftite_shovel", (new Item.Properties()).shovel(SIFTITE_TOOL_MATERIAL, 1.5F, -3.0F).fireResistant());
       SIFTITE_PICKAXE = registerItem("siftite_pickaxe", (new Item.Properties()).pickaxe(SIFTITE_TOOL_MATERIAL, 1.0F, -2.8F).fireResistant());

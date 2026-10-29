@@ -1,7 +1,6 @@
 package mielon.thesift.portal;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import mielon.thesift.block.SonorousNoteBlocks;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -19,8 +18,8 @@ public final class SonorousIgnition {
    }
 
    public static void register() {
-      ServerTickEvents.END_SERVER_TICK.register((ServerTickEvents.EndTick)(server) -> tick());
-      ServerLifecycleEvents.SERVER_STOPPED.register((ServerLifecycleEvents.ServerStopped)(server) -> PENDING.clear());
+      ServerTickEvents.END_SERVER_TICK.register((server) -> tick());
+      ServerLifecycleEvents.SERVER_STOPPED.register((server) -> PENDING.clear());
    }
 
    public static void start(ServerLevel level, SonorousConsoles.MatchedSequence matched) {
@@ -34,13 +33,8 @@ public final class SonorousIgnition {
    }
 
    private static void tick() {
-      Iterator<Pending> iterator = PENDING.iterator();
 
-      while(iterator.hasNext()) {
-         if (!((Pending)iterator.next()).tick()) {
-            iterator.remove();
-         }
-      }
+       PENDING.removeIf(pending -> !((Pending) pending).tick());
 
    }
 

@@ -13,7 +13,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -35,20 +34,20 @@ final class IchorCauldronInteractions {
          registered = true;
          CauldronInteraction.Dispatcher ichor = IchorCauldronBlock.INTERACTIONS;
          CauldronInteractions.addDefaultInteractions(ichor);
-         itemInteractions(CauldronInteractions.EMPTY).put(ModFluids.ICHOR_BUCKET, (CauldronInteraction)(state, level, pos, player, hand, stack) -> CauldronInteractions.emptyBucket(level, pos, player, hand, stack, (BlockState)ModBlocks.ICHOR_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3), ModSounds.ICHOR_BUCKET_EMPTY));
+         itemInteractions(CauldronInteractions.EMPTY).put(ModFluids.ICHOR_BUCKET, (state, level, pos, player, hand, stack) -> CauldronInteractions.emptyBucket(level, pos, player, hand, stack, ModBlocks.ICHOR_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3), ModSounds.ICHOR_BUCKET_EMPTY));
          itemInteractions(CauldronInteractions.EMPTY).put(ModItems.ICHOR_BOTTLE, IchorCauldronInteractions::fillFromBottle);
          itemInteractions(ichor).put(ModItems.ICHOR_BOTTLE, IchorCauldronInteractions::fillFromBottle);
-         itemInteractions(ichor).put(Items.BUCKET, (CauldronInteraction)(state, level, pos, player, hand, stack) -> CauldronInteractions.fillBucket(state, level, pos, player, hand, stack, new ItemStack(ModFluids.ICHOR_BUCKET), (candidate) -> candidate.is(ModBlocks.ICHOR_CAULDRON) && (Integer)candidate.getValue(LayeredCauldronBlock.LEVEL) == 3, ModSounds.ICHOR_BUCKET_FILL));
+         itemInteractions(ichor).put(Items.BUCKET, (state, level, pos, player, hand, stack) -> CauldronInteractions.fillBucket(state, level, pos, player, hand, stack, new ItemStack(ModFluids.ICHOR_BUCKET), (candidate) -> candidate.is(ModBlocks.ICHOR_CAULDRON) && candidate.getValue(LayeredCauldronBlock.LEVEL) == 3, ModSounds.ICHOR_BUCKET_FILL));
          itemInteractions(ichor).put(Items.GLASS_BOTTLE, IchorBottleItem::fillFromCauldron);
       }
    }
 
    private static Map<Item, CauldronInteraction> itemInteractions(CauldronInteraction.Dispatcher dispatcher) {
-      return ((CauldronDispatcherAccessor)dispatcher).theSift$getItems();
+      return ((CauldronDispatcherAccessor) dispatcher).theSift$getItems();
    }
 
    private static InteractionResult fillFromBottle(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, ItemStack stack) {
-      int currentLevel = state.is(ModBlocks.ICHOR_CAULDRON) ? (Integer)state.getValue(LayeredCauldronBlock.LEVEL) : 0;
+      int currentLevel = state.is(ModBlocks.ICHOR_CAULDRON) ? state.getValue(LayeredCauldronBlock.LEVEL) : 0;
       if (currentLevel >= 3) {
          return InteractionResult.PASS;
       } else {
@@ -57,12 +56,11 @@ final class IchorCauldronInteractions {
             player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, emptyBottle));
             player.awardStat(Stats.USE_CAULDRON);
             player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
-            BlockState next = (BlockState)ModBlocks.ICHOR_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, currentLevel + 1);
+            BlockState next = ModBlocks.ICHOR_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, currentLevel + 1);
             level.setBlockAndUpdate(pos, next);
-            level.playSound((Entity)null, pos, ModSounds.ICHOR_BOTTLE_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+            level.playSound(null, pos, ModSounds.ICHOR_BOTTLE_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
             level.gameEvent(player, GameEvent.FLUID_PLACE, pos);
          }
-
          return InteractionResult.SUCCESS;
       }
    }

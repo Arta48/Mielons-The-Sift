@@ -12,6 +12,7 @@ import mielon.thesift.entity.SingerEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.NonNull;
 
 public final class TheSiftDynamicLightsInitializer implements DynamicLightsInitializer {
    public void onInitializeDynamicLights(DynamicLightsContext context) {
@@ -22,14 +23,14 @@ public final class TheSiftDynamicLightsInitializer implements DynamicLightsIniti
 
    private static final class EchoLightHandler implements EchoGolemLightBridge.Handler {
       private final DynamicLightBehaviorManager manager;
-      private final Map sources = new WeakHashMap();
+      private final Map<EchoGolemEntity, EchoLightBehavior> sources = new WeakHashMap<>();
 
       private EchoLightHandler(DynamicLightBehaviorManager manager) {
          this.manager = manager;
       }
 
       public void update(EchoGolemEntity golem, Vec3 position) {
-         EchoLightBehavior source = (EchoLightBehavior)this.sources.get(golem);
+         EchoLightBehavior source = this.sources.get(golem);
          if (!golem.hasSoulBlock()) {
             if (source != null) {
                this.manager.remove(source);
@@ -50,8 +51,8 @@ public final class TheSiftDynamicLightsInitializer implements DynamicLightsIniti
    }
 
    private static final class EchoLightBehavior implements DynamicLightBehavior {
-      private static final double LUMINANCE = (double)14.0F;
-      private final WeakReference golem;
+      private static final double LUMINANCE = 14.0F;
+      private final WeakReference<EchoGolemEntity> golem;
       private double x;
       private double y;
       private double z;
@@ -60,7 +61,7 @@ public final class TheSiftDynamicLightsInitializer implements DynamicLightsIniti
       private double previousZ = Double.NaN;
 
       private EchoLightBehavior(EchoGolemEntity golem, Vec3 position) {
-         this.golem = new WeakReference(golem);
+         this.golem = new WeakReference<>(golem);
          this.setPosition(position);
       }
 
@@ -70,19 +71,19 @@ public final class TheSiftDynamicLightsInitializer implements DynamicLightsIniti
          this.z = position.z;
       }
 
-      public double lightAtPos(BlockPos pos, double falloffRatio) {
-         EchoGolemEntity entity = (EchoGolemEntity)this.golem.get();
+      public double lightAtPos(@NonNull BlockPos pos, double falloffRatio) {
+         EchoGolemEntity entity = this.golem.get();
          if (entity != null && entity.hasSoulBlock()) {
-            double dx = (double)pos.getX() + (double)0.5F - this.x;
-            double dy = (double)pos.getY() + (double)0.5F - this.y;
-            double dz = (double)pos.getZ() + (double)0.5F - this.z;
-            return Math.max((double)14.0F - Math.sqrt(dx * dx + dy * dy + dz * dz) * falloffRatio, (double)0.0F);
+            double dx = (double) pos.getX() + (double) 0.5F - this.x;
+            double dy = (double) pos.getY() + (double) 0.5F - this.y;
+            double dz = (double) pos.getZ() + (double) 0.5F - this.z;
+            return Math.max((double)14.0F - Math.sqrt(dx * dx + dy * dy + dz * dz) * falloffRatio, 0.0F);
          } else {
-            return (double)0.0F;
+            return 0.0F;
          }
       }
 
-      public DynamicLightBehavior.BoundingBox getBoundingBox() {
+      public DynamicLightBehavior.@NonNull BoundingBox getBoundingBox() {
          int blockX = Mth.floor(this.x);
          int blockY = Mth.floor(this.y);
          int blockZ = Mth.floor(this.z);
@@ -101,21 +102,21 @@ public final class TheSiftDynamicLightsInitializer implements DynamicLightsIniti
       }
 
       public boolean isRemoved() {
-         EchoGolemEntity entity = (EchoGolemEntity)this.golem.get();
+         EchoGolemEntity entity = this.golem.get();
          return entity == null || entity.isRemoved() || !entity.hasSoulBlock();
       }
    }
 
    private static final class SingerLightHandler implements SingerHeadLightBridge.Handler {
       private final DynamicLightBehaviorManager manager;
-      private final Map sources = new WeakHashMap();
+      private final Map<SingerEntity, SingerHeadLightBehavior> sources = new WeakHashMap<>();
 
       private SingerLightHandler(DynamicLightBehaviorManager manager) {
          this.manager = manager;
       }
 
       public void update(SingerEntity singer, Vec3 position) {
-         SingerHeadLightBehavior source = (SingerHeadLightBehavior)this.sources.get(singer);
+         SingerHeadLightBehavior source = this.sources.get(singer);
          if (source == null) {
             source = new SingerHeadLightBehavior(singer, position);
             this.sources.put(singer, source);
@@ -128,8 +129,8 @@ public final class TheSiftDynamicLightsInitializer implements DynamicLightsIniti
    }
 
    private static final class SingerHeadLightBehavior implements DynamicLightBehavior {
-      private static final double LUMINANCE = (double)15.0F;
-      private final WeakReference singer;
+      private static final double LUMINANCE = 15.0F;
+      private final WeakReference<SingerEntity> singer;
       private double x;
       private double y;
       private double z;
@@ -138,7 +139,7 @@ public final class TheSiftDynamicLightsInitializer implements DynamicLightsIniti
       private double previousZ = Double.NaN;
 
       private SingerHeadLightBehavior(SingerEntity singer, Vec3 position) {
-         this.singer = new WeakReference(singer);
+         this.singer = new WeakReference<>(singer);
          this.setPosition(position);
       }
 
@@ -149,14 +150,14 @@ public final class TheSiftDynamicLightsInitializer implements DynamicLightsIniti
       }
 
       public double lightAtPos(BlockPos pos, double falloffRatio) {
-         double dx = (double)pos.getX() + (double)0.5F - this.x;
-         double dy = (double)pos.getY() + (double)0.5F - this.y;
-         double dz = (double)pos.getZ() + (double)0.5F - this.z;
+         double dx = (double) pos.getX() + (double) 0.5F - this.x;
+         double dy = (double) pos.getY() + (double) 0.5F - this.y;
+         double dz = (double) pos.getZ() + (double) 0.5F - this.z;
          double distanceSquared = dx * dx + dy * dy + dz * dz;
-         return Math.max((double)15.0F - Math.sqrt(distanceSquared) * falloffRatio, (double)0.0F);
+         return Math.max((double) 15.0F - Math.sqrt(distanceSquared) * falloffRatio, 0.0F);
       }
 
-      public DynamicLightBehavior.BoundingBox getBoundingBox() {
+      public DynamicLightBehavior.@NonNull BoundingBox getBoundingBox() {
          int blockX = Mth.floor(this.x);
          int blockY = Mth.floor(this.y);
          int blockZ = Mth.floor(this.z);
@@ -175,7 +176,7 @@ public final class TheSiftDynamicLightsInitializer implements DynamicLightsIniti
       }
 
       public boolean isRemoved() {
-         SingerEntity entity = (SingerEntity)this.singer.get();
+         SingerEntity entity = this.singer.get();
          return entity == null || entity.isRemoved();
       }
    }

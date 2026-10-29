@@ -14,6 +14,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
+import org.jspecify.annotations.NonNull;
 
 public class SonorousBeamRenderer implements BlockEntityRenderer<SonorousDeepslateBlockEntity, SonorousBeamRenderer.State> {
    private static final float MAX_BEAM_HEIGHT = 128.0F;
@@ -27,11 +28,11 @@ public class SonorousBeamRenderer implements BlockEntityRenderer<SonorousDeepsla
    public SonorousBeamRenderer(BlockEntityRendererProvider.Context context) {
    }
 
-   public State createRenderState() {
+   public @NonNull State createRenderState() {
       return new State();
    }
 
-   public void extractRenderState(SonorousDeepslateBlockEntity blockEntity, State state, float tickProgress, Vec3 cameraPos, ModelFeatureRenderer.@Nullable CrumblingOverlay crumblingOverlay) {
+   public void extractRenderState(@NonNull SonorousDeepslateBlockEntity blockEntity, @NonNull State state, float tickProgress, @NonNull Vec3 cameraPos, @Nullable ModelFeatureRenderer.CrumblingOverlay crumblingOverlay) {
       BlockEntityRenderer.super.extractRenderState(blockEntity, state, tickProgress, cameraPos, crumblingOverlay);
       state.active = blockEntity.hasBeam();
       state.colorRGB = blockEntity.getBeamColor();
@@ -41,16 +42,16 @@ public class SonorousBeamRenderer implements BlockEntityRenderer<SonorousDeepsla
       state.partialTick = tickProgress;
    }
 
-   public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState cameraState) {
+   public void submit(State state, @NonNull PoseStack poseStack, @NonNull SubmitNodeCollector collector, @NonNull CameraRenderState cameraState) {
       if (state.active && !(state.growth <= 0.0F)) {
-         float red = (float)(state.colorRGB >> 16 & 255) / 255.0F;
-         float green = (float)(state.colorRGB >> 8 & 255) / 255.0F;
-         float blue = (float)(state.colorRGB & 255) / 255.0F;
+         float red = (float) (state.colorRGB >> 16 & 255) / 255.0F;
+         float green = (float) (state.colorRGB >> 8 & 255) / 255.0F;
+         float blue = (float) (state.colorRGB & 255) / 255.0F;
          float bottomY = 1.0F;
          float topY = bottomY + 128.0F * state.growth;
          float beamHeight = topY - bottomY;
-         float time = (float)state.gameTime + state.partialTick;
-         float vScroll = -(time / 20.0F) * 1.0F;
+         float time = (float) state.gameTime + state.partialTick;
+         float vScroll = -(time / 20.0F);
          poseStack.pushPose();
          collector.submitCustomGeometry(poseStack, SonorousBeamRenderTypes.BEAM, (pose, vertexConsumer) -> renderBeamColumn(vertexConsumer, pose.pose(), 0.35F, bottomY, 0.35F, 0.65F, topY, 0.65F, red, green, blue, vScroll, beamHeight));
          if (state.waterSegmentCount > 0) {
@@ -62,10 +63,8 @@ public class SonorousBeamRenderer implements BlockEntityRenderer<SonorousDeepsla
                      renderBeamWaterOverlay(vertexConsumer, pose.pose(), segmentBottom, segmentTop, topY, red, green, blue, vScroll);
                   }
                }
-
             });
          }
-
          poseStack.popPose();
       }
    }
@@ -76,7 +75,7 @@ public class SonorousBeamRenderer implements BlockEntityRenderer<SonorousDeepsla
          float topY = 1.0F + 128.0F * state.growth;
          int openSegment = -1;
 
-         for (int offset = 1; offset <= 128 && !((float)offset >= topY); ++offset) {
+         for (int offset = 1; offset <= 128 && !((float) offset >= topY); ++offset) {
             Fluid fluid = blockEntity.getLevel().getFluidState(blockEntity.getBlockPos().above(offset)).getType();
             boolean water = fluid == Fluids.WATER || fluid == Fluids.FLOWING_WATER;
             if (water) {
@@ -84,13 +83,13 @@ public class SonorousBeamRenderer implements BlockEntityRenderer<SonorousDeepsla
                   openSegment = offset;
                }
             } else if (openSegment >= 0) {
-               state.addWaterSegment((float)openSegment, Math.min((float)offset, topY));
+               state.addWaterSegment((float) openSegment, Math.min((float) offset, topY));
                openSegment = -1;
             }
          }
 
          if (openSegment >= 0) {
-            state.addWaterSegment((float)openSegment, topY);
+            state.addWaterSegment((float) openSegment, topY);
          }
 
       }

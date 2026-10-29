@@ -40,9 +40,7 @@ public final class TheSiftClient implements ClientModInitializer {
 
    public void onInitializeClient() {
       VanillaPaletteRemapper.initialize();
-      ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-         VanillaPaletteRemapper.isVanillaServer = false;
-      });
+      ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> VanillaPaletteRemapper.isVanillaServer = false);
       SiftShaderCompat.initialize();
       SonorousBeamRenderTypes.initialize();
       SiftProceduralSkyRenderer.initialize();

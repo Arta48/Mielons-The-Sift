@@ -26,7 +26,7 @@ public abstract class IrisWorldTimeUniformsMixin {
       require = 0,
       remap = false
    )
-   private static void theSift$mapWorldTime(CallbackInfoReturnable cir) {
+   private static void theSift$mapWorldTime(CallbackInfoReturnable<Integer> cir) {
       ClientLevel level = Minecraft.getInstance().level;
       if (level != null && level.dimension().equals(TheSiftDimension.LEVEL_KEY)) {
          cir.setReturnValue(theSift$shaderTime(level.getDefaultClockTime()));
@@ -40,10 +40,10 @@ public abstract class IrisWorldTimeUniformsMixin {
       require = 0,
       remap = false
    )
-   private static void theSift$mapWorldDay(CallbackInfoReturnable cir) {
+   private static void theSift$mapWorldDay(CallbackInfoReturnable<Integer> cir) {
       ClientLevel level = Minecraft.getInstance().level;
       if (level != null && level.dimension().equals(TheSiftDimension.LEVEL_KEY)) {
-         cir.setReturnValue((int)Math.floorDiv(level.getDefaultClockTime(), 24120L));
+         cir.setReturnValue((int) Math.floorDiv(level.getDefaultClockTime(), 24120L));
       }
    }
 
@@ -52,19 +52,19 @@ public abstract class IrisWorldTimeUniformsMixin {
       if (tick < 12000L) {
          return 3000;
       } else if (tick < 12060L) {
-         float t = theSift$smooth((float)(tick - 12000L) / 60.0F);
+         float t = theSift$smooth((float) (tick - 12000L) / 60.0F);
          return Math.round(3000.0F + 15000.0F * t);
       } else if (tick < 24060L) {
          return 18000;
       } else {
-         float t = theSift$smooth((float)(tick - 24060L) / 60.0F);
+         float t = theSift$smooth((float) (tick - 24060L) / 60.0F);
          int unwrapped = Math.round(18000.0F + 9000.0F * t);
          return Math.floorMod(unwrapped, 24000);
       }
    }
 
    private static float theSift$smooth(float value) {
-      float clamped = Math.max(0.0F, Math.min(1.0F, value));
+      float clamped = Math.clamp(value, 0.0F, 1.0F);
       return clamped * clamped * (3.0F - 2.0F * clamped);
    }
 }

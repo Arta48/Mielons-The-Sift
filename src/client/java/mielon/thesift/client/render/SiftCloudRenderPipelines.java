@@ -12,16 +12,14 @@ public final class SiftCloudRenderPipelines {
    public static final OitPipelineSet OIT_FANCY;
    public static final OitPipelineSet OIT_FLAT;
 
-   private SiftCloudRenderPipelines() {
-   }
+   private SiftCloudRenderPipelines() {}
 
-   public static void initialize() {
-   }
+   public static void initialize() {}
 
    static {
-      FANCY = RenderPipelines.register(RenderPipeline.builder(new RenderPipeline.Snippet[]{RenderPipelines.CLOUDS_SNIPPET}).withLocation(Identifier.fromNamespaceAndPath("the_sift", "pipeline/ichor_clouds")).withVertexShader(SHADER).withFragmentShader(SHADER).build());
-      FLAT = RenderPipelines.register(RenderPipeline.builder(new RenderPipeline.Snippet[]{RenderPipelines.CLOUDS_SNIPPET}).withLocation(Identifier.fromNamespaceAndPath("the_sift", "pipeline/flat_ichor_clouds")).withVertexShader(SHADER).withFragmentShader(SHADER).withCull(false).build());
-      OIT_FANCY = RenderPipelines.register(OitPipelineSet.builder("the_sift/ichor_clouds", RenderPipeline.builder(new RenderPipeline.Snippet[]{RenderPipelines.OIT_CLOUDS_SNIPPET}).withVertexShader(SHADER).withFragmentShader(SHADER)).build());
-      OIT_FLAT = RenderPipelines.register(OitPipelineSet.builder("the_sift/flat_ichor_clouds", RenderPipeline.builder(new RenderPipeline.Snippet[]{RenderPipelines.OIT_CLOUDS_SNIPPET}).withVertexShader(SHADER).withFragmentShader(SHADER).withCull(false)).build());
+      FANCY = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.CLOUDS_SNIPPET).withLocation(Identifier.fromNamespaceAndPath("the_sift", "pipeline/ichor_clouds")).withVertexShader(SHADER).withFragmentShader(SHADER).build());
+      FLAT = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.CLOUDS_SNIPPET).withLocation(Identifier.fromNamespaceAndPath("the_sift", "pipeline/flat_ichor_clouds")).withVertexShader(SHADER).withFragmentShader(SHADER).withCull(false).build());
+      OIT_FANCY = RenderPipelines.register(OitPipelineSet.builder("the_sift/ichor_clouds", RenderPipeline.builder(RenderPipelines.OIT_CLOUDS_SNIPPET).withVertexShader(SHADER).withFragmentShader(SHADER)).build());
+      OIT_FLAT = RenderPipelines.register(OitPipelineSet.builder("the_sift/flat_ichor_clouds", RenderPipeline.builder(RenderPipelines.OIT_CLOUDS_SNIPPET).withVertexShader(SHADER).withFragmentShader(SHADER).withCull(false)).build());
    }
 }

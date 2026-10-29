@@ -11,14 +11,15 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.BlockItemStateProperties;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.block.Block;
+import org.jspecify.annotations.NonNull;
 
 public final class SonorousDeepslateBlockItem extends BlockItem {
    public SonorousDeepslateBlockItem(Block block, Item.Properties properties) {
       super(block, properties);
    }
 
-   public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer tooltip, TooltipFlag tooltipFlag) {
-      BlockItemStateProperties properties = (BlockItemStateProperties)stack.get(DataComponents.BLOCK_STATE);
+   public void appendHoverText(ItemStack stack, Item.@NonNull TooltipContext context, @NonNull TooltipDisplay display, @NonNull Consumer tooltip, @NonNull TooltipFlag tooltipFlag) {
+      BlockItemStateProperties properties = stack.get(DataComponents.BLOCK_STATE);
       SonorousDeepslateBlock.Mode mode = properties == null ? SonorousDeepslateBlock.Mode.HORN : (SonorousDeepslateBlock.Mode)properties.get(SonorousDeepslateBlock.MODE);
       if (mode == null) {
          mode = SonorousDeepslateBlock.Mode.HORN;

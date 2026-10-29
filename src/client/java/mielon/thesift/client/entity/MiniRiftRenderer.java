@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.NonNull;
 
 public final class MiniRiftRenderer extends EntityRenderer<MiniRiftEntity, MiniRiftRenderer.State> {
    private static final RiftMesh CUBE = new RiftMesh(List.of(new RiftAssetModel.Box(-0.4F, -0.4F, -0.4F, 0.4F, 0.4F, 0.4F)));
@@ -25,20 +26,20 @@ public final class MiniRiftRenderer extends EntityRenderer<MiniRiftEntity, MiniR
       this.shadowRadius = 0.0F;
    }
 
-   public MiniRiftRenderer.State createRenderState() {
+   public MiniRiftRenderer.@NonNull State createRenderState() {
       return new State();
    }
 
-   public void extractRenderState(MiniRiftEntity entity, MiniRiftRenderer.State state, float partial) {
+   public void extractRenderState(@NonNull MiniRiftEntity entity, MiniRiftRenderer.@NonNull State state, float partial) {
       super.extractRenderState(entity, state, partial);
       state.open = entity.getOpenScale(partial);
    }
 
-   protected int getBlockLightLevel(MiniRiftEntity entity, BlockPos pos) {
+   protected int getBlockLightLevel(@NonNull MiniRiftEntity entity, @NonNull BlockPos pos) {
       return 15;
    }
 
-   public void submit(MiniRiftRenderer.State state, PoseStack poses, SubmitNodeCollector collector, CameraRenderState camera) {
+   public void submit(MiniRiftRenderer.State state, @NonNull PoseStack poses, @NonNull SubmitNodeCollector collector, @NonNull CameraRenderState camera) {
       if (!(state.open <= 0.0F)) {
          poses.pushPose();
          float size = state.open * state.open * (3.0F - 2.0F * state.open);
@@ -70,13 +71,13 @@ public final class MiniRiftRenderer extends EntityRenderer<MiniRiftEntity, MiniR
          return 0.0F;
       } else {
          float partial = minecraft.getDeltaTracker().getGameTimeDeltaPartialTick(false);
-         return ((float)minecraft.level.getGameTime() + partial) / 20.0F;
+         return ((float) minecraft.level.getGameTime() + partial) / 20.0F;
       }
    }
 
    private static float destinationAlpha(double distanceSquared) {
-      float distance = (float)Math.sqrt(Math.max((double)0.0F, distanceSquared));
-      float t = Math.max(0.0F, Math.min(1.0F, (distance - 3.0F) / 12.0F));
+      float distance = (float) Math.sqrt(Math.max(0.0F, distanceSquared));
+      float t = Math.clamp((distance - 3.0F) / 12.0F, 0.0F, 1.0F);
       float smooth = t * t * (3.0F - 2.0F * t);
       return (1.0F - smooth) * 0.78F;
    }

@@ -29,11 +29,10 @@ public final class ModWorldgen {
    }
 
    private static MapCodec register(String name, MapCodec codec) {
-      return (MapCodec)Registry.register(BuiltInRegistries.FEATURE_TYPE, Identifier.fromNamespaceAndPath("the_sift", name), codec);
+      return Registry.register(BuiltInRegistries.FEATURE_TYPE, Identifier.fromNamespaceAndPath("the_sift", name), codec);
    }
 
-   public static void initialize() {
-   }
+   public static void initialize() {}
 
    static {
       LUSH_MONOLITH = register("lush_monolith", SiftMonolithFeature.LUSH_CODEC);

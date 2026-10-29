@@ -18,7 +18,7 @@ public abstract class PitcherCropBlockMixin {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void theSift$allowSiftSoil(BlockState floor, BlockGetter level, BlockPos floorPos, CallbackInfoReturnable cir) {
+   private void theSift$allowSiftSoil(BlockState floor, BlockGetter level, BlockPos floorPos, CallbackInfoReturnable<Boolean> cir) {
       if (theSift$isSiftSoil(floor)) {
          cir.setReturnValue(true);
       }
@@ -30,7 +30,7 @@ public abstract class PitcherCropBlockMixin {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void theSift$allowGeneratedBulbsInCaves(BlockState state, LevelReader level, BlockPos pos, CallbackInfoReturnable cir) {
+   private void theSift$allowGeneratedBulbsInCaves(BlockState state, LevelReader level, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
       if (theSift$isSiftSoil(level.getBlockState(pos.below()))) {
          cir.setReturnValue(true);
       }

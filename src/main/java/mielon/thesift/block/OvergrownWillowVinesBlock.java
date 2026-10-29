@@ -7,14 +7,13 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.VineBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.Property;
+import org.jspecify.annotations.NonNull;
 
 public class OvergrownWillowVinesBlock extends VineBlock {
    public static final BooleanProperty BOTTOM;
@@ -25,15 +24,15 @@ public class OvergrownWillowVinesBlock extends VineBlock {
 
    public OvergrownWillowVinesBlock(BlockBehaviour.Properties properties) {
       super(properties);
-      this.registerDefaultState((BlockState)((BlockState)((BlockState)((BlockState)((BlockState)this.defaultBlockState().setValue(BOTTOM, true)).setValue(NORTH_BOTTOM, true)).setValue(EAST_BOTTOM, true)).setValue(SOUTH_BOTTOM, true)).setValue(WEST_BOTTOM, true));
+      this.registerDefaultState(this.defaultBlockState().setValue(BOTTOM, true).setValue(NORTH_BOTTOM, true).setValue(EAST_BOTTOM, true).setValue(SOUTH_BOTTOM, true).setValue(WEST_BOTTOM, true));
    }
 
-   public BlockState getStateForPlacement(BlockPlaceContext context) {
+   public BlockState getStateForPlacement(@NonNull BlockPlaceContext context) {
       BlockState placed = super.getStateForPlacement(context);
       return placed == null ? null : refreshBottomFaces(placed, context.getLevel().getBlockState(context.getClickedPos().below()));
    }
 
-   protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
+   protected @NonNull BlockState updateShape(@NonNull BlockState state, @NonNull LevelReader level, @NonNull ScheduledTickAccess scheduledTickAccess, @NonNull BlockPos pos, @NonNull Direction direction, @NonNull BlockPos neighborPos, @NonNull BlockState neighborState, @NonNull RandomSource random) {
       BlockState updated = super.updateShape(state, level, scheduledTickAccess, pos, direction, neighborPos, neighborState, random);
       if (updated.isAir()) {
          return updated;
@@ -43,9 +42,9 @@ public class OvergrownWillowVinesBlock extends VineBlock {
       }
    }
 
-   protected void createBlockStateDefinition(StateDefinition.Builder builder) {
+   protected void createBlockStateDefinition(StateDefinition.@NonNull Builder builder) {
       super.createBlockStateDefinition(builder);
-      builder.add(new Property[]{BOTTOM, NORTH_BOTTOM, EAST_BOTTOM, SOUTH_BOTTOM, WEST_BOTTOM});
+      builder.add(BOTTOM, NORTH_BOTTOM, EAST_BOTTOM, SOUTH_BOTTOM, WEST_BOTTOM);
    }
 
    public static BlockState refreshBottomFaces(BlockState state, BlockState below) {
@@ -56,15 +55,15 @@ public class OvergrownWillowVinesBlock extends VineBlock {
 
          for (Direction direction : Plane.HORIZONTAL) {
             BooleanProperty face = VineBlock.getPropertyForFace(direction);
-            boolean active = state.hasProperty(face) && (Boolean)state.getValue(face);
+            boolean active = state.hasProperty(face) && state.getValue(face);
             boolean continues = active && hasFace(below, direction);
-            state = (BlockState)state.setValue(getBottomProperty(direction), !continues);
+            state = state.setValue(getBottomProperty(direction), !continues);
             if (continues) {
                everyActiveFaceEndsHere = false;
             }
          }
 
-         return (BlockState)state.setValue(BOTTOM, everyActiveFaceEndsHere);
+         return state.setValue(BOTTOM, everyActiveFaceEndsHere);
       }
    }
 
@@ -83,7 +82,7 @@ public class OvergrownWillowVinesBlock extends VineBlock {
 
    private static boolean hasFace(BlockState state, Direction direction) {
       BooleanProperty face = VineBlock.getPropertyForFace(direction);
-      return isVineSegment(state) && state.hasProperty(face) && (Boolean)state.getValue(face);
+      return isVineSegment(state) && state.hasProperty(face) && state.getValue(face);
    }
 
    private static boolean isVineSegment(BlockState state) {

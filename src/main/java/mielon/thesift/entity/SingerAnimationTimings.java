@@ -26,7 +26,7 @@ public record SingerAnimationTimings(int appearTicks, int singTicks, int disappe
 
                JsonObject root = JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject();
                JsonObject animations = root.getAsJsonObject("animations");
-               var3 = new SingerAnimationTimings(ticksfor (animations, "appear"), ticksfor (animations, "sing"), ticksfor (animations, "disappear"));
+               var3 = new SingerAnimationTimings(ticksFor(animations, "appear"), ticksFor(animations, "sing"), ticksFor(animations, "disappear"));
             } catch (Throwable var5) {
                if (stream != null) {
                   try {
@@ -39,15 +39,9 @@ public record SingerAnimationTimings(int appearTicks, int singTicks, int disappe
                throw var5;
             }
 
-            if (stream != null) {
-               stream.close();
-            }
-
-            return var3;
-         }
-
-         if (stream != null) {
             stream.close();
+
+             return var3;
          }
 
          return var7;
@@ -56,17 +50,17 @@ public record SingerAnimationTimings(int appearTicks, int singTicks, int disappe
       }
    }
 
-   private static int ticksfor (JsonObject animations, String name) {
+   private static int ticksFor(JsonObject animations, String name) {
       JsonElement element = animations == null ? null : animations.get(name);
       if (element != null && element.isJsonObject()) {
          JsonObject animation = element.getAsJsonObject();
-         double length = (double)1.0F;
+         double length = 1.0F;
          JsonElement lengthElement = animation.get("animation_length");
          if (lengthElement != null && lengthElement.isJsonPrimitive()) {
             length = Math.max(0.05, lengthElement.getAsDouble());
          }
 
-         return Math.max(1, (int)Math.ceil(length * (double)20.0F));
+         return Math.max(1, (int) Math.ceil(length * (double) 20.0F));
       } else {
          return 20;
       }

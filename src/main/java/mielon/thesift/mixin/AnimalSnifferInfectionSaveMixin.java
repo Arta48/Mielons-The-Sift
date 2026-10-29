@@ -17,9 +17,8 @@ public abstract class AnimalSnifferInfectionSaveMixin {
       at = {@At("TAIL")}
    )
    private void theSift$saveSnifferInfection(ValueOutput output, CallbackInfo ci) {
-      if ((Object)this instanceof Sniffer && (Object)this instanceof SnifferInfectionAccess) {
-         SnifferInfectionAccess access = (SnifferInfectionAccess)this;
-         if (access.theSift$getSculkInfectionTicks() > 0) {
+      if ((Object)this instanceof Sniffer && this instanceof SnifferInfectionAccess access) {
+          if (access.theSift$getSculkInfectionTicks() > 0) {
             output.putInt("TheSiftSculkInfection", access.theSift$getSculkInfectionTicks());
          }
       }
@@ -31,9 +30,8 @@ public abstract class AnimalSnifferInfectionSaveMixin {
       at = {@At("TAIL")}
    )
    private void theSift$loadSnifferInfection(ValueInput input, CallbackInfo ci) {
-      if ((Object)this instanceof Sniffer && (Object)this instanceof SnifferInfectionAccess) {
-         SnifferInfectionAccess access = (SnifferInfectionAccess)this;
-         access.theSift$setSculkInfectionTicks(input.getIntOr("TheSiftSculkInfection", 0));
+      if ((Object)this instanceof Sniffer && this instanceof SnifferInfectionAccess access) {
+          access.theSift$setSculkInfectionTicks(input.getIntOr("TheSiftSculkInfection", 0));
       }
 
    }

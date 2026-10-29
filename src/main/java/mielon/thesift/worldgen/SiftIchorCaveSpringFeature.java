@@ -11,16 +11,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import org.jspecify.annotations.NonNull;
 
 public final class SiftIchorCaveSpringFeature implements Feature {
    public static final MapCodec CODEC = MapCodec.unit(SiftIchorCaveSpringFeature::new);
    private static final Direction[] POSSIBLE_OPENINGS;
 
-   public MapCodec codec() {
+   public @NonNull MapCodec codec() {
       return CODEC;
    }
 
-   public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+   public boolean place(@NonNull WorldGenLevel level, @NonNull ChunkGenerator generator, @NonNull RandomSource random, @NonNull BlockPos origin) {
       for (Direction direction : POSSIBLE_OPENINGS) {
          BlockPos opening = origin.relative(direction);
          if (level.isEmptyBlock(opening)) {

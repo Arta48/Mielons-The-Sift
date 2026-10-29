@@ -23,14 +23,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin({NoteBlock.class})
 public abstract class NoteBlockMixin {
-   private static final double THE_SIFT_NOTE_MARKER = (double)100.0F;
+   private static final double THE_SIFT_NOTE_MARKER = 100.0F;
 
    @Inject(
       method = {"useWithoutItem"},
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void theSift$cycleSonorousSound(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit, CallbackInfoReturnable cir) {
+   private void theSift$cycleSonorousSound(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit, CallbackInfoReturnable<InteractionResult.Success> cir) {
       if (SonorousNoteBlocks.isHorn(level, pos)) {
          if (!level.isClientSide()) {
             SonorousNoteBlocks.playHornGlitch(level, pos);
@@ -44,7 +44,7 @@ public abstract class NoteBlockMixin {
             SonorousAutoplay.interrupt(serverLevel, pos);
             int current = SonorousNoteBlocks.getIndex(state);
             int nextStored = (current + 1) % 8;
-            BlockState newState = (BlockState)state.setValue(NoteBlock.NOTE, nextStored);
+            BlockState newState = state.setValue(NoteBlock.NOTE, nextStored);
             level.setBlock(pos, newState, 3);
             level.blockEvent(pos, newState.getBlock(), 0, 0);
             player.awardStat(Stats.TUNE_NOTEBLOCK);
@@ -74,14 +74,14 @@ public abstract class NoteBlockMixin {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void theSift$playSonorousSound(BlockState state, Level level, BlockPos pos, int id, int param, CallbackInfoReturnable cir) {
+   private void theSift$playSonorousSound(BlockState state, Level level, BlockPos pos, int id, int param, CallbackInfoReturnable<Boolean> cir) {
       if (SonorousNoteBlocks.isHorn(level, pos)) {
          SonorousNoteBlocks.playHornGlitch(level, pos);
          cir.setReturnValue(true);
       } else if (SonorousNoteBlocks.isSonorous(level, pos)) {
          int index = SonorousNoteBlocks.getIndex(state);
          double encodedColor = (double)100.0F + (double)(index * 3);
-         level.addParticle(ParticleTypes.NOTE, (double)pos.getX() + (double)0.5F, (double)pos.getY() + 1.2, (double)pos.getZ() + (double)0.5F, encodedColor, (double)0.0F, (double)0.0F);
+         level.addParticle(ParticleTypes.NOTE, (double)pos.getX() + (double)0.5F, (double)pos.getY() + 1.2, (double)pos.getZ() + (double)0.5F, encodedColor, 0.0F, 0.0F);
          SonorousNoteBlocks.playSound(level, pos, index);
          cir.setReturnValue(true);
       }

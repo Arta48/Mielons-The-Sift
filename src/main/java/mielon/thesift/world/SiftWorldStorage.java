@@ -7,7 +7,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
@@ -17,7 +16,7 @@ public final class SiftWorldStorage extends SavedData {
    private static final String RETURN_POINTS = "return_points";
    private static final String PORTAL_GUARDS = "portal_guards";
    private static final String RIFT_ROUTES = "rift_routes";
-   private static final SavedDataType TYPE;
+   private static final SavedDataType<SiftWorldStorage> TYPE;
    private final CompoundTag root;
 
    private SiftWorldStorage() {
@@ -33,10 +32,10 @@ public final class SiftWorldStorage extends SavedData {
    }
 
    private static SiftWorldStorage data(MinecraftServer server) {
-      return (SiftWorldStorage)server.getDataStorage().computeIfAbsent(TYPE);
+      return server.getDataStorage().computeIfAbsent(TYPE);
    }
 
-   public static Optional getPortalAnchor(MinecraftServer server) {
+   public static Optional<BlockPos> getPortalAnchor(MinecraftServer server) {
       SiftWorldStorage data = data(server);
       CompoundTag tag = data.getOrMigrateDimensionState(server);
       return !tag.getBooleanOr("portal_generated", false) ? Optional.empty() : Optional.of(new BlockPos(tag.getIntOr("portal_x", 0), tag.getIntOr("portal_y", 64), tag.getIntOr("portal_z", 0)));
@@ -81,26 +80,26 @@ public final class SiftWorldStorage extends SavedData {
       }
    }
 
-   public static Optional getReturnPoint(MinecraftServer server, UUID entityId) {
-      Optional<CompoundTag> optional = data(server).getOrMigrateEntry(server, "return_points", entityId, "return/" + String.valueOf(entityId));
+   public static Optional<ReturnPoint> getReturnPoint(MinecraftServer server, UUID entityId) {
+      Optional<CompoundTag> optional = data(server).getOrMigrateEntry(server, "return_points", entityId, "return/" + entityId);
       if (optional.isEmpty()) {
          return Optional.empty();
       } else {
-         CompoundTag tag = (CompoundTag)optional.get();
+         CompoundTag tag = optional.get();
          if (!tag.getBooleanOr("valid", false)) {
             return Optional.empty();
          } else {
-            double x = tag.getDoubleOr("x", (double)0.5F);
-            double y = tag.getDoubleOr("y", (double)80.0F);
-            double z = tag.getDoubleOr("z", (double)0.5F);
-            return Optional.of(new ReturnPoint(x, y, z, tag.getFloatOr("yaw", 0.0F), tag.getFloatOr("pitch", 0.0F), new BlockPos(tag.getIntOr("portal_x", (int)Math.floor(x)), tag.getIntOr("portal_y", (int)Math.floor(y)), tag.getIntOr("portal_z", (int)Math.floor(z)))));
+            double x = tag.getDoubleOr("x", 0.5F);
+            double y = tag.getDoubleOr("y", 80.0F);
+            double z = tag.getDoubleOr("z", 0.5F);
+            return Optional.of(new ReturnPoint(x, y, z, tag.getFloatOr("yaw", 0.0F), tag.getFloatOr("pitch", 0.0F), new BlockPos(tag.getIntOr("portal_x", (int) Math.floor(x)), tag.getIntOr("portal_y", (int) Math.floor(y)), tag.getIntOr("portal_z", (int) Math.floor(z)))));
          }
       }
    }
 
    public static void clearReturnPoint(MinecraftServer server, UUID entityId) {
       data(server).removeEntry("return_points", entityId);
-      clearLegacyIfPresent(server, "return/" + String.valueOf(entityId));
+      clearLegacyIfPresent(server, "return/" + entityId);
    }
 
    public static void markPortalExitRequired(Entity entity) {
@@ -113,12 +112,12 @@ public final class SiftWorldStorage extends SavedData {
    }
 
    public static boolean requiresPortalExit(MinecraftServer server, UUID entityId) {
-      return (Boolean)data(server).getOrMigrateEntry(server, "portal_guards", entityId, "portal_guard/" + String.valueOf(entityId)).map((tag) -> ((CompoundTag) tag).getBooleanOr("waiting_for_exit", false)).orElse(false);
+      return data(server).getOrMigrateEntry(server, "portal_guards", entityId, "portal_guard/" + entityId).map((tag) -> tag.getBooleanOr("waiting_for_exit", false)).orElse(false);
    }
 
    public static void clearPortalExitRequired(MinecraftServer server, UUID entityId) {
       data(server).removeEntry("portal_guards", entityId);
-      clearLegacyIfPresent(server, "portal_guard/" + String.valueOf(entityId));
+      clearLegacyIfPresent(server, "portal_guard/" + entityId);
    }
 
    public static void markRiftEntry(Entity entity) {
@@ -139,18 +138,18 @@ public final class SiftWorldStorage extends SavedData {
       data(server).putEntry("rift_routes", entityId, tag);
    }
 
-   public static Optional getRiftRoute(MinecraftServer server, UUID entityId, UUID exitId, long now) {
+   public static Optional<BlockPos> getRiftRoute(MinecraftServer server, UUID entityId, UUID exitId, long now) {
       SiftWorldStorage data = data(server);
-      Optional<CompoundTag> optional = data.getOrMigrateEntry(server, "rift_routes", entityId, "rift_route/" + String.valueOf(entityId));
+      Optional<CompoundTag> optional = data.getOrMigrateEntry(server, "rift_routes", entityId, "rift_route/" + entityId);
       if (optional.isEmpty()) {
          return Optional.empty();
       } else {
-         CompoundTag tag = (CompoundTag)optional.get();
+         CompoundTag tag = optional.get();
          if (tag.getStringOr("exit", "").equals(exitId.toString()) && tag.getLongOr("expires", 0L) > now) {
             return Optional.of(new BlockPos(tag.getIntOr("x", 0), tag.getIntOr("y", 80), tag.getIntOr("z", 0)));
          } else {
             data.removeEntry("rift_routes", entityId);
-            clearLegacyIfPresent(server, "rift_route/" + String.valueOf(entityId));
+            clearLegacyIfPresent(server, "rift_route/" + entityId);
             return Optional.empty();
          }
       }
@@ -159,7 +158,7 @@ public final class SiftWorldStorage extends SavedData {
    private CompoundTag getOrMigrateDimensionState(MinecraftServer server) {
       Optional<CompoundTag> current = this.root.getCompound("dimension_state");
       if (current.isPresent()) {
-         return (CompoundTag)current.get();
+         return current.get();
       } else {
          CompoundTag legacy = server.getCommandStorage().get(legacyId("dimension_state"));
          if (!legacy.isEmpty()) {
@@ -174,11 +173,11 @@ public final class SiftWorldStorage extends SavedData {
       }
    }
 
-   private Optional getOrMigrateEntry(MinecraftServer server, String sectionName, UUID entityId, String legacyPath) {
+   private Optional<CompoundTag> getOrMigrateEntry(MinecraftServer server, String sectionName, UUID entityId, String legacyPath) {
       String key = entityId.toString();
       Optional<CompoundTag> section = this.root.getCompound(sectionName);
       if (section.isPresent()) {
-         Optional<CompoundTag> current = ((CompoundTag)section.get()).getCompound(key);
+         Optional<CompoundTag> current = section.get().getCompound(key);
          if (current.isPresent()) {
             return current;
          }
@@ -203,8 +202,8 @@ public final class SiftWorldStorage extends SavedData {
 
    private void removeEntry(String sectionName, UUID entityId) {
       Optional<CompoundTag> section = this.root.getCompound(sectionName);
-      if (!section.isEmpty()) {
-         CompoundTag entries = (CompoundTag)section.get();
+      if (section.isPresent()) {
+         CompoundTag entries = section.get();
          if (entries.remove(entityId.toString()) != null) {
             if (entries.isEmpty()) {
                this.root.remove(sectionName);
@@ -221,7 +220,7 @@ public final class SiftWorldStorage extends SavedData {
    private CompoundTag section(String name) {
       Optional<CompoundTag> current = this.root.getCompound(name);
       if (current.isPresent()) {
-         return (CompoundTag)current.get();
+         return current.get();
       } else {
          CompoundTag created = new CompoundTag();
          this.root.put(name, created);
@@ -242,9 +241,8 @@ public final class SiftWorldStorage extends SavedData {
    }
 
    static {
-      TYPE = new SavedDataType(Identifier.fromNamespaceAndPath("the_sift", "world_state"), SiftWorldStorage::new, CompoundTag.CODEC.xmap(SiftWorldStorage::new, SiftWorldStorage::saveTag), (DataFixTypes)null);
+      TYPE = new SavedDataType<>(Identifier.fromNamespaceAndPath("the_sift", "world_state"), SiftWorldStorage::new, CompoundTag.CODEC.xmap(SiftWorldStorage::new, SiftWorldStorage::saveTag), null);
    }
 
-   public static record ReturnPoint(double x, double y, double z, float yaw, float pitch, BlockPos portalBlock) {
-   }
+   public record ReturnPoint(double x, double y, double z, float yaw, float pitch, BlockPos portalBlock) {}
 }

@@ -12,15 +12,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import org.jspecify.annotations.NonNull;
 
 public final class CoveredGrowthCleanupFeature implements Feature {
-   public static final MapCodec CODEC = MapCodec.unit(CoveredGrowthCleanupFeature::new);
+   public static final MapCodec<CoveredGrowthCleanupFeature> CODEC = MapCodec.unit(CoveredGrowthCleanupFeature::new);
 
-   public MapCodec codec() {
+   public @NonNull MapCodec<CoveredGrowthCleanupFeature> codec() {
       return CODEC;
    }
 
-   public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+   public boolean place(WorldGenLevel level, @NonNull ChunkGenerator generator, @NonNull RandomSource random, BlockPos origin) {
       int minX = origin.getX() & -16;
       int minZ = origin.getZ() & -16;
       int maxY = level.getMaxY() - 1;
@@ -51,8 +52,8 @@ public final class CoveredGrowthCleanupFeature implements Feature {
                   } else if (dry && state.is(ModBlocks.SIFTSLATE_GROWTH)) {
                      level.setBlock(cursor, ModBlocks.DRY_HEALTHY_SCULK_GROWTH.defaultBlockState(), 2);
                      changed = true;
-                  } else if (state.is(ModBlocks.SIFTSLATE_GROWTH) && (Boolean)state.getValue(SiftslateGrowthBlock.SNOWY) != ichorSnowCover) {
-                     level.setBlock(cursor, (BlockState)state.setValue(SiftslateGrowthBlock.SNOWY, ichorSnowCover), 2);
+                  } else if (state.is(ModBlocks.SIFTSLATE_GROWTH) && state.getValue(SiftslateGrowthBlock.SNOWY) != ichorSnowCover) {
+                     level.setBlock(cursor, state.setValue(SiftslateGrowthBlock.SNOWY, ichorSnowCover), 2);
                      changed = true;
                   }
                }

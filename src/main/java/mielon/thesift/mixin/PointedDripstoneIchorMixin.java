@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import org.spongepowered.asm.mixin.Mixin;
@@ -41,7 +42,7 @@ public abstract class PointedDripstoneIchorMixin {
       at = {@At("RETURN")},
       cancellable = true
    )
-   private static void theSift$resolveIchorDrip(ServerLevel level, BlockPos tip, CallbackInfoReturnable cir) {
+   private static void theSift$resolveIchorDrip(ServerLevel level, BlockPos tip, CallbackInfoReturnable<FlowingFluid> cir) {
       if (cir.getReturnValue() == Fluids.EMPTY && theSift$hasIchorSourceAbove(level, tip)) {
          cir.setReturnValue(ModFluids.ICHOR);
       }

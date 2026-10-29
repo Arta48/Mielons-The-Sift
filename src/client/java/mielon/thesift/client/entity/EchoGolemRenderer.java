@@ -11,9 +11,10 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.util.Mth;
+import org.jspecify.annotations.NonNull;
 
 public final class EchoGolemRenderer extends GeoEntityRenderer {
-   static final DataTicket ECHO_GOLEM_ENTITY = DataTicket.create("the_sift_echo_golem_entity", EchoGolemEntity.class);
+   static final DataTicket<EchoGolemEntity> ECHO_GOLEM_ENTITY = DataTicket.create("the_sift_echo_golem_entity", EchoGolemEntity.class);
 
    public EchoGolemRenderer(EntityRendererProvider.Context context) {
       super(context, new EchoGolemModel());
@@ -25,11 +26,11 @@ public final class EchoGolemRenderer extends GeoEntityRenderer {
    public void addRenderData(EchoGolemEntity animatable, Void relatedObject, EntityRenderState renderState, float partialTick) {
       super.addRenderData(animatable, relatedObject, renderState, partialTick);
       renderState.addGeckolibData(ECHO_GOLEM_ENTITY, animatable);
-      EchoGolemLightBridge.update(animatable, animatable.getPosition(partialTick).add((double)0.0F, (double)2.125F, (double)0.0F));
+      EchoGolemLightBridge.update(animatable, animatable.getPosition(partialTick).add(0.0F, 2.125F, 0.0F));
    }
 
-   public void preRenderPass(RenderPassInfo renderPassInfo, SubmitNodeCollector renderTasks) {
-      EchoGolemEntity golem = (EchoGolemEntity)renderPassInfo.getGeckolibData(ECHO_GOLEM_ENTITY);
+   public void preRenderPass(RenderPassInfo renderPassInfo, @NonNull SubmitNodeCollector renderTasks) {
+      EchoGolemEntity golem = (EchoGolemEntity) renderPassInfo.getGeckolibData(ECHO_GOLEM_ENTITY);
       if (golem != null && golem.hasSoulBlock()) {
          renderPassInfo.addLocatorPositionListener("soul_light", (worldPos, modelPos, localPos) -> {
             if (worldPos != null) {
@@ -40,16 +41,16 @@ public final class EchoGolemRenderer extends GeoEntityRenderer {
       }
    }
 
-   public void adjustModelBonesForRender(RenderPassInfo renderPassInfo, BoneSnapshots snapshots) {
+   public void adjustModelBonesForRender(RenderPassInfo renderPassInfo, @NonNull BoneSnapshots snapshots) {
       EchoGolemEntity golem = (EchoGolemEntity)renderPassInfo.getGeckolibData(ECHO_GOLEM_ENTITY);
       if (golem != null) {
-         float partialTick = (Float)renderPassInfo.getOrDefaultGeckolibData(DataTickets.PARTIAL_TICK, 0.0F);
+         float partialTick = (Float) renderPassInfo.getOrDefaultGeckolibData(DataTickets.PARTIAL_TICK, 0.0F);
          float headYaw = Mth.rotLerp(partialTick, golem.yHeadRotO, golem.getYHeadRot());
          float bodyYaw = Mth.rotLerp(partialTick, golem.yBodyRotO, golem.yBodyRot);
          float relativeYaw = Mth.clamp(Mth.wrapDegrees(headYaw - bodyYaw), -55.0F, 55.0F);
          snapshots.ifPresent("head", (head) -> {
             head.setRotX(0.0F);
-            head.setRotY(head.getRotY() + relativeYaw * ((float)Math.PI / 180F));
+            head.setRotY(head.getRotY() + relativeYaw * ((float) Math.PI / 180F));
          });
       }
    }

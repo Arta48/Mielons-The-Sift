@@ -6,32 +6,31 @@ import net.minecraft.world.level.Level;
 public final class SiftLoadingScreenState {
    private static boolean active;
    private static boolean rift;
-   private static ResourceKey sourceDimension;
+   private static ResourceKey<Level> sourceDimension;
    private static long startedAtNanos;
 
    public static boolean isRift() {
       return rift;
    }
 
-   private SiftLoadingScreenState() {
-   }
+   private SiftLoadingScreenState() {}
 
    public static boolean isActive() {
       return active;
    }
 
-   public static void begin(ResourceKey source) {
+   public static void begin(ResourceKey<Level> source) {
       begin(source, false);
    }
 
-   public static void begin(ResourceKey source, boolean fromRift) {
+   public static void begin(ResourceKey<Level> source, boolean fromRift) {
       rift = fromRift;
       active = true;
       sourceDimension = source;
       startedAtNanos = System.nanoTime();
    }
 
-   public static void markVanillaTransition(ResourceKey oldDimension) {
+   public static void markVanillaTransition(ResourceKey<Level> oldDimension) {
       if (!active) {
          begin(oldDimension);
       } else if (sourceDimension == null) {
@@ -40,12 +39,12 @@ public final class SiftLoadingScreenState {
 
    }
 
-   public static ResourceKey sourceDimension() {
+   public static ResourceKey<Level> sourceDimension() {
       return sourceDimension;
    }
 
    public static boolean isOlderThanSeconds(double seconds) {
-      return active && startedAtNanos != 0L && (double)(System.nanoTime() - startedAtNanos) > seconds * (double)1.0E9F;
+      return active && startedAtNanos != 0L && (double) (System.nanoTime() - startedAtNanos) > seconds * (double) 1.0E9F;
    }
 
    public static void clear() {

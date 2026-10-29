@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.NonNull;
 
 public final class RiftRenderer extends EntityRenderer<RiftEntity, RiftRenderState> {
    private static final RiftMesh OPEN;
@@ -24,22 +25,22 @@ public final class RiftRenderer extends EntityRenderer<RiftEntity, RiftRenderSta
       this.shadowRadius = 0.0F;
    }
 
-   public RiftRenderState createRenderState() {
+   public @NonNull RiftRenderState createRenderState() {
       return new RiftRenderState();
    }
 
-   public void extractRenderState(RiftEntity entity, RiftRenderState state, float partial) {
+   public void extractRenderState(@NonNull RiftEntity entity, @NonNull RiftRenderState state, float partial) {
       super.extractRenderState(entity, state, partial);
       state.openScale = entity.getOpenScale(partial);
       state.longAlongX = entity.isLongAlongX();
       state.targetSift = entity.targetsSift();
    }
 
-   protected int getBlockLightLevel(RiftEntity entity, BlockPos pos) {
+   protected int getBlockLightLevel(@NonNull RiftEntity entity, @NonNull BlockPos pos) {
       return 15;
    }
 
-   public void submit(RiftRenderState state, PoseStack poses, SubmitNodeCollector collector, CameraRenderState camera) {
+   public void submit(RiftRenderState state, @NonNull PoseStack poses, @NonNull SubmitNodeCollector collector, @NonNull CameraRenderState camera) {
       if (!(state.openScale <= 0.0F)) {
          RiftMesh mesh = state.openScale >= 1.0F ? OPEN : new RiftMesh(RiftAssetModel.INSTANCE.boxes(state.openScale));
          boolean axis = state.longAlongX;
@@ -74,8 +75,8 @@ public final class RiftRenderer extends EntityRenderer<RiftEntity, RiftRenderSta
    }
 
    private static float destinationAlpha(double distanceSquared) {
-      float distance = (float)Math.sqrt(Math.max((double)0.0F, distanceSquared));
-      float t = Math.max(0.0F, Math.min(1.0F, (distance - 3.0F) / 12.0F));
+      float distance = (float)Math.sqrt(Math.max(0.0F, distanceSquared));
+      float t = Math.clamp((distance - 3.0F) / 12.0F, 0.0F, 1.0F);
       float smooth = t * t * (3.0F - 2.0F * t);
       return (1.0F - smooth) * 0.78F;
    }

@@ -85,13 +85,13 @@ public final class TheSiftMod implements ModInitializer {
    }
 
    private static void registerServerLifecycle() {
-      ServerTickEvents.END_SERVER_TICK.register((ServerTickEvents.EndTick)(server) -> {
+      ServerTickEvents.END_SERVER_TICK.register((server) -> {
          SiftTeleportManager.tick(server);
          RiftManager.tick(server);
          SiftiteRecoveryManager.tick(server);
          IchorWaterlogging.tick(server);
       });
-      ServerLifecycleEvents.SERVER_STOPPED.register((ServerLifecycleEvents.ServerStopped)(server) -> {
+      ServerLifecycleEvents.SERVER_STOPPED.register((server) -> {
          SonorousConsoles.clearTransientBuffers();
          SiftTeleportManager.clearTransientState();
          RiftManager.clearTransientState();

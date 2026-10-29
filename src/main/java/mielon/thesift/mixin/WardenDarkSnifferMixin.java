@@ -28,9 +28,9 @@ public abstract class WardenDarkSnifferMixin implements WardenPettingAccess {
    @Unique
    private static final EntityDataAccessor THE_SIFT$PETTING;
    @Unique
-   private static final double THE_SIFT$SEARCH_RANGE = (double)18.0F;
+   private static final double THE_SIFT$SEARCH_RANGE = 18.0F;
    @Unique
-   private static final double THE_SIFT$PETTING_DISTANCE_SQUARED = (double)12.25F;
+   private static final double THE_SIFT$PETTING_DISTANCE_SQUARED = 12.25F;
    @Unique
    private static final int THE_SIFT$PETTING_DURATION = 100;
    @Unique
@@ -78,7 +78,7 @@ public abstract class WardenDarkSnifferMixin implements WardenPettingAccess {
             }
 
             if (this.theSift$pettingSearchCooldown-- <= 0 && theSift$isCompletelyCalm(warden)) {
-               Stream var10000 = serverLevel.getEntitiesOfClass(DarkSnifferEntity.class, warden.getBoundingBox().inflate((double)18.0F), DarkSnifferEntity::isAvailableForWardenPetting).stream();
+               Stream var10000 = serverLevel.getEntitiesOfClass(DarkSnifferEntity.class, warden.getBoundingBox().inflate(18.0F), DarkSnifferEntity::isAvailableForWardenPetting).stream();
                Objects.requireNonNull(warden);
                DarkSnifferEntity candidate = (DarkSnifferEntity)var10000.min(Comparator.comparingDouble((DarkSnifferEntity e) -> warden.distanceToSqr(e))).orElse(null);
                if (candidate == null) {
@@ -110,7 +110,7 @@ public abstract class WardenDarkSnifferMixin implements WardenPettingAccess {
             warden.getNavigation().stop();
             warden.getEntityData().set(THE_SIFT$PETTING, true);
             if (this.theSift$pettingTicks % 20 == 8) {
-               serverLevel.sendParticles(ParticleTypes.HEART, target.getX(), target.getY() + (double)target.getBbHeight() + 0.35, target.getZ(), 1, 0.18, 0.08, 0.18, (double)0.0F);
+               serverLevel.sendParticles(ParticleTypes.HEART, target.getX(), target.getY() + (double)target.getBbHeight() + 0.35, target.getZ(), 1, 0.18, 0.08, 0.18, 0.0F);
             }
 
             if (++this.theSift$pettingTicks >= 100) {

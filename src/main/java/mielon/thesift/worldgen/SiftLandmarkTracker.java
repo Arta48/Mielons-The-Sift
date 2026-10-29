@@ -75,8 +75,8 @@ public final class SiftLandmarkTracker {
 
       for (long packed : (Set<Long>) POSITIONS.get(kind)) {
          BlockPos candidate = BlockPos.of(packed);
-         double dx = (double)(candidate.getX() - origin.getX());
-         double dz = (double)(candidate.getZ() - origin.getZ());
+         double dx = candidate.getX() - origin.getX();
+         double dz = candidate.getZ() - origin.getZ();
          double distance = dx * dx + dz * dz;
          if (distance < bestDistance) {
             bestDistance = distance;
@@ -100,7 +100,7 @@ public final class SiftLandmarkTracker {
          for (int chunkX = originChunkX - ring; chunkX <= originChunkX + ring; ++chunkX) {
             for (int chunkZ = originChunkZ - ring; chunkZ <= originChunkZ + ring; ++chunkZ) {
                if (ring <= 0 || Math.max(Math.abs(chunkX - originChunkX), Math.abs(chunkZ - originChunkZ)) == ring) {
-                  Set<Long> positions = (Set)index.get(chunkKey(chunkX, chunkZ));
+                  Set<Long> positions = index.get(chunkKey(chunkX, chunkZ));
                   if (positions != null) {
                      for (long packed : positions) {
                         if (packed != excludedPacked) {
@@ -145,7 +145,7 @@ public final class SiftLandmarkTracker {
          for (int chunkX = originChunkX - ring; chunkX <= originChunkX + ring; ++chunkX) {
             for (int chunkZ = originChunkZ - ring; chunkZ <= originChunkZ + ring; ++chunkZ) {
                if (ring <= 0 || Math.max(Math.abs(chunkX - originChunkX), Math.abs(chunkZ - originChunkZ)) == ring) {
-                  Set<Long> positions = (Set)index.get(chunkKey(chunkX, chunkZ));
+                  Set<Long> positions = index.get(chunkKey(chunkX, chunkZ));
                   if (positions != null) {
                      for (long packed : positions) {
                         if (!excluded.contains(packed)) {
@@ -181,7 +181,7 @@ public final class SiftLandmarkTracker {
 
       for (int chunkX = minimumChunkX; chunkX <= maximumChunkX; ++chunkX) {
          for (int chunkZ = minimumChunkZ; chunkZ <= maximumChunkZ; ++chunkZ) {
-            Set<Long> positions = (Set)index.get(chunkKey(chunkX, chunkZ));
+            Set<Long> positions = index.get(chunkKey(chunkX, chunkZ));
             if (positions != null) {
                for (long packed : positions) {
                   BlockPos candidate = BlockPos.of(packed);
@@ -206,7 +206,7 @@ public final class SiftLandmarkTracker {
 
       for (int chunkX = minimumChunkX; chunkX <= maximumChunkX; ++chunkX) {
          for (int chunkZ = minimumChunkZ; chunkZ <= maximumChunkZ; ++chunkZ) {
-            Set<Long> positions = (Set)index.get(chunkKey(chunkX, chunkZ));
+            Set<Long> positions = index.get(chunkKey(chunkX, chunkZ));
             if (positions != null) {
                for (long packed : positions) {
                   BlockPos candidate = BlockPos.of(packed);
@@ -269,8 +269,8 @@ public final class SiftLandmarkTracker {
    }
 
    private static double horizontalDistanceSqr(BlockPos first, BlockPos second) {
-      double dx = (double)(first.getX() - second.getX());
-      double dz = (double)(first.getZ() - second.getZ());
+      double dx = first.getX() - second.getX();
+      double dz = first.getZ() - second.getZ();
       return dx * dx + dz * dz;
    }
 
@@ -296,7 +296,7 @@ public final class SiftLandmarkTracker {
          CompoundTag stored = server.getCommandStorage().get(STORAGE_ID);
 
          for (Kind kind : SiftLandmarkTracker.Kind.values()) {
-            long[] positions = (long[])stored.getLongArray(kind.storageKey()).orElse(new long[0]);
+            long[] positions = stored.getLongArray(kind.storageKey()).orElse(new long[0]);
 
             for (long position : positions) {
                if (((Set)POSITIONS.get(kind)).add(position)) {
@@ -343,7 +343,7 @@ public final class SiftLandmarkTracker {
 
    }
 
-   public static enum Kind {
+   public enum Kind {
       ABANDONED_MAIN_PORTAL("abandoned_main_portals"),
       SNIFFER_CAVE("sniffer_caves"),
       SOUL_CANYON_ENTRANCE("soul_canyon_entrances"),
@@ -353,7 +353,7 @@ public final class SiftLandmarkTracker {
 
       private final String storageKey;
 
-      private Kind(String storageKey) {
+      Kind(String storageKey) {
          this.storageKey = storageKey;
       }
 
@@ -367,6 +367,6 @@ public final class SiftLandmarkTracker {
       }
    }
 
-   private static record CanyonActivity(boolean active, long validUntil) {
+   private record CanyonActivity(boolean active, long validUntil) {
    }
 }

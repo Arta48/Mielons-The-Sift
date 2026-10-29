@@ -17,20 +17,7 @@ public abstract class SnifferRendererMixin {
       at = {@At("TAIL")}
    )
    private void theSift$copyInfectionState(Sniffer sniffer, SnifferRenderState state, float partialTick, CallbackInfo ci) {
-      SnifferInfectionRenderState var10000;
-      boolean var10001;
-      label12: {
-         var10000 = (SnifferInfectionRenderState)state;
-         if (sniffer instanceof SnifferInfectionAccess access) {
-            if (access.theSift$isSculkInfected()) {
-               var10001 = true;
-               break label12;
-            }
-         }
-
-         var10001 = false;
-      }
-
-      var10000.theSift$setInfected(var10001);
+      boolean infected = sniffer instanceof SnifferInfectionAccess access && access.theSift$isSculkInfected();
+      ((SnifferInfectionRenderState) state).theSift$setInfected(infected);
    }
 }

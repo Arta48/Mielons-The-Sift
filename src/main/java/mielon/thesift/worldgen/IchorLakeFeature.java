@@ -21,16 +21,17 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import org.jspecify.annotations.NonNull;
 
 public final class IchorLakeFeature implements Feature {
-   public static final MapCodec CODEC = MapCodec.unit(IchorLakeFeature::new);
+   public static final MapCodec<IchorLakeFeature> CODEC = MapCodec.unit(IchorLakeFeature::new);
    private static final int MAX_SAFE_EXTENT = 24;
 
-   public MapCodec codec() {
+   public @NonNull MapCodec codec() {
       return CODEC;
    }
 
-   public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+   public boolean place(@NonNull WorldGenLevel level, @NonNull ChunkGenerator generator, @NonNull RandomSource random, @NonNull BlockPos origin) {
       SiftWorldgenBounds bounds = SiftWorldgenBounds.aroundWithNeighbourMargin(origin);
       int centerX = (origin.getX() & -16) + 9;
       int centerZ = (origin.getZ() & -16) + 9;
@@ -66,7 +67,7 @@ public final class IchorLakeFeature implements Feature {
                         return false;
                      } else {
                         Map<Xz, Integer> beach = buildBeachMask(water, beachWidth);
-                        List<Integer> waterSurfaces = new ArrayList(water.size());
+                        List<Integer> waterSurfaces = new ArrayList<>(water.size());
                         int minimumSurface = Integer.MAX_VALUE;
                         int maximumSurface = Integer.MIN_VALUE;
 
@@ -80,22 +81,22 @@ public final class IchorLakeFeature implements Feature {
                            return false;
                         } else {
                            waterSurfaces.sort(Comparator.naturalOrder());
-                           int waterY = (Integer)waterSurfaces.get((int)Math.floor((double)(waterSurfaces.size() - 1) * 0.36)) - 1;
+                           int waterY = waterSurfaces.get((int)Math.floor((double)(waterSurfaces.size() - 1) * 0.36)) - 1;
                            if (waterY >= level.getMinY() + 6 && waterY <= level.getMaxY() - 7) {
-                              Map<Xz, LakeColumn> beachColumns = new LinkedHashMap();
-                              Iterator var33 = beach.entrySet().iterator();
+                              Map<Xz, LakeColumn> beachColumns = new LinkedHashMap<>();
+                              Iterator<Map.Entry<Xz, Integer>> var33 = beach.entrySet().iterator();
 
                               while(true) {
                                  if (var33.hasNext()) {
-                                    Map.Entry<Xz, Integer> entry = (Map.Entry)var33.next();
-                                    Xz cell = (Xz)entry.getKey();
+                                    Map.Entry<Xz, Integer> entry = var33.next();
+                                    Xz cell = entry.getKey();
                                     if (!bounds.contains(cell.x(), cell.z())) {
                                        return false;
                                     }
 
                                     int surfaceY = SiftMonolithFeature.findTerrainSurface(level, cell.x(), cell.z());
                                     if (surfaceY >= 0 && SiftMonolithFeature.isSiftTerrain(level.getBlockState(new BlockPos(cell.x(), surfaceY - 1, cell.z())))) {
-                                       int layer = (Integer)entry.getValue();
+                                       int layer = entry.getValue();
                                        int naturalTop = surfaceY - 1;
                                        int targetTop = targetShoreTop(naturalTop, waterY, layer, beachWidth);
                                        if (naturalTop >= waterY - beachWidth && naturalTop <= waterY + variant.maximumRelief() + beachWidth && Math.abs(targetTop - naturalTop) <= beachWidth && hasNaturalSupport(level, cell.x(), naturalTop, cell.z(), 3)) {
@@ -122,7 +123,7 @@ public final class IchorLakeFeature implements Feature {
                                  int placed = 0;
 
                                  for (Map.Entry entry : beachColumns.entrySet()) {
-                                    placed += shapeBeach(level, (LakeColumn)entry.getValue(), (Integer)shoreTargets.get(entry.getKey()), palette, bounds);
+                                    placed += shapeBeach(level, (LakeColumn)entry.getValue(), shoreTargets.get(entry.getKey()), palette, bounds);
                                  }
 
                                  for (LakeColumn column : water.values()) {
@@ -189,7 +190,7 @@ public final class IchorLakeFeature implements Feature {
    }
 
    private static Map buildWaterMask(WorldGenLevel level, SiftWorldgenBounds bounds, int centerX, int centerZ, int radiusX, int radiusZ, double angle, double cos, double sin, long salt) {
-      Map<Xz, LakeColumn> water = new LinkedHashMap();
+      Map<Xz, LakeColumn> water = new LinkedHashMap<>();
       int limit = Mth.ceil((double)Math.max(radiusX, radiusZ) * 1.14);
 
       for (int dx = -limit; dx <= limit; ++dx) {
@@ -220,12 +221,12 @@ public final class IchorLakeFeature implements Feature {
    }
 
    private static Map buildBeachMask(Map water, int width) {
-      Map<Xz, Integer> beach = new HashMap();
+      Map<Xz, Integer> beach = new HashMap<>();
 
       for (Xz source : (Iterable<Xz>) water.keySet()) {
          for (int dx = -width; dx <= width; ++dx) {
             for (int dz = -width; dz <= width; ++dz) {
-               int layer = (int)Math.ceil(Math.sqrt((double)(dx * dx + dz * dz)));
+               int layer = (int)Math.ceil(Math.sqrt(dx * dx + dz * dz));
                if (layer != 0 && layer <= width) {
                   Xz candidate = new Xz(source.x() + dx, source.z() + dz);
                   if (!water.containsKey(candidate)) {
@@ -297,16 +298,16 @@ public final class IchorLakeFeature implements Feature {
 
    private static int targetShoreTop(int naturalTop, int waterY, int layer, int width) {
       if (layer > 1 && width > 1) {
-         double outward = Mth.clamp((double)(layer - 1) / (double)(width - 1), (double)0.0F, (double)1.0F);
+         double outward = Mth.clamp((double)(layer - 1) / (double)(width - 1), 0.0F, 1.0F);
          double smooth = outward * outward * ((double)3.0F - (double)2.0F * outward);
-         return Mth.floor(Mth.lerp(smooth, (double)waterY, (double)naturalTop) + (double)0.5F);
+         return Mth.floor(Mth.lerp(smooth, waterY, naturalTop) + (double)0.5F);
       } else {
          return waterY;
       }
    }
 
    private static Map buildShoreTargets(WorldGenLevel level, Map water, Map beach, Map beachColumns, int waterY, int width) {
-      Map<Xz, Integer> targets = new LinkedHashMap();
+      Map<Xz, Integer> targets = new LinkedHashMap<>();
 
       for (Map.Entry entry : (Iterable<Map.Entry>) beachColumns.entrySet()) {
          int layer = (Integer)beach.get(entry.getKey());
@@ -317,7 +318,7 @@ public final class IchorLakeFeature implements Feature {
       int[] steps = new int[]{-1, 0, 1, 0, -1};
 
       for (int pass = 0; pass < width * 6; ++pass) {
-         Map<Xz, Integer> next = new LinkedHashMap(targets.size());
+         Map<Xz, Integer> next = new LinkedHashMap<>(targets.size());
 
          for (Map.Entry entry : (Iterable<Map.Entry>) beachColumns.entrySet()) {
             Xz cell = (Xz)entry.getKey();
@@ -337,16 +338,8 @@ public final class IchorLakeFeature implements Feature {
                      sum += waterY * 3;
                      weight += 3;
                   } else if (targets.containsKey(neighbour)) {
-                     sum += (Integer)targets.get(neighbour);
+                     sum += targets.get(neighbour);
                      ++weight;
-                  } else if (layer == width) {
-                     int surface = SiftMonolithFeature.findTerrainSurface(level, neighbour.x(), neighbour.z());
-                     if (surface < 0) {
-                        return Map.of();
-                     }
-
-                     sum += (surface - 1) * 2;
-                     weight += 2;
                   }
                }
 
@@ -368,7 +361,7 @@ public final class IchorLakeFeature implements Feature {
             if (water.containsKey(neighbour)) {
                neighbourTop = waterY;
             } else if (targets.containsKey(neighbour)) {
-               neighbourTop = (Integer)targets.get(neighbour);
+               neighbourTop = targets.get(neighbour);
             } else {
                if (layer != width) {
                   continue;
@@ -401,7 +394,7 @@ public final class IchorLakeFeature implements Feature {
 
    private static void decorateLakeShore(WorldGenLevel level, RandomSource random, Map water, Map shoreTargets, SiftWorldgenBounds bounds) {
       Map<Xz, Integer> oasisBand = buildBeachMask(water, 4);
-      List<BlockPos> shore = new ArrayList(oasisBand.size());
+      List<BlockPos> shore = new ArrayList<>(oasisBand.size());
 
       for (Xz cell : oasisBand.keySet()) {
          if (bounds.contains(cell.x(), cell.z())) {
@@ -417,7 +410,7 @@ public final class IchorLakeFeature implements Feature {
    }
 
    private static int carveAndFill(WorldGenLevel level, LakeColumn column, int waterY, BlockState lining, long salt, int maximumDepth, SiftWorldgenBounds bounds) {
-      double centerStrength = (double)1.0F - Mth.clamp(column.normalizedDistance(), (double)0.0F, (double)1.0F);
+      double centerStrength = (double)1.0F - Mth.clamp(column.normalizedDistance(), 0.0F, 1.0F);
       int depth = Mth.clamp(1 + (int)Math.floor(centerStrength * ((double)maximumDepth - 0.55) + hash01(column.x(), waterY, column.z(), salt ^ -6752110988234923001L) * 0.7), 1, maximumDepth);
       int floorY = waterY - depth;
       BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
@@ -458,7 +451,7 @@ public final class IchorLakeFeature implements Feature {
          return 0;
       } else {
          boolean islandScale = water.size() > 400;
-         LakeColumn lakeSample = (LakeColumn)candidates.get(0);
+         LakeColumn lakeSample = candidates.getFirst();
          boolean overgrown = TheSiftDimension.isOvergrownBiome(level.getBiome(new BlockPos(lakeSample.x(), waterY, lakeSample.z())));
          boolean willowVariant = islandScale && overgrown && random.nextFloat() < 0.27F;
          if (willowVariant) {
@@ -469,14 +462,14 @@ public final class IchorLakeFeature implements Feature {
          }
 
          int formations = islandScale ? 3 + random.nextInt(2) : 1 + random.nextInt(3);
-         List<Xz> usedCenters = new ArrayList();
+         List<Xz> usedCenters = new ArrayList<>();
          int placed = 0;
 
          for (int formation = 0; formation < formations; ++formation) {
             LakeColumn center = null;
 
             for (int attempt = 0; attempt < 24 && center == null; ++attempt) {
-               LakeColumn candidate = (LakeColumn)candidates.get(random.nextInt(candidates.size()));
+               LakeColumn candidate = candidates.get(random.nextInt(candidates.size()));
                boolean separated = true;
 
                for (Xz used : usedCenters) {
@@ -501,7 +494,7 @@ public final class IchorLakeFeature implements Feature {
 
                for (int dx = -radius; dx <= radius; ++dx) {
                   for (int dz = -radius; dz <= radius; ++dz) {
-                     double distance = Math.sqrt((double)(dx * dx + dz * dz));
+                     double distance = Math.sqrt(dx * dx + dz * dz);
                      double irregularRadius = (double)radius + (hash01(center.x() + dx, waterY, center.z() + dz, formationSalt) - (double)0.5F) * 0.85;
                      if (!(distance > irregularRadius) && water.containsKey(new Xz(center.x() + dx, center.z() + dz))) {
                         int height = Math.max(0, peak - Mth.floor(distance * 1.35));
@@ -559,7 +552,7 @@ public final class IchorLakeFeature implements Feature {
       double outlinePhase = random.nextDouble() * Math.PI * (double)2.0F;
       long islandSalt = salt ^ 6289642245231954259L;
       int limit = Mth.ceil(Math.max(radiusX, radiusZ) + (double)1.0F);
-      Map<Xz, Integer> surface = new LinkedHashMap();
+      Map<Xz, Integer> surface = new LinkedHashMap<>();
 
       for (int dx = -limit; dx <= limit; ++dx) {
          for (int dz = -limit; dz <= limit; ++dz) {
@@ -625,14 +618,14 @@ public final class IchorLakeFeature implements Feature {
          }
 
          Xz rootCell = new Xz(center.x(), center.z());
-         Integer rootTop = (Integer)surface.get(rootCell);
+         Integer rootTop = surface.get(rootCell);
          if (rootTop == null) {
-            rootCell = (Xz)surface.keySet().stream().min(Comparator.comparingInt((cellx) -> {
+            rootCell = surface.keySet().stream().min(Comparator.comparingInt((cellx) -> {
                int dx = cellx.x() - center.x();
                int dz = cellx.z() - center.z();
                return dx * dx + dz * dz;
             })).orElse(null);
-            rootTop = rootCell == null ? null : (Integer)surface.get(rootCell);
+            rootTop = rootCell == null ? null : surface.get(rootCell);
          }
 
          if (rootCell != null && rootTop != null) {
@@ -706,8 +699,8 @@ public final class IchorLakeFeature implements Feature {
          return 0;
       } else {
          List<Integer> lowerSurfaces = lowerWater.values().stream().map(LakeColumn::surfaceY).sorted().toList();
-         int lowerWaterY = (Integer)lowerSurfaces.get(lowerSurfaces.size() / 2) - 1;
-         if ((Integer)lowerSurfaces.get(lowerSurfaces.size() - 1) - (Integer)lowerSurfaces.get(0) > 5) {
+         int lowerWaterY = lowerSurfaces.get(lowerSurfaces.size() / 2) - 1;
+         if (lowerSurfaces.getLast() - lowerSurfaces.getFirst() > 5) {
             return 0;
          } else {
             Map<Xz, Integer> lowerBeach = buildBeachMask(lowerWater, beachWidth);
@@ -756,7 +749,7 @@ public final class IchorLakeFeature implements Feature {
                            int placed = 0;
 
                            for (Map.Entry entry : lowerBeachColumns.entrySet()) {
-                              placed += shapeBeach(level, (LakeColumn)entry.getValue(), (Integer)lowerShoreTargets.get(entry.getKey()), palette, bounds);
+                              placed += shapeBeach(level, (LakeColumn)entry.getValue(), lowerShoreTargets.get(entry.getKey()), palette, bounds);
                            }
 
                            for (LakeColumn column : lowerWater.values()) {
@@ -782,7 +775,7 @@ public final class IchorLakeFeature implements Feature {
    }
 
    private static Map validateBeach(WorldGenLevel level, SiftWorldgenBounds bounds, Map beach, int width, int waterY, int maximumRelief) {
-      Map<Xz, LakeColumn> columns = new LinkedHashMap();
+      Map<Xz, LakeColumn> columns = new LinkedHashMap<>();
 
       for (Map.Entry entry : (Iterable<Map.Entry>) beach.entrySet()) {
          Xz cell = (Xz)entry.getKey();
@@ -810,7 +803,7 @@ public final class IchorLakeFeature implements Feature {
    }
 
    private static Map buildShelfMask(WorldGenLevel level, SiftWorldgenBounds bounds, CascadeSite site, long salt) {
-      Map<Xz, ShelfColumn> shelf = new LinkedHashMap();
+      Map<Xz, ShelfColumn> shelf = new LinkedHashMap<>();
       int centerX = site.upperCenter().getX();
       int centerZ = site.upperCenter().getZ();
       int topY = site.upperCenter().getY();
@@ -848,7 +841,7 @@ public final class IchorLakeFeature implements Feature {
    }
 
    private static Map buildUpperPondMask(CascadeSite site, Map shelf, long salt) {
-      Map<Xz, Double> pond = new LinkedHashMap();
+      Map<Xz, Double> pond = new LinkedHashMap<>();
       double centerX = (double)site.upperCenter().getX() - site.forwardX() * 1.8;
       double centerZ = (double)site.upperCenter().getZ() - site.forwardZ() * 1.8;
 
@@ -872,10 +865,10 @@ public final class IchorLakeFeature implements Feature {
       int placed = 0;
 
       for (ShelfColumn column : (Iterable<ShelfColumn>) shelf.values()) {
-         double edgeStrength = smoothstep((double)1.0F, 0.7, column.normalizedDistance());
+         double edgeStrength = smoothstep(1.0F, 0.7, column.normalizedDistance());
          boolean channelCore = column.forward() >= (double)-3.0F && column.forward() <= 7.6 && Math.abs(column.side()) <= 3.8;
          double strength = channelCore ? (double)1.0F : edgeStrength;
-         int targetTop = Mth.floor(Mth.lerp(strength, (double)column.naturalTop(), (double)topY) + (double)0.5F);
+         int targetTop = Mth.floor(Mth.lerp(strength, column.naturalTop(), topY) + (double)0.5F);
 
          for (int y = targetTop + 1; y <= Math.max(column.naturalTop() + 3, targetTop + 3); ++y) {
             cursor.set(column.x(), y, column.z());
@@ -908,7 +901,7 @@ public final class IchorLakeFeature implements Feature {
 
       for (Map.Entry entry : (Iterable<Map.Entry>) pond.entrySet()) {
          Xz cell = (Xz)entry.getKey();
-         double centerStrength = (double)1.0F - Mth.clamp((Double)entry.getValue(), (double)0.0F, (double)1.0F);
+         double centerStrength = (double)1.0F - Mth.clamp((Double)entry.getValue(), 0.0F, 1.0F);
          int depth = Mth.clamp(1 + Mth.floor(centerStrength * 2.8 + hash01(cell.x(), waterY, cell.z(), salt) * 0.55), 1, 4);
          int floorY = waterY - depth;
 
@@ -945,7 +938,7 @@ public final class IchorLakeFeature implements Feature {
       int lipX = site.upperCenter().getX() + (int)Math.round(site.forwardX() * (double)7.0F);
       int lipZ = site.upperCenter().getZ() + (int)Math.round(site.forwardZ() * (double)7.0F);
       BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
-      BlockState fallingIchor = (BlockState)ModFluids.ICHOR_BLOCK.defaultBlockState().setValue(LiquidBlock.LEVEL, 8);
+      BlockState fallingIchor = ModFluids.ICHOR_BLOCK.defaultBlockState().setValue(LiquidBlock.LEVEL, 8);
 
       for (int step = 1; step <= 7; ++step) {
          int centerX = site.upperCenter().getX() + (int)Math.round(site.forwardX() * (double)step);
@@ -972,14 +965,14 @@ public final class IchorLakeFeature implements Feature {
          }
       }
 
-      double dx = (double)(site.lowerCenter().getX() - lipX);
-      double dz = (double)(site.lowerCenter().getZ() - lipZ);
+      double dx = site.lowerCenter().getX() - lipX;
+      double dz = site.lowerCenter().getZ() - lipZ;
       int length = Math.max(1, Mth.ceil(Math.sqrt(dx * dx + dz * dz)));
 
       for (int step = 0; step <= length; ++step) {
          double progress = (double)step / (double)length;
-         int x = Mth.floor(Mth.lerp(progress, (double)lipX, (double)site.lowerCenter().getX()) + (double)0.5F);
-         int z = Mth.floor(Mth.lerp(progress, (double)lipZ, (double)site.lowerCenter().getZ()) + (double)0.5F);
+         int x = Mth.floor(Mth.lerp(progress, lipX, site.lowerCenter().getX()) + (double)0.5F);
+         int z = Mth.floor(Mth.lerp(progress, lipZ, site.lowerCenter().getZ()) + (double)0.5F);
          placed += placeChannelCell(level, x, lowerWaterY, z, lining, bounds);
       }
 
@@ -1040,7 +1033,7 @@ public final class IchorLakeFeature implements Feature {
    }
 
    private static double smoothstep(double edge0, double edge1, double value) {
-      double t = Mth.clamp((value - edge0) / (edge1 - edge0), (double)0.0F, (double)1.0F);
+      double t = Mth.clamp((value - edge0) / (edge1 - edge0), 0.0F, 1.0F);
       return t * t * ((double)3.0F - (double)2.0F * t);
    }
 
@@ -1060,7 +1053,7 @@ public final class IchorLakeFeature implements Feature {
       return state.is(ModBlocks.ICHOR_SNOW) || state.is(ModBlocks.ICHOR_SNOW_BLOCK);
    }
 
-   private static enum LakeVariant {
+   private enum LakeVariant {
       SMALL(4, 7, 1, 2, 3, 4, 28, false),
       MEDIUM(8, 12, 2, 3, 4, 4, 90, false),
       LARGE(12, 15, 4, 5, 5, 5, 300, true),
@@ -1075,7 +1068,7 @@ public final class IchorLakeFeature implements Feature {
       private final int minimumArea;
       private final boolean rocks;
 
-      private LakeVariant(int minimumRadius, int maximumRadius, int minimumBeach, int maximumBeach, int maximumDepth, int maximumRelief, int minimumArea, boolean rocks) {
+      LakeVariant(int minimumRadius, int maximumRadius, int minimumBeach, int maximumBeach, int maximumDepth, int maximumRelief, int minimumArea, boolean rocks) {
          this.minimumRadius = minimumRadius;
          this.maximumRadius = maximumRadius;
          this.minimumBeach = minimumBeach;
@@ -1124,18 +1117,18 @@ public final class IchorLakeFeature implements Feature {
       }
    }
 
-   private static record Xz(int x, int z) {
+   private record Xz(int x, int z) {
    }
 
-   private static record LakeColumn(int x, int z, int surfaceY, double normalizedDistance) {
+   private record LakeColumn(int x, int z, int surfaceY, double normalizedDistance) {
    }
 
-   private static record LakePalette(BlockState basin, BlockState shore) {
+   private record LakePalette(BlockState basin, BlockState shore) {
    }
 
-   private static record CascadeSite(BlockPos upperCenter, BlockPos lowerCenter, double forwardX, double forwardZ) {
+   private record CascadeSite(BlockPos upperCenter, BlockPos lowerCenter, double forwardX, double forwardZ) {
    }
 
-   private static record ShelfColumn(int x, int z, int naturalTop, double normalizedDistance, double forward, double side) {
+   private record ShelfColumn(int x, int z, int naturalTop, double normalizedDistance, double forward, double side) {
    }
 }

@@ -11,7 +11,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.animal.sniffer.Sniffer;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.material.Fluid;
@@ -112,13 +111,13 @@ public final class SiftDeferredSnifferSpawner {
          BlockPos pos = BlockPos.of(nest[(start + offset) % nest.length]).above();
          if (level.isEmptyBlock(pos) && level.isEmptyBlock(pos.above()) && !isIchor(level, pos) && !isIchor(level, pos.below())) {
             EntitySpawnReason reason = request.dark() ? EntitySpawnReason.CHUNK_GENERATION : EntitySpawnReason.STRUCTURE;
-            Sniffer sniffer = request.dark() ? (Sniffer)ModEntities.DARK_SNIFFER.create(level, reason) : (Sniffer)EntityTypes.SNIFFER.create(level, reason);
+            Sniffer sniffer = request.dark() ? (Sniffer)ModEntities.DARK_SNIFFER.create(level, reason) : EntityTypes.SNIFFER.create(level, reason);
             if (sniffer == null) {
                return true;
             }
 
-            sniffer.snapTo((double)pos.getX() + (double)0.5F, (double)pos.getY(), (double)pos.getZ() + (double)0.5F, random.nextFloat() * 360.0F, 0.0F);
-            sniffer.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), reason, (SpawnGroupData)null);
+            sniffer.snapTo((double)pos.getX() + (double)0.5F, pos.getY(), (double)pos.getZ() + (double)0.5F, random.nextFloat() * 360.0F, 0.0F);
+            sniffer.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), reason, null);
             if (!request.dark()) {
                sniffer.setBaby(request.baby());
             } else {
@@ -157,6 +156,6 @@ public final class SiftDeferredSnifferSpawner {
       return value ^ value >>> 31;
    }
 
-   private static record SpawnRequest(long[] nestPositions, boolean baby, boolean dark, long seed, int attempts) {
+   private record SpawnRequest(long[] nestPositions, boolean baby, boolean dark, long seed, int attempts) {
    }
 }

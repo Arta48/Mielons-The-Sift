@@ -17,7 +17,7 @@ public abstract class SiftServerDetectionMixin {
       at = {@At("RETURN")}
    )
    private void theSift$detectServerFeatures(ClientboundLoginPacket packet, CallbackInfo ci) {
-      ClientPacketListener listener = (ClientPacketListener)(Object)this;
+      ClientPacketListener listener = (ClientPacketListener) (Object) this;
 
       boolean serverHasTheSift = listener.registryAccess()
          .lookup(Registries.JUKEBOX_SONG)

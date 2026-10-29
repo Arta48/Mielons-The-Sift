@@ -10,15 +10,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import org.jspecify.annotations.NonNull;
 
 public final class SiftslatePlantPatchFeature implements Feature {
    public static final MapCodec CODEC = MapCodec.unit(SiftslatePlantPatchFeature::new);
 
-   public MapCodec codec() {
+   public @NonNull MapCodec codec() {
       return CODEC;
    }
 
-   public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+   public boolean place(@NonNull WorldGenLevel level, @NonNull ChunkGenerator generator, RandomSource random, BlockPos origin) {
       int centerX = (origin.getX() & -16) + 8;
       int centerZ = (origin.getZ() & -16) + 8;
       int target = 4 + random.nextInt(4);

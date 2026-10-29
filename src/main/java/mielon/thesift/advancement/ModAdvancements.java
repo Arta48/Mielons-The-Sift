@@ -18,13 +18,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -53,7 +50,7 @@ public final class ModAdvancements {
    public static void register() {
       if (!registered) {
          registered = true;
-         UseBlockCallback.EVENT.register((UseBlockCallback)(player, level, hand, hit) -> {
+         UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
             if (level instanceof ServerLevel serverLevel) {
                if (player instanceof ServerPlayer serverPlayer) {
                   ItemStack held = player.getItemInHand(hand);
@@ -71,10 +68,8 @@ public final class ModAdvancements {
                   }
 
                   if (held.is(ModItems.MUSIC_DISC_RIFT) && clicked.is(Blocks.JUKEBOX)) {
-                     BlockEntity patt0$temp = level.getBlockEntity(clickedPos);
-                     if (patt0$temp instanceof JukeboxBlockEntity) {
-                        JukeboxBlockEntity jukebox = (JukeboxBlockEntity)patt0$temp;
-                        if (jukebox.getTheItem().isEmpty() && isNearOpenRift(serverLevel, Vec3.atCenterOf(clickedPos), (double)16.0F)) {
+                     if (level.getBlockEntity(clickedPos) instanceof JukeboxBlockEntity jukebox) {
+                        if (jukebox.getTheItem().isEmpty() && isNearOpenRift(serverLevel, Vec3.atCenterOf(clickedPos), 16.0F)) {
                            award(serverPlayer, "the_sift/rift_resonance");
                         }
                      }
@@ -86,7 +81,7 @@ public final class ModAdvancements {
 
             return InteractionResult.PASS;
          });
-         PlayerBlockBreakEvents.AFTER.register((PlayerBlockBreakEvents.After)(level, player, pos, state, blockEntity) -> {
+         PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> {
             if (player instanceof ServerPlayer serverPlayer) {
                if (state.is(ModBlocks.SIFTSLATE_CHAROITE_ORE)) {
                   award(serverPlayer, "the_sift/kinda_purpleish");
@@ -96,19 +91,10 @@ public final class ModAdvancements {
 
             }
          });
-         ServerLivingEntityEvents.AFTER_DEATH.register((ServerLivingEntityEvents.AfterDeath)(entity, source) -> {
+         ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
             if (entity instanceof DarkSnifferEntity) {
-               Entity patt0$temp = source.getEntity();
-               if (patt0$temp instanceof BlubEntity) {
-                  BlubEntity blub = (BlubEntity)patt0$temp;
-                  if (blub.isTame()) {
-                     LivingEntity patt1$temp = blub.getOwner();
-                     if (patt1$temp instanceof ServerPlayer) {
-                        ServerPlayer owner = (ServerPlayer)patt1$temp;
-                        award(owner, "the_sift/food_chain");
-                        return;
-                     }
-                  }
+               if (source.getEntity() instanceof BlubEntity blub && blub.isTame() && blub.getOwner() instanceof ServerPlayer owner) {
+                  award(owner, "the_sift/food_chain");
                }
             }
 
@@ -136,7 +122,7 @@ public final class ModAdvancements {
    private static boolean isNearOpenRift(ServerLevel level, Vec3 center, double radius) {
       double maxDistance = radius * radius;
 
-      for (RiftEntity rift : (Iterable<RiftEntity>) RiftDirectory.loaded()) {
+      for (RiftEntity rift : RiftDirectory.loaded()) {
          if (!rift.isRemoved() && !rift.isClosing() && rift.level() == level && rift.position().distanceToSqr(center) <= maxDistance) {
             return true;
          }

@@ -26,7 +26,7 @@ public final class SiftDayNightCycle {
    }
 
    private static float smooth(float value) {
-      float clamped = Math.max(0.0F, Math.min(1.0F, value));
+      float clamped = Math.clamp(value, 0.0F, 1.0F);
       return clamped * clamped * (3.0F - 2.0F * clamped);
    }
 }

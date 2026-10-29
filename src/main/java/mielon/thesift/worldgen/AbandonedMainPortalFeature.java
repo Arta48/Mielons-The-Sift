@@ -22,20 +22,21 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnoreProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import org.jspecify.annotations.NonNull;
 
 public final class AbandonedMainPortalFeature implements Feature {
-   public static final MapCodec CODEC = MapCodec.unit(AbandonedMainPortalFeature::new);
+   public static final MapCodec<AbandonedMainPortalFeature> CODEC = MapCodec.unit(AbandonedMainPortalFeature::new);
    private static final String[] OVERGROWN_TEMPLATES = templateIds("abandoned_portal_overgrown_");
    private static final String[] WASTES_TEMPLATES = templateIds("abandoned_portal_wastes_");
    private static final BlockPos PIVOT = new BlockPos(4, 0, 19);
    private static final int MAX_RELIEF = 20;
    private static final int FOUNDATION_BLEND_RADIUS = 15;
 
-   public MapCodec codec() {
+   public @NonNull MapCodec codec() {
       return CODEC;
    }
 
-   public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+   public boolean place(WorldGenLevel level, @NonNull ChunkGenerator generator, @NonNull RandomSource random, @NonNull BlockPos origin) {
       if (!SiftLandmarkPlacement.isSelectedChunk(level.getSeed(), origin, 32, 4702392765337521733L)) {
          return false;
       } else {
@@ -57,18 +58,18 @@ public final class AbandonedMainPortalFeature implements Feature {
                if (!terrainFits(level, center, rotation)) {
                   return false;
                } else {
-                  StructureTemplate template = (StructureTemplate)optional.get();
-                  List<StructureTemplate.StructureBlockInfo> naturalBlocks = new ArrayList();
+                  StructureTemplate template = optional.get();
+                  List<StructureTemplate.StructureBlockInfo> naturalBlocks = new ArrayList<>();
                   naturalBlocks.addAll(template.filterBlocks(templateOrigin, settings, ModBlocks.SIFTSLATE));
                   naturalBlocks.addAll(template.filterBlocks(templateOrigin, settings, ModBlocks.SIFTSLATE_GROWTH));
                   naturalBlocks.addAll(template.filterBlocks(templateOrigin, settings, ModBlocks.HEALTHY_SCULK));
                   naturalBlocks.addAll(template.filterBlocks(templateOrigin, settings, ModBlocks.DRY_HEALTHY_SCULK));
                   naturalBlocks.addAll(template.filterBlocks(templateOrigin, settings, ModBlocks.DRY_HEALTHY_SCULK_GROWTH));
                   naturalBlocks.sort(Comparator.comparingInt((infox) -> infox.pos().getY()));
-                  List<StructureTemplate.StructureBlockInfo> structureBlocks = new ArrayList(naturalBlocks);
+                  List<StructureTemplate.StructureBlockInfo> structureBlocks = new ArrayList<>(naturalBlocks);
                   structureBlocks.addAll(template.filterBlocks(templateOrigin, settings, Blocks.CHEST));
                   if (!naturalBlocks.isEmpty() && allBlocksWritable(level, bounds, structureBlocks)) {
-                     int baseY = ((StructureTemplate.StructureBlockInfo)naturalBlocks.getFirst()).pos().getY();
+                     int baseY = naturalBlocks.getFirst().pos().getY();
                      List<BlockPos> blendedSurfaces = blendNaturalFoundation(level, bounds, random, naturalBlocks, baseY);
                      if (!template.placeInWorld(level, templateOrigin, templateOrigin, settings, random, 2)) {
                         return false;
@@ -106,7 +107,7 @@ public final class AbandonedMainPortalFeature implements Feature {
    }
 
    private static Identifier chooseTemplate(WorldGenLevel level, BlockPos center, RandomSource random) {
-      String biomePath = (String)level.getBiome(center).unwrapKey().map((key) -> key.identifier().getPath()).orElse("");
+      String biomePath = level.getBiome(center).unwrapKey().map((key) -> key.identifier().getPath()).orElse("");
       boolean overgrown = biomePath.startsWith("overgrown_") || "ichor_snowy_peaks".equals(biomePath);
       String[] templates = overgrown ? OVERGROWN_TEMPLATES : WASTES_TEMPLATES;
       return Identifier.fromNamespaceAndPath("the_sift", templates[random.nextInt(templates.length)]);
@@ -138,7 +139,7 @@ public final class AbandonedMainPortalFeature implements Feature {
          case CLOCKWISE_90 -> var10000 = center.offset(-z, 0, x);
          case CLOCKWISE_180 -> var10000 = center.offset(-x, 0, -z);
          case COUNTERCLOCKWISE_90 -> var10000 = center.offset(z, 0, -x);
-         default -> throw new MatchException((String)null, (Throwable)null);
+         default -> throw new MatchException(null, null);
       }
 
       return var10000;
@@ -155,8 +156,8 @@ public final class AbandonedMainPortalFeature implements Feature {
    }
 
    private static List blendNaturalFoundation(WorldGenLevel level, SiftWorldgenBounds bounds, RandomSource random, List naturalBlocks, int baseY) {
-      List<BlockPos> baseColumns = new ArrayList();
-      Set<Long> baseKeys = new HashSet();
+      List<BlockPos> baseColumns = new ArrayList<>();
+      Set<Long> baseKeys = new HashSet<>();
       int minX = Integer.MAX_VALUE;
       int maxX = Integer.MIN_VALUE;
       int minZ = Integer.MAX_VALUE;
@@ -180,7 +181,7 @@ public final class AbandonedMainPortalFeature implements Feature {
          return List.of();
       } else {
          long noiseSalt = random.nextLong();
-         List<BlockPos> blendedSurfaces = new ArrayList();
+         List<BlockPos> blendedSurfaces = new ArrayList<>();
          BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
 
          for (int x = minX - 15; x <= maxX + 15; ++x) {
@@ -258,11 +259,11 @@ public final class AbandonedMainPortalFeature implements Feature {
          int dz = z - base.getZ();
          bestSquared = Math.min(bestSquared, dx * dx + dz * dz);
          if (bestSquared == 0) {
-            return (double)0.0F;
+            return 0.0F;
          }
       }
 
-      return Math.sqrt((double)bestSquared);
+      return Math.sqrt(bestSquared);
    }
 
    private static double blendNoise(int x, int z, long salt) {

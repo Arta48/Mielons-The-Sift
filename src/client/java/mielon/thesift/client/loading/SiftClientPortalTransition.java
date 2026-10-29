@@ -18,7 +18,7 @@ public final class SiftClientPortalTransition {
    private static boolean initialized;
    private static boolean waitingForExit;
    private static boolean suppressPortalUntilExit;
-   private static ResourceKey riftSourceDimension;
+   private static ResourceKey<Level> riftSourceDimension;
 
    private SiftClientPortalTransition() {
    }
@@ -40,8 +40,8 @@ public final class SiftClientPortalTransition {
       Minecraft minecraft = Minecraft.getInstance();
       if (SiftLoadingScreenState.isActive()) {
          Screen currentScreen = minecraft.gui.screen();
-         boolean validTransitionScreen = currentScreen instanceof SiftTransitionScreen || currentScreen instanceof LevelLoadingScreen;
-         if (!validTransitionScreen || SiftLoadingScreenState.isOlderThanSeconds((double)45.0F)) {
+         boolean validTransitionScreen = currentScreen instanceof LevelLoadingScreen;
+         if (!validTransitionScreen || SiftLoadingScreenState.isOlderThanSeconds(45.0F)) {
             SiftLoadingScreenState.clear();
          }
       }
@@ -50,7 +50,7 @@ public final class SiftClientPortalTransition {
          ResourceKey<Level> source = SiftLoadingScreenState.sourceDimension();
          if (source != null && !player.level().dimension().equals(source)) {
             SiftLoadingScreenState.clear();
-            minecraft.gui.setScreen((Screen)null);
+            minecraft.gui.setScreen(null);
             return;
          }
       }
@@ -63,7 +63,7 @@ public final class SiftClientPortalTransition {
 
       boolean supportedDimension = player.level().dimension().equals(Level.OVERWORLD) || player.level().dimension().equals(TheSiftDimension.LEVEL_KEY);
       boolean touchingPortal = supportedDimension && isTouchingPortal(player);
-      boolean touchingAny = touchingPortal || !player.level().getEntitiesOfClass(RiftEntity.class, player.getBoundingBox().inflate((double)5.0F), (rift) -> rift.getPortalBounds().intersects(player.getBoundingBox())).isEmpty();
+      boolean touchingAny = touchingPortal || !player.level().getEntitiesOfClass(RiftEntity.class, player.getBoundingBox().inflate(5.0F), (rift) -> rift.getPortalBounds().intersects(player.getBoundingBox())).isEmpty();
       if (suppressPortalUntilExit) {
          boolean changedDimension = riftSourceDimension != null && !player.level().dimension().equals(riftSourceDimension);
          if (!changedDimension || touchingAny) {
@@ -82,7 +82,7 @@ public final class SiftClientPortalTransition {
 
          if (minecraft.gui.screen() instanceof SiftTransitionScreen) {
             SiftLoadingScreenState.clear();
-            minecraft.gui.setScreen((Screen)null);
+            minecraft.gui.setScreen(null);
          }
 
       } else if (!initialized) {

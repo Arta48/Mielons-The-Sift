@@ -35,6 +35,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
+import org.jspecify.annotations.NonNull;
 
 public final class SifterEntity extends Monster implements GeoEntity {
    private static final String ATTACK_CONTROLLER = "attack_controller";
@@ -43,7 +44,7 @@ public final class SifterEntity extends Monster implements GeoEntity {
    private static final int BITE_SOUND_TICK = 8;
    private static final int BITE_DAMAGE_TICK = 13;
    private static final int BITE_DURATION_TICKS = 14;
-   private static final double BITE_REACH = (double)2.5F;
+   private static final double BITE_REACH = 2.5F;
    private static final RawAnimation RUNNING = RawAnimation.begin().thenLoop("running");
    private static final RawAnimation BITE = RawAnimation.begin().thenPlay("attack");
    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -56,7 +57,7 @@ public final class SifterEntity extends Monster implements GeoEntity {
    }
 
    public static AttributeSupplier.Builder createAttributes() {
-      return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, (double)40.0F).add(Attributes.MOVEMENT_SPEED, 0.31).add(Attributes.ATTACK_DAMAGE, (double)10.0F).add(Attributes.FOLLOW_RANGE, (double)28.0F).add(Attributes.STEP_HEIGHT, (double)1.0F);
+      return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 40.0F).add(Attributes.MOVEMENT_SPEED, 0.31).add(Attributes.ATTACK_DAMAGE, 10.0F).add(Attributes.FOLLOW_RANGE, 28.0F).add(Attributes.STEP_HEIGHT, 1.0F);
    }
 
    public static boolean checkSifterSpawnRules(EntityType type, ServerLevelAccessor level, EntitySpawnReason reason, BlockPos pos, RandomSource random) {
@@ -69,15 +70,15 @@ public final class SifterEntity extends Monster implements GeoEntity {
       this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.95));
       this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
       this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
-      this.targetSelector.addGoal(1, new HurtByTargetGoal(this, new Class[0]));
+      this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
       this.targetSelector.addGoal(2, new NearestAttackableTargetGoal(this, Player.class, true));
    }
 
-   public boolean canAttack(LivingEntity target) {
+   public boolean canAttack(@NonNull LivingEntity target) {
       return this.level().getDifficulty() != Difficulty.PEACEFUL && super.canAttack(target);
    }
 
-   public boolean doHurtTarget(ServerLevel level, Entity target) {
+   public boolean doHurtTarget(@NonNull ServerLevel level, @NonNull Entity target) {
       if (this.biteAge < 0 && target instanceof LivingEntity living) {
          if (living.isAlive() && this.canAttack(living)) {
             this.biteTarget = target;
@@ -95,15 +96,14 @@ public final class SifterEntity extends Monster implements GeoEntity {
    public void tick() {
       super.tick();
       if (this.level().getDifficulty() == Difficulty.PEACEFUL) {
-         this.setTarget((LivingEntity)null);
+         this.setTarget(null);
          this.setAggressive(false);
          this.biteAge = -1;
          this.biteTarget = null;
       } else {
          Level var2 = this.level();
-         if (var2 instanceof ServerLevel) {
-            ServerLevel level = (ServerLevel)var2;
-            if (this.biteAge >= 0) {
+         if (var2 instanceof ServerLevel level) {
+             if (this.biteAge >= 0) {
                ++this.biteAge;
                this.getNavigation().stop();
                if (this.biteTarget != null && this.biteTarget.isAlive()) {
@@ -123,7 +123,6 @@ public final class SifterEntity extends Monster implements GeoEntity {
                   this.biteTarget = null;
                }
 
-               return;
             }
          }
 
@@ -135,7 +134,6 @@ public final class SifterEntity extends Monster implements GeoEntity {
       if (var3 instanceof LivingEntity living) {
          if (living.level() == this.level() && living.isAlive() && this.canAttack(living) && !(this.distanceToSqr(living) > (double)6.25F) && this.getSensing().hasLineOfSight(living)) {
             super.doHurtTarget(level, living);
-            return;
          }
       }
 
@@ -149,23 +147,23 @@ public final class SifterEntity extends Monster implements GeoEntity {
       return ModSounds.SIFTER_AMBIENT;
    }
 
-   protected SoundEvent getHurtSound(DamageSource source) {
+   protected @NonNull SoundEvent getHurtSound(@NonNull DamageSource source) {
       return ModSounds.SIFTER_HURT;
    }
 
-   protected SoundEvent getDeathSound() {
+   protected @NonNull SoundEvent getDeathSound() {
       return ModSounds.SIFTER_DEATH;
    }
 
-   protected void playStepSound(BlockPos pos, BlockState state) {
+   protected void playStepSound(@NonNull BlockPos pos, @NonNull BlockState state) {
       this.playSound(ModSounds.SIFTER_STEP, 0.12F, 0.9F + this.random.nextFloat() * 0.2F);
    }
 
    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-      controllers.add((new AnimationController("attack_controller", 3, (state) -> {
+      controllers.add((new AnimationController<SifterEntity>("attack_controller", 3, (state) -> {
          AnimationController<SifterEntity> controller = state.controller();
          if (controller.isTriggeredAnimation("bite")) {
-            controller.setAnimationSpeed((double)1.0F);
+            controller.setAnimationSpeed(1.0F);
             if (controller.getCurrentTimelineTime() != (double)-2.0F) {
                return PlayState.CONTINUE;
             }
@@ -174,18 +172,18 @@ public final class SifterEntity extends Monster implements GeoEntity {
          }
 
          if (this.getDeltaMovement().horizontalDistanceSqr() > 0.001) {
-            controller.setAnimationSpeed((double)2.5F);
+            controller.setAnimationSpeed(2.5F);
             controller.setAnimation(RUNNING);
             return PlayState.CONTINUE;
          } else {
-            controller.setAnimationSpeed((double)1.0F);
+            controller.setAnimationSpeed(1.0F);
             controller.reset();
             return PlayState.STOP;
          }
       })).triggerableAnim("bite", BITE).receiveTriggeredAnimations());
    }
 
-   public AnimatableInstanceCache getAnimatableInstanceCache() {
+   public @NonNull AnimatableInstanceCache getAnimatableInstanceCache() {
       return this.cache;
    }
 }

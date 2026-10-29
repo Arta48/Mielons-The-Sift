@@ -34,7 +34,7 @@ public abstract class ServerLevelWeatherMixin {
    )
    private Block theSift$useIchorSnowDuringPrecipitation() {
       ServerLevel self = (ServerLevel)(Object)this;
-      return (Block)(self.dimension().equals(TheSiftDimension.LEVEL_KEY) ? ModBlocks.ICHOR_SNOW : Blocks.SNOW);
+      return self.dimension().equals(TheSiftDimension.LEVEL_KEY) ? ModBlocks.ICHOR_SNOW : Blocks.SNOW;
    }
 
    @Redirect(
@@ -68,7 +68,7 @@ public abstract class ServerLevelWeatherMixin {
    )
    private BlockState theSift$capIchorSnowLayers(BlockState state) {
       ServerLevel self = (ServerLevel)(Object)this;
-      return self.dimension().equals(TheSiftDimension.LEVEL_KEY) && state.is(ModBlocks.ICHOR_SNOW) && (Integer)state.getValue(SnowLayerBlock.LAYERS) > 2 ? (BlockState)state.setValue(SnowLayerBlock.LAYERS, 2) : state;
+      return self.dimension().equals(TheSiftDimension.LEVEL_KEY) && state.is(ModBlocks.ICHOR_SNOW) && state.getValue(SnowLayerBlock.LAYERS) > 2 ? state.setValue(SnowLayerBlock.LAYERS, 2) : state;
    }
 
    @Inject(
@@ -79,7 +79,7 @@ public abstract class ServerLevelWeatherMixin {
    private void theSift$getPerDimensionWeather(CallbackInfoReturnable cir) {
       ServerLevel self = (ServerLevel)(Object)this;
       if (!self.dimension().equals(Level.OVERWORLD)) {
-         cir.setReturnValue((WeatherData)self.getDataStorage().computeIfAbsent(WeatherData.TYPE));
+         cir.setReturnValue(self.getDataStorage().computeIfAbsent(WeatherData.TYPE));
       }
 
    }

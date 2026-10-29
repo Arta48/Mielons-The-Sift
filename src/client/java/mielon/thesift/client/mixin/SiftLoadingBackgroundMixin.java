@@ -18,7 +18,7 @@ public abstract class SiftLoadingBackgroundMixin {
    )
    private void theSift$extractPortalBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
       if (SiftLoadingScreenState.isActive()) {
-         LevelLoadingScreen screen = (LevelLoadingScreen)(Object)this;
+         LevelLoadingScreen screen = (LevelLoadingScreen) (Object) this;
          SiftLoadingBackgroundRenderer.draw(graphics, screen.width, screen.height);
          ci.cancel();
       }

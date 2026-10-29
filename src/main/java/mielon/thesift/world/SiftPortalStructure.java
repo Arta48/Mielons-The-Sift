@@ -45,10 +45,10 @@ public final class SiftPortalStructure {
    private SiftPortalStructure() {
    }
 
-   public static Optional ensurePortal(MinecraftServer server, ServerLevel sift) {
+   public static Optional<BlockPos> ensurePortal(MinecraftServer server, ServerLevel sift) {
       Optional<BlockPos> stored = SiftWorldStorage.getPortalAnchor(server);
       if (stored.isPresent()) {
-         BlockPos storedOrigin = ((BlockPos)stored.get()).offset(-PLAYER_RELATIVE.getX(), -PLAYER_RELATIVE.getY(), -PLAYER_RELATIVE.getZ());
+         BlockPos storedOrigin = stored.get().offset(-PLAYER_RELATIVE.getX(), -PLAYER_RELATIVE.getY(), -PLAYER_RELATIVE.getZ());
          SiftFeaturePlacementGuard.reservePortal(storedOrigin, 9, 40);
          return stored;
       } else {
@@ -58,11 +58,11 @@ public final class SiftPortalStructure {
             return Optional.empty();
          } else {
             TheSiftMod.LOGGER.info("Selecting a location for the main Sift portal.");
-            StructureTemplate template = (StructureTemplate)templateOptional.get();
+            StructureTemplate template = templateOptional.get();
             PlacementCandidate candidate = findBestCandidate(sift);
             int naturalGroundY = candidate.groundY();
             int originY = naturalGroundY - STRUCTURE_GROUND_RELATIVE_Y;
-            originY = Math.max(0, Math.min(237, originY));
+            originY = Math.clamp(originY, 0, 237);
             BlockPos origin = new BlockPos(candidate.anchorX() - MARKER_RELATIVE.getX(), originY, candidate.anchorZ() - MARKER_RELATIVE.getZ());
             SiftFeaturePlacementGuard.reservePortal(origin, 9, 40);
             clearLargeFeaturesAroundPortal(sift, origin);
@@ -139,7 +139,7 @@ public final class SiftPortalStructure {
       PlacementCandidate coarse = searchArea(level, -96, 96, -96, 96, 16);
       if (coarse == null) {
          int height = generatedSurfaceBlockY(level, 0, 0);
-         return new PlacementCandidate(0, 0, height, (double)999.0F);
+         return new PlacementCandidate(0, 0, height, 999.0F);
       } else {
          PlacementCandidate refined = searchArea(level, coarse.anchorX() - 16, coarse.anchorX() + 16, coarse.anchorZ() - 16, coarse.anchorZ() + 16, 4);
          return refined != null ? refined : coarse;
@@ -154,9 +154,9 @@ public final class SiftPortalStructure {
          for (int z = minSearchZ; z <= maxSearchZ; z += step) {
             TerrainSample sample = sampleFootprintWithoutLoadingChunks(level, x, z);
             PlacementCandidate candidate = new PlacementCandidate(x, z, sample.medianHeight(), sample.roughness());
-            double candidateScore = score(candidate, x, z) + (double)sample.range() * (double)135.0F + (double)sample.outerRange() * (double)75.0F;
+            double candidateScore = score(candidate, x, z) + (double) sample.range() * (double) 135.0F + (double) sample.outerRange() * (double) 75.0F;
             if (sample.medianHeight() < 12 || sample.medianHeight() > 232) {
-               candidateScore += (double)10000.0F;
+               candidateScore += 10000.0F;
             }
 
             if (candidateScore < bestScore) {
@@ -170,8 +170,8 @@ public final class SiftPortalStructure {
    }
 
    private static double score(PlacementCandidate candidate, int x, int z) {
-      double distancePenalty = Math.sqrt((double)x * (double)x + (double)z * (double)z) * 0.8;
-      return candidate.roughness() * (double)18.0F + distancePenalty;
+      double distancePenalty = Math.sqrt((double) x * (double) x + (double) z * (double) z) * 0.8;
+      return candidate.roughness() * (double) 18.0F + distancePenalty;
    }
 
    private static TerrainSample sampleFootprintWithoutLoadingChunks(ServerLevel level, int anchorX, int anchorZ) {
@@ -189,24 +189,24 @@ public final class SiftPortalStructure {
       int outerMidX = (outerMinX + outerMaxX) / 2;
       int outerMidZ = (outerMinZ + outerMaxZ) / 2;
       int[] outer = new int[]{generatedSurfaceBlockY(level, outerMinX, outerMinZ), generatedSurfaceBlockY(level, outerMidX, outerMinZ), generatedSurfaceBlockY(level, outerMaxX, outerMinZ), generatedSurfaceBlockY(level, outerMinX, outerMidZ), generatedSurfaceBlockY(level, outerMaxX, outerMidZ), generatedSurfaceBlockY(level, outerMinX, outerMaxZ), generatedSurfaceBlockY(level, outerMidX, outerMaxZ), generatedSurfaceBlockY(level, outerMaxX, outerMaxZ)};
-      int[] sorted = ((int[]) core).clone();
+      int[] sorted = core.clone();
       Arrays.sort(sorted);
       int median = sorted[sorted.length / 2];
       int coreMin = Arrays.stream(core).min().orElse(median);
       int coreMax = Arrays.stream(core).max().orElse(median);
       int outerMin = Arrays.stream(outer).min().orElse(median);
       int outerMax = Arrays.stream(outer).max().orElse(median);
-      double roughness = (double)0.0F;
+      double roughness = 0.0F;
 
       for (int height : core) {
-         roughness += (double)Math.abs(height - median);
+         roughness += Math.abs(height - median);
       }
 
       for (int height : outer) {
-         roughness += (double)Math.abs(height - median) * 0.45;
+         roughness += (double) Math.abs(height - median) * 0.45;
       }
 
-      roughness /= (double)core.length + (double)outer.length * 0.45;
+      roughness /= (double) core.length + (double) outer.length * 0.45;
       return new TerrainSample(median, coreMax - coreMin, Math.max(coreMax, outerMax) - Math.min(coreMin, outerMin), roughness);
    }
 
@@ -234,24 +234,24 @@ public final class SiftPortalStructure {
                   if (inside) {
                      int exactRelativeY = GROUND_PROFILE[localX][localZ];
                      if (exactRelativeY >= 0) {
-                        int desiredY = Math.max(2, Math.min(253, origin.getY() + exactRelativeY));
+                        int desiredY = Math.clamp(origin.getY() + exactRelativeY, 2, 253);
                         if (naturalY > desiredY) {
                            lowerTerrainColumn(level, x, z, naturalY, desiredY, originalTop, false);
                         }
                      }
                   } else {
                      double rectangleDistance = distanceOutsideRectangle(x, z, structureMinX, structureMaxX, structureMinZ, structureMaxZ);
-                     if (!(rectangleDistance > (double)52.0F)) {
+                     if (!(rectangleDistance > (double) 52.0F)) {
                         double envelopeRelativeY = portalTerrainEnvelope(localX, localZ, seed);
                         double approach = portalApproachMask(localX, localZ);
-                        if (approach > (double)0.0F) {
+                        if (approach > (double) 0.0F) {
                            double lowForecourt = 3.6 + terrainBlendNoise(seed ^ -3335678366873096957L, localX, localZ) * 0.55;
-                           envelopeRelativeY = envelopeRelativeY * ((double)1.0F - approach) + Math.min(envelopeRelativeY, lowForecourt) * approach;
+                           envelopeRelativeY = envelopeRelativeY * ((double) 1.0F - approach) + Math.min(envelopeRelativeY, lowForecourt) * approach;
                         }
 
-                        if (!(envelopeRelativeY <= (double)0.0F)) {
-                           int desiredY = origin.getY() + (int)Math.floor(envelopeRelativeY);
-                           desiredY = Math.max(2, Math.min(253, desiredY));
+                        if (!(envelopeRelativeY <= (double) 0.0F)) {
+                           int desiredY = origin.getY() + (int) Math.floor(envelopeRelativeY);
+                           desiredY = Math.clamp(desiredY, 2, 253);
                            if (desiredY > naturalY) {
                               raiseTerrainColumn(level, x, z, naturalY, desiredY, originalTop, true);
                            }
@@ -312,15 +312,15 @@ public final class SiftPortalStructure {
             boolean core = isPortalBaseColumn(localX, localZ);
             double broadNoise = terrainBlendNoise(seed ^ 7640891576956012809L, localX * 3 + 11, localZ * 3 - 17);
             double fineNoise = terrainBlendNoise(seed ^ -4942790177534073029L, localX * 9 - 23, localZ * 9 + 31);
-            double distance = core ? (double)0.0F : distanceToPortalBase((double)localX + broadNoise * 1.45, (double)localZ - broadNoise * 1.15);
-            if (!(distance > (double)15.0F)) {
+            double distance = core ? (double) 0.0F : distanceToPortalBase((double) localX + broadNoise * 1.45, (double) localZ - broadNoise * 1.15);
+            if (!(distance > (double) 15.0F)) {
                double erosion = distance * (0.7 + fineNoise * 0.08) + distance * distance * 0.016;
-               int targetY = core ? foundationTopY : foundationTopY - Math.max(1, (int)Math.floor(erosion));
+               int targetY = core ? foundationTopY : foundationTopY - Math.max(1, (int) Math.floor(erosion));
                int naturalY = findTerrainSurfaceBlockY(level, x, z);
                if (naturalY > 1 && naturalY < targetY) {
                   BlockState originalTop = level.getBlockState(new BlockPos(x, naturalY, z));
                   if (isSiftTerrain(originalTop)) {
-                     boolean preserveBiomeSurface = !core && distance > (double)2.25F;
+                     boolean preserveBiomeSurface = !core && distance > (double) 2.25F;
                      raiseTerrainColumn(level, x, z, naturalY, targetY, originalTop, preserveBiomeSurface);
                   }
                }
@@ -356,10 +356,10 @@ public final class SiftPortalStructure {
       double best = Double.NEGATIVE_INFINITY;
 
       for (ProfilePoint point : CLIFF_POINTS) {
-         double dx = (warpedX - (double)point.x()) * 0.76;
-         double dz = (warpedZ - (double)point.z()) * 1.08;
+         double dx = (warpedX - (double) point.x()) * 0.76;
+         double dz = (warpedZ - (double) point.z()) * 1.08;
          double distance = Math.sqrt(dx * dx + dz * dz);
-         double candidate = (double)point.height() - distance * erosionPerBlock;
+         double candidate = (double) point.height() - distance * erosionPerBlock;
          if (candidate > best) {
             best = candidate;
          }
@@ -367,7 +367,7 @@ public final class SiftPortalStructure {
 
       best += columnNoise * 0.55;
       if (!Double.isFinite(best)) {
-         return (double)-1.0F;
+         return -1.0F;
       } else {
          return best;
       }
@@ -388,14 +388,14 @@ public final class SiftPortalStructure {
          distanceX = -localX;
       } else {
          if (localX < 9) {
-            return (double)0.0F;
+            return 0.0F;
          }
 
          distanceX = localX - 8;
       }
 
-      double zMask = (double)1.0F - smootherstep((double)distanceZ / (double)6.0F);
-      double xMask = (double)1.0F - smootherstep(Math.max((double)0.0F, (double)distanceX - (double)2.0F) / (double)18.0F);
+      double zMask = (double) 1.0F - smootherstep((double) distanceZ / (double) 6.0F);
+      double xMask = (double) 1.0F - smootherstep(Math.max(0.0F, (double) distanceX - (double) 2.0F) / (double) 18.0F);
       return clamp01(zMask * xMask);
    }
 
@@ -465,8 +465,10 @@ public final class SiftPortalStructure {
 
    }
 
-   private static boolean setDuringPortalBuild(ServerLevel level, BlockPos pos, BlockState state) {
-      return level.getBlockState(pos) == state ? false : level.setBlock(pos, state, 48);
+   private static void setDuringPortalBuild(ServerLevel level, BlockPos pos, BlockState state) {
+      if (level.getBlockState(pos) != state) {
+         level.setBlock(pos, state, 48);
+      }
    }
 
    private static ProfilePoint[] collectProfilePoints(int[][] profile) {
@@ -482,7 +484,7 @@ public final class SiftPortalStructure {
          }
       }
 
-      return (ProfilePoint[])Arrays.copyOf(temporary, count);
+      return Arrays.copyOf(temporary, count);
    }
 
    private static boolean isPortalApproach(BlockPos pos, BlockPos playerAnchor) {
@@ -517,24 +519,24 @@ public final class SiftPortalStructure {
    private static double distanceOutsideRectangle(int x, int z, int minX, int maxX, int minZ, int maxZ) {
       int dx = x < minX ? minX - x : Math.max(0, x - maxX);
       int dz = z < minZ ? minZ - z : Math.max(0, z - maxZ);
-      return Math.sqrt((double)dx * (double)dx + (double)dz * (double)dz);
+      return Math.sqrt((double) dx * (double) dx + (double) dz * (double) dz);
    }
 
    private static double terrainBlendNoise(long seed, int x, int z) {
-      double phase = (double)(seed & 65535L) * 1.73E-4;
-      double a = Math.sin((double)x * 0.083 + (double)z * 0.031 + phase);
-      double b = Math.cos((double)x * 0.037 - (double)z * 0.071 - phase * 0.73);
-      double c = Math.sin((double)(x + z) * 0.021 + phase * 1.91);
-      return a * (double)0.5F + b * 0.33 + c * 0.17;
+      double phase = (double) (seed & 65535L) * 1.73E-4;
+      double a = Math.sin((double) x * 0.083 + (double) z * 0.031 + phase);
+      double b = Math.cos((double) x * 0.037 - (double) z * 0.071 - phase * 0.73);
+      double c = Math.sin((double) (x + z) * 0.021 + phase * 1.91);
+      return a * (double) 0.5F + b * 0.33 + c * 0.17;
    }
 
    private static double smootherstep(double value) {
       double t = clamp01(value);
-      return t * t * t * (t * (t * (double)6.0F - (double)15.0F) + (double)10.0F);
+      return t * t * t * (t * (t * (double) 6.0F - (double) 15.0F) + (double) 10.0F);
    }
 
    private static double clamp01(double value) {
-      return Math.max((double)0.0F, Math.min((double)1.0F, value));
+      return Math.clamp(value, 0.0F, 1.0F);
    }
 
    private static int generatedSurfaceBlockY(ServerLevel level, int x, int z) {
@@ -551,12 +553,12 @@ public final class SiftPortalStructure {
       CLIFF_POINTS = collectProfilePoints(CLIFF_PROFILE);
    }
 
-   private static record TerrainSample(int medianHeight, int range, int outerRange, double roughness) {
+   private record TerrainSample(int medianHeight, int range, int outerRange, double roughness) {
    }
 
-   private static record PlacementCandidate(int anchorX, int anchorZ, int groundY, double roughness) {
+   private record PlacementCandidate(int anchorX, int anchorZ, int groundY, double roughness) {
    }
 
-   private static record ProfilePoint(int x, int z, int height) {
+   private record ProfilePoint(int x, int z, int height) {
    }
 }

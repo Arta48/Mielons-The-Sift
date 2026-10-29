@@ -15,9 +15,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.NonNull;
 
 public final class SculkflowerCropBlock extends CropBlock {
    public static final IntegerProperty AGE;
@@ -27,7 +27,7 @@ public final class SculkflowerCropBlock extends CropBlock {
       super(properties);
    }
 
-   protected IntegerProperty getAgeProperty() {
+   protected @NonNull IntegerProperty getAgeProperty() {
       return AGE;
    }
 
@@ -35,19 +35,19 @@ public final class SculkflowerCropBlock extends CropBlock {
       return 2;
    }
 
-   public BlockState getStateForAge(int age) {
-      return age >= 2 ? ModBlocks.SCULKFLOWER.defaultBlockState() : (BlockState)this.defaultBlockState().setValue(AGE, age);
+   public @NonNull BlockState getStateForAge(int age) {
+      return age >= 2 ? ModBlocks.SCULKFLOWER.defaultBlockState() : this.defaultBlockState().setValue(AGE, age);
    }
 
-   protected int getBonemealAgeIncrease(Level level) {
+   protected int getBonemealAgeIncrease(@NonNull Level level) {
       return 1;
    }
 
-   protected boolean isRandomlyTicking(BlockState state) {
+   protected boolean isRandomlyTicking(@NonNull BlockState state) {
       return this.getAge(state) >= 2 || super.isRandomlyTicking(state);
    }
 
-   protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+   protected void randomTick(@NonNull BlockState state, @NonNull ServerLevel level, @NonNull BlockPos pos, @NonNull RandomSource random) {
       if (this.getAge(state) >= 2) {
          level.setBlockAndUpdate(pos, ModBlocks.SCULKFLOWER.defaultBlockState());
       } else {
@@ -55,24 +55,24 @@ public final class SculkflowerCropBlock extends CropBlock {
       }
    }
 
-   protected boolean mayPlaceOn(BlockState floor, BlockGetter level, BlockPos floorPos) {
+   protected boolean mayPlaceOn(BlockState floor, @NonNull BlockGetter level, @NonNull BlockPos floorPos) {
       return floor.is(Blocks.FARMLAND) || floor.is(Blocks.SCULK);
    }
 
-   protected ItemLike getBaseSeedId() {
+   protected @NonNull ItemLike getBaseSeedId() {
       return ModItems.SCULKFLOWER_SEEDS;
    }
 
-   protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+   protected @NonNull VoxelShape getShape(@NonNull BlockState state, @NonNull BlockGetter level, @NonNull BlockPos pos, @NonNull CollisionContext context) {
       return SHAPES[this.getAge(state)];
    }
 
    protected void createBlockStateDefinition(StateDefinition.Builder builder) {
-      builder.add(new Property[]{AGE});
+      builder.add(AGE);
    }
 
    static {
       AGE = BlockStateProperties.AGE_2;
-      SHAPES = new VoxelShape[]{Block.column((double)10.0F, (double)0.0F, (double)4.0F), Block.column((double)14.0F, (double)0.0F, (double)13.0F), Block.column((double)16.0F, (double)0.0F, (double)16.0F)};
+      SHAPES = new VoxelShape[]{Block.column(10.0F, 0.0F, 4.0F), Block.column(14.0F, 0.0F, 13.0F), Block.column(16.0F, 0.0F, 16.0F)};
    }
 }

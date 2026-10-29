@@ -14,61 +14,55 @@ public final class PortalAutoActivation {
    private PortalAutoActivation() {
    }
 
-   public static boolean tryActivateNearNotes(ServerLevel level, List sequence) {
-      if (sequence.isEmpty()) {
-         return false;
-      } else {
-         Set<BlockPos> checked = new HashSet();
-         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+   public static void tryActivateNearNotes(ServerLevel level, List sequence) {
+       if (!sequence.isEmpty()) {
+           Set<BlockPos> checked = new HashSet<>();
+           BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
 
-         for (SonorousConsoles.PlayedNote note : (Iterable<SonorousConsoles.PlayedNote>) sequence) {
-            BlockPos notePos = note.notePos();
+           for (SonorousConsoles.PlayedNote note : (Iterable<SonorousConsoles.PlayedNote>) sequence) {
+               BlockPos notePos = note.notePos();
 
-            for (int dx = -10; dx <= 10; ++dx) {
-               for (int dy = -10; dy <= 10; ++dy) {
-                  for (int dz = -10; dz <= 10; ++dz) {
-                     cursor.set(notePos.getX() + dx, notePos.getY() + dy, notePos.getZ() + dz);
-                     BlockPos candidate = cursor.immutable();
-                     if (checked.add(candidate) && level.getBlockState(candidate).is(Blocks.REINFORCED_DEEPSLATE) && PortalIgnition.tryIgnite(level, candidate)) {
-                        return true;
-                     }
-                  }
+               for (int dx = -10; dx <= 10; ++dx) {
+                   for (int dy = -10; dy <= 10; ++dy) {
+                       for (int dz = -10; dz <= 10; ++dz) {
+                           cursor.set(notePos.getX() + dx, notePos.getY() + dy, notePos.getZ() + dz);
+                           BlockPos candidate = cursor.immutable();
+                           if (checked.add(candidate) && level.getBlockState(candidate).is(Blocks.REINFORCED_DEEPSLATE) && PortalIgnition.tryIgnite(level, candidate)) {
+                               return;
+                           }
+                       }
+                   }
                }
-            }
-         }
+           }
 
-         return false;
-      }
+       }
    }
 
-   public static boolean tryCloseNearNotes(ServerLevel level, List sequence) {
-      if (sequence.isEmpty()) {
-         return false;
-      } else {
-         Set<BlockPos> checked = new HashSet();
-         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+   public static void tryCloseNearNotes(ServerLevel level, List sequence) {
+       if (!sequence.isEmpty()) {
+           Set<BlockPos> checked = new HashSet<>();
+           BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
 
-         for (SonorousConsoles.PlayedNote note : (Iterable<SonorousConsoles.PlayedNote>) sequence) {
-            BlockPos notePos = note.notePos();
+           for (SonorousConsoles.PlayedNote note : (Iterable<SonorousConsoles.PlayedNote>) sequence) {
+               BlockPos notePos = note.notePos();
 
-            for (int dx = -10; dx <= 10; ++dx) {
-               for (int dy = -10; dy <= 10; ++dy) {
-                  for (int dz = -10; dz <= 10; ++dz) {
-                     cursor.set(notePos.getX() + dx, notePos.getY() + dy, notePos.getZ() + dz);
-                     BlockPos candidate = cursor.immutable();
-                     if (checked.add(candidate) && level.getBlockState(candidate).is(Blocks.REINFORCED_DEEPSLATE)) {
-                        Optional<PortalFrameScanner.Frame> frame = PortalFrameScanner.scanForClosing(level, candidate);
-                        if (!frame.isEmpty()) {
-                           PortalGrowth.startClosing(level, ((PortalFrameScanner.Frame)frame.get()).interior(), ((PortalFrameScanner.Frame)frame.get()).axis());
-                           return true;
-                        }
-                     }
-                  }
+               for (int dx = -10; dx <= 10; ++dx) {
+                   for (int dy = -10; dy <= 10; ++dy) {
+                       for (int dz = -10; dz <= 10; ++dz) {
+                           cursor.set(notePos.getX() + dx, notePos.getY() + dy, notePos.getZ() + dz);
+                           BlockPos candidate = cursor.immutable();
+                           if (checked.add(candidate) && level.getBlockState(candidate).is(Blocks.REINFORCED_DEEPSLATE)) {
+                               Optional<PortalFrameScanner.Frame> frame = PortalFrameScanner.scanForClosing(level, candidate);
+                               if (frame.isPresent()) {
+                                   PortalGrowth.startClosing(level, frame.get().interior(), frame.get().axis());
+                                   return;
+                               }
+                           }
+                       }
+                   }
                }
-            }
-         }
+           }
 
-         return false;
-      }
+       }
    }
 }

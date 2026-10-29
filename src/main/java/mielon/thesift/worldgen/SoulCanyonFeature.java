@@ -19,15 +19,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import org.jspecify.annotations.NonNull;
 
 public final class SoulCanyonFeature implements Feature {
    public static final MapCodec CODEC = MapCodec.unit(SoulCanyonFeature::new);
 
-   public MapCodec codec() {
+   public @NonNull MapCodec codec() {
       return CODEC;
    }
 
-   public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+   public boolean place(WorldGenLevel level, @NonNull ChunkGenerator generator, @NonNull RandomSource random, @NonNull BlockPos origin) {
       if (!SiftLandmarkPlacement.isSelectedChunk(level.getSeed(), origin, 12, 6003110614342389337L, 1)) {
          return false;
       } else {
@@ -58,7 +59,7 @@ public final class SoulCanyonFeature implements Feature {
                }
             }
 
-            if (plan != null && soulBlocks != null) {
+            if (plan != null) {
                int minX = Integer.MAX_VALUE;
                int minZ = Integer.MAX_VALUE;
                int maxX = Integer.MIN_VALUE;
@@ -104,8 +105,7 @@ public final class SoulCanyonFeature implements Feature {
       double directionX = (orientation & 1) == 0 ? 0.7071067811865476 : -0.7071067811865476;
       double directionZ = (orientation & 2) == 0 ? 0.7071067811865476 : -0.7071067811865476;
       double sideX = -directionZ;
-      double sideZ = directionX;
-      int halfLength = length / 2;
+       int halfLength = length / 2;
       Map<Long, CanyonColumn> columns = new HashMap();
       BlockPos entrance = null;
       BlockPos midpoint = null;
@@ -117,7 +117,7 @@ public final class SoulCanyonFeature implements Feature {
          double meander = Math.sin(phase + (double)step * 0.22) * 1.65 + Math.sin(phase * 1.73 + (double)step * 0.071) * 0.7;
          int radius = Math.max(3, baseRadius + (int)Math.round(Math.sin(phase * 0.63 + (double)step * 0.39)));
          double exactCenterX = (double)centerX + directionX * (double)offset + sideX * meander;
-         double exactCenterZ = (double)centerZ + directionZ * (double)offset + sideZ * meander;
+         double exactCenterZ = (double)centerZ + directionZ * (double)offset + directionX * meander;
          int centerXAtStep = (int)Math.round(exactCenterX);
          int centerZAtStep = (int)Math.round(exactCenterZ);
          int centerSurface = findTerrainSurfaceBlockY(level, centerXAtStep, centerZAtStep);
@@ -165,7 +165,7 @@ public final class SoulCanyonFeature implements Feature {
                double relativeX = (double)x - exactCenterX;
                double relativeZ = (double)z - exactCenterZ;
                double alongDistance = Math.abs(relativeX * directionX + relativeZ * directionZ);
-               double signedSide = relativeX * sideX + relativeZ * sideZ;
+               double signedSide = relativeX * sideX + relativeZ * directionX;
                double sideDistance = Math.abs(signedSide);
                if (!(alongDistance > 0.82) && !(sideDistance > (double)radius + 0.35)) {
                   if (!bounds.contains(x, z)) {
@@ -173,7 +173,7 @@ public final class SoulCanyonFeature implements Feature {
                   }
 
                   double sideRatio = sideDistance / ((double)radius + 0.35);
-                  double arch = Math.sqrt(Math.max((double)0.0F, (double)1.0F - sideRatio * sideRatio));
+                  double arch = Math.sqrt(Math.max(0.0F, (double)1.0F - sideRatio * sideRatio));
                   int surfaceY = findTerrainSurfaceBlockY(level, x, z);
                   if (surfaceY < 0) {
                      return null;
@@ -194,7 +194,7 @@ public final class SoulCanyonFeature implements Feature {
 
                      CanyonColumn column = new CanyonColumn(x, z, surfaceY, floorY, surfaceY - floorY, (double)step / (double)Math.max(1, length - 1), step, (int)Math.round(sideDistance), signedSide);
                      long key = BlockPos.asLong(x, 0, z);
-                     CanyonColumn previous = (CanyonColumn)columns.get(key);
+                     CanyonColumn previous = columns.get(key);
                      if (previous == null || column.floorY() < previous.floorY()) {
                         columns.put(key, column);
                      }
@@ -224,7 +224,7 @@ public final class SoulCanyonFeature implements Feature {
 
       for (CanyonColumn column : (Iterable<CanyonColumn>) plan.columns().values()) {
          if (!((double)column.depth() < (double)maximumDepth * (double)0.5F) && !(column.progress() < 0.53) && !(column.progress() > 0.86) && column.sideDistance() <= plan.baseRadius() && reachableFloor.contains(BlockPos.asLong(column.x(), 0, column.z())) && hasGolemSizedApproach(plan, column)) {
-            double along = (double)column.alongStep();
+            double along = column.alongStep();
             double veinCenter = Math.sin(phase + along * 0.31) * 1.15 + Math.sin(phase * 0.71 + along * 0.13) * 0.48;
             double width = 0.82 + (Math.sin(phase * 1.37 + along * 0.43) + (double)1.0F) * 0.24;
             double edgeRatio = Math.abs(column.signedSide() - veinCenter) / width;
@@ -246,29 +246,27 @@ public final class SoulCanyonFeature implements Feature {
       Set<Long> visited = new HashSet();
       ArrayDeque<CanyonColumn> queue = new ArrayDeque();
       CanyonColumn start = (CanyonColumn)plan.columns().get(BlockPos.asLong(plan.midpoint().getX(), 0, plan.midpoint().getZ()));
-      if (start == null) {
-         return visited;
-      } else {
-         visited.add(BlockPos.asLong(start.x(), 0, start.z()));
-         queue.add(start);
+       if (start != null) {
+           visited.add(BlockPos.asLong(start.x(), 0, start.z()));
+           queue.add(start);
 
-         while(!queue.isEmpty()) {
-            CanyonColumn current = (CanyonColumn)queue.removeFirst();
+           while (!queue.isEmpty()) {
+               CanyonColumn current = queue.removeFirst();
 
-            for (Direction direction : Plane.HORIZONTAL) {
-               int x = current.x() + direction.getStepX();
-               int z = current.z() + direction.getStepZ();
-               long key = BlockPos.asLong(x, 0, z);
-               CanyonColumn next = (CanyonColumn)plan.columns().get(key);
-               if (next != null && !visited.contains(key) && Math.abs(next.floorY() - current.floorY()) <= 1) {
-                  visited.add(key);
-                  queue.addLast(next);
+               for (Direction direction : Plane.HORIZONTAL) {
+                   int x = current.x() + direction.getStepX();
+                   int z = current.z() + direction.getStepZ();
+                   long key = BlockPos.asLong(x, 0, z);
+                   CanyonColumn next = (CanyonColumn) plan.columns().get(key);
+                   if (next != null && !visited.contains(key) && Math.abs(next.floorY() - current.floorY()) <= 1) {
+                       visited.add(key);
+                       queue.addLast(next);
+                   }
                }
-            }
-         }
+           }
 
-         return visited;
-      }
+       }
+       return visited;
    }
 
    private static boolean hasGolemSizedApproach(CanyonPlan plan, CanyonColumn target) {
@@ -306,9 +304,9 @@ public final class SoulCanyonFeature implements Feature {
       long z = 0L;
 
       for (BlockPos pos : (Iterable<BlockPos>) positions) {
-         x += (long)pos.getX();
-         y += (long)pos.getY();
-         z += (long)pos.getZ();
+         x += pos.getX();
+         y += pos.getY();
+         z += pos.getZ();
       }
 
       int size = positions.size();
@@ -363,7 +361,7 @@ public final class SoulCanyonFeature implements Feature {
    }
 
    private static double clamp01(double value) {
-      return Math.max((double)0.0F, Math.min((double)1.0F, value));
+      return Math.clamp(value, 0.0F, 1.0F);
    }
 
    private static double smootherStep(double value) {
@@ -378,9 +376,9 @@ public final class SoulCanyonFeature implements Feature {
       return (double)((value ^ value >>> 31) >>> 11) * (double)1.110223E-16F;
    }
 
-   private static record CanyonPlan(Map columns, BlockPos entrance, BlockPos midpoint, int length, int baseRadius) {
+   private record CanyonPlan(Map columns, BlockPos entrance, BlockPos midpoint, int length, int baseRadius) {
    }
 
-   private static record CanyonColumn(int x, int z, int surfaceY, int floorY, int depth, double progress, int alongStep, int sideDistance, double signedSide) {
+   private record CanyonColumn(int x, int z, int surfaceY, int floorY, int depth, double progress, int alongStep, int sideDistance, double signedSide) {
    }
 }

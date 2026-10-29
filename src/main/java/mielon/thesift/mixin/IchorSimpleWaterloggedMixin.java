@@ -23,7 +23,7 @@ public interface IchorSimpleWaterloggedMixin {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void theSift$canFill(LivingEntity user, BlockGetter level, BlockPos pos, BlockState state, Fluid fluid, CallbackInfoReturnable cir) {
+   private void theSift$canFill(LivingEntity user, BlockGetter level, BlockPos pos, BlockState state, Fluid fluid, CallbackInfoReturnable<Boolean> cir) {
       if (IchorWaterlogging.isIchor(fluid)) {
          cir.setReturnValue(IchorWaterlogging.canFill(state));
       }
@@ -35,7 +35,7 @@ public interface IchorSimpleWaterloggedMixin {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void theSift$fill(LevelAccessor level, BlockPos pos, BlockState state, FluidState fluid, CallbackInfoReturnable cir) {
+   private void theSift$fill(LevelAccessor level, BlockPos pos, BlockState state, FluidState fluid, CallbackInfoReturnable<Boolean> cir) {
       if (IchorWaterlogging.isIchor(fluid.getType())) {
          cir.setReturnValue(IchorWaterlogging.fill(level, pos, state));
       }
@@ -47,7 +47,7 @@ public interface IchorSimpleWaterloggedMixin {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void theSift$drain(LivingEntity user, LevelAccessor level, BlockPos pos, BlockState state, CallbackInfoReturnable cir) {
+   private void theSift$drain(LivingEntity user, LevelAccessor level, BlockPos pos, BlockState state, CallbackInfoReturnable<ItemStack> cir) {
       if (IchorWaterlogging.isIchorlogged(state)) {
          level.setBlock(pos, IchorWaterlogging.setFluidlogged(state, false), 3);
          if (!state.canSurvive(level, pos)) {
@@ -56,6 +56,5 @@ public interface IchorSimpleWaterloggedMixin {
 
          cir.setReturnValue(new ItemStack(ModFluids.ICHOR_BUCKET));
       }
-
    }
 }

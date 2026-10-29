@@ -19,11 +19,11 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LightBlock;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.NonNull;
 
 public final class RiftEntity extends Entity {
    public static final int LIFETIME_TICKS = 6000;
@@ -40,7 +40,7 @@ public final class RiftEntity extends Entity {
    private long linkedUntil;
    private boolean appearSoundPlayed;
    private int closingTicks;
-   private final List placedLights = new ArrayList(3);
+   private final List placedLights = new ArrayList<>(3);
 
    public RiftEntity(EntityType type, Level level) {
       super(type, level);
@@ -128,15 +128,15 @@ public final class RiftEntity extends Entity {
       return new AABB(position.x - halfX, position.y - (double)0.375F, position.z - halfZ, position.x + halfX, position.y + (double)3.875F, position.z + halfZ);
    }
 
-   protected AABB makeBoundingBox(Vec3 position) {
+   protected @NonNull AABB makeBoundingBox(@NonNull Vec3 position) {
       return portalBoundsAt(position, this.isLongAlongX());
    }
 
    public float getOpenScale(float partialTick) {
       if (this.isClosing()) {
-         return RiftAnimationClock.progress(true, (double)((float)this.closingTicks + partialTick));
+         return RiftAnimationClock.progress(true, (float)this.closingTicks + partialTick);
       } else {
-         return !(Boolean)this.entityData.get(DATA_APPEARING) ? 1.0F : RiftAnimationClock.progress(false, (double)((float)this.tickCount + partialTick));
+         return !(Boolean)this.entityData.get(DATA_APPEARING) ? 1.0F : RiftAnimationClock.progress(false, (float)this.tickCount + partialTick);
       }
    }
 
@@ -198,7 +198,7 @@ public final class RiftEntity extends Entity {
       for (int offset : new int[]{-3, 0, 3}) {
          BlockPos lightPos = this.isLongAlongX() ? anchor.offset(offset, 2, 0) : anchor.offset(0, 2, offset);
          if (level.getBlockState(lightPos).isAir()) {
-            level.setBlock(lightPos, (BlockState)Blocks.LIGHT.defaultBlockState().setValue(LightBlock.LEVEL, 15), 3);
+            level.setBlock(lightPos, Blocks.LIGHT.defaultBlockState().setValue(LightBlock.LEVEL, 15), 3);
             this.placedLights.add(lightPos.immutable());
          }
       }
@@ -256,9 +256,8 @@ public final class RiftEntity extends Entity {
       output.putBoolean("AppearSoundPlayed", this.appearSoundPlayed);
       output.putInt("ClosingTicks", this.closingTicks);
       ValueOutput.TypedOutputList<BlockPos> lights = output.list("PlacedLights", BlockPos.CODEC);
-      List var10000 = this.placedLights;
-      Objects.requireNonNull(lights);
-      var10000.forEach((pos) -> lights.add((BlockPos) pos));
+       Objects.requireNonNull(lights);
+      this.placedLights.forEach((pos) -> lights.add((BlockPos) pos));
    }
 
    private static UUID parseUuid(String value, UUID fallback) {
@@ -269,11 +268,11 @@ public final class RiftEntity extends Entity {
       }
    }
 
-   public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+   public boolean hurtServer(@NonNull ServerLevel level, @NonNull DamageSource source, float amount) {
       return false;
    }
 
-   public boolean hurtClient(DamageSource source) {
+   public boolean hurtClient(@NonNull DamageSource source) {
       return false;
    }
 
@@ -293,7 +292,7 @@ public final class RiftEntity extends Entity {
       return false;
    }
 
-   public boolean canCollideWith(Entity other) {
+   public boolean canCollideWith(@NonNull Entity other) {
       return false;
    }
 
@@ -301,7 +300,7 @@ public final class RiftEntity extends Entity {
       return false;
    }
 
-   public boolean skipAttackInteraction(Entity attacker) {
+   public boolean skipAttackInteraction(@NonNull Entity attacker) {
       return true;
    }
 

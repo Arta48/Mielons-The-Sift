@@ -17,8 +17,8 @@ public abstract class IchorBlockFluidStateMixin {
       at = {@At("HEAD")},
       cancellable = true
    )
-   private void theSift$actualFluid(CallbackInfoReturnable cir) {
-      if (IchorState.source != null && IchorWaterlogging.isIchorlogged((BlockState)(Object)this)) {
+   private void theSift$actualFluid(CallbackInfoReturnable<FluidState> cir) {
+      if (IchorState.source != null && IchorWaterlogging.isIchorlogged((BlockState) (Object) this)) {
          cir.setReturnValue(IchorState.source);
       }
 

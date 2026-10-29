@@ -61,7 +61,7 @@ public final class SiftFeaturePlacementGuard {
       }
    }
 
-   private static enum FeatureKind {
+   private enum FeatureKind {
       CARVER,
       SOLID;
 
@@ -71,10 +71,10 @@ public final class SiftFeaturePlacementGuard {
       }
    }
 
-   private static record FeatureReservation(ProtectedRectangle rectangle, FeatureKind kind) {
+   private record FeatureReservation(ProtectedRectangle rectangle, FeatureKind kind) {
    }
 
-   private static record ProtectedRectangle(int minX, int minZ, int maxX, int maxZ) {
+   private record ProtectedRectangle(int minX, int minZ, int maxX, int maxZ) {
       boolean intersects(ProtectedRectangle other) {
          return this.maxX >= other.minX && this.minX <= other.maxX && this.maxZ >= other.minZ && this.minZ <= other.maxZ;
       }
